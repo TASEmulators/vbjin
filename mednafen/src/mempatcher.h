@@ -1,7 +1,7 @@
 #ifndef __MDFN_MEMPATCHER_H
 #define __MDFN_MEMPATCHER_H
 
-#include "mempatcher-driver.h"
+//#include "mempatcher-driver.h"
 #include <vector>
 
 typedef struct __SUBCHEAT
@@ -24,6 +24,6 @@ void MDFNMP_RemoveReadPatches(void);
 
 void MDFNMP_ApplyPeriodicCheats(void);
 
-extern MDFNSetting MDFNMP_Settings[];
+//extern MDFNSetting MDFNMP_Settings[];
 
 #endif

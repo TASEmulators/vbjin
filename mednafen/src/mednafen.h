@@ -4,11 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "gettext.h"
+//#include "gettext.h"
 
-#define _(String) gettext (String)
+//#define _(String) gettext (String)
 
-#include "math_ops.h"
+//#include "math_ops.h"
 #include "git.h"
 
 extern MDFNGI *MDFNGameInfo;
@@ -21,9 +21,9 @@ typedef struct {
 
 extern MDFNS FSettings;
 
-void MDFN_PrintError(const char *format, ...) __attribute__ ((format (printf, 1, 2)));
-void MDFN_printf(const char *format, ...) __attribute__ ((format (printf, 1, 2)));
-void MDFN_DispMessage(const char *format, ...) __attribute__ ((format (printf, 1, 2)));
+void MDFN_PrintError(const char *format, ...) ;//__attribute__ ((format (printf, 1, 2)));
+//void MDFN_printf(const char *format, ...) ;//__attribute__ ((format (printf, 1, 2)));
+void MDFN_DispMessage(const char *format, ...) ;//__attribute__ ((format (printf, 1, 2)));
 
 class MDFNException
 {
@@ -47,10 +47,12 @@ void MDFN_QSimpleCommand(int cmd);
 #include "state.h"
 int MDFN_RawInputStateAction(StateMem *sm, int load, int data_only);
 
-#include "mednafen-driver.h"
+//#include "mednafen-driver.h"
 
 #include "endian.h"
-#include "memory.h"
+//#include "memory.h"
+
+#define gettext_noop
 
 #define _MEDNAFEN_H
 #endif

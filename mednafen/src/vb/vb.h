@@ -1,8 +1,9 @@
 #ifndef __VB_VB_H
 #define __VB_VB_H
 
-#include <mednafen/mednafen.h>
-#include <mednafen/hw_cpu/v810/v810_cpu.h>
+#include <types.h>
+#include <hw_cpu/v810/v810_cpu.h>
+#include "math_ops.h"
 
 namespace MDFN_IEN_VB
 {

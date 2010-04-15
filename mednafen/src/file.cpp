@@ -20,9 +20,12 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <errno.h>
+#include "io.h"
 #include <trio/trio.h>
+#include "error.h"
+#include "memory.h"
 
 #ifdef HAVE_MMAP
 #include <sys/mman.h>
@@ -72,7 +75,7 @@ static const char *unzErrorString(int error_code)
  else
   return("ZIP Unknown");
 }
-
+#if 0
 bool MDFNFILE::ApplyIPS(MDFNFILE *ips)
 {
  uint8 header[5];
@@ -199,7 +202,7 @@ bool MDFNFILE::ApplyIPS(MDFNFILE *ips)
 
  return(1);
 }
-
+#endif
 // This function should ALWAYS close the system file "descriptor"(gzip library, zip library, or FILE *) it's given,
 // even if it errors out.
 bool MDFNFILE::MakeMemWrap(void *tz, int type)

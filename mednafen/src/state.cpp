@@ -15,21 +15,27 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#define MEDNAFEN_VERSION '0.9.0'
+#define MEDNAFEN_VERSION_NUMERIC 0x000900
+
 #include "mednafen.h"
 
 #include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
+//#include <sys/types.h>
+//#include <sys/stat.h>
+//#include <unistd.h>
 
-#include <trio/trio.h>
-#include "driver.h"
+//#include <trio/trio.h>
+//#include "driver.h"
 #include "general.h"
 #include "state.h"
-#include "movie.h"
-#include "netplay.h"
+//#include "movie.h"
+//#include "netplay.h"
 #include "video.h"
-#include "video/resize.h"
+//#include "video/resize.h"
+#include <map>
+#include "assert.h"
+#include "memory.h"
 
 static int SaveStateStatus[10];
 
@@ -188,7 +194,7 @@ static bool SubWrite(StateMem *st, SFORMAT *sf, int data_only, const char *name_
    char nameo[1 + 256];
    int slen;
 
-   slen = trio_snprintf(nameo + 1, 256, "%s%s", name_prefix ? name_prefix : "", sf->name);
+   slen = snprintf(nameo + 1, 256, "%s%s", name_prefix ? name_prefix : "", sf->name);
    nameo[0] = slen;
 
    if(slen >= 255)
@@ -447,7 +453,7 @@ static int ReadStateChunk(StateMem *st, SFORMAT *sf, int size, int data_only)
  return 1;
 }
 
-static int CurrentState = 0;
+int CurrentState = 0;
 static int RecentlySavedState = -1;
 
 /* This function is called by the game driver(NES, GB, GBA) to save a state. */
@@ -593,7 +599,7 @@ int MDFNSS_SaveSM(StateMem *st, int wantpreview, int data_only, const MDFN_Surfa
 	 dest_rect.w = neowidth;
 	 dest_rect.h = neoheight;
 
-	 MDFN_ResizeSurface(surface, DisplayRect, (LineWidths[0].w != ~0) ? LineWidths : NULL, dest_surface, &dest_rect);
+//	 MDFN_ResizeSurface(surface, DisplayRect, (LineWidths[0].w != ~0) ? LineWidths : NULL, dest_surface, &dest_rect);
 
 	 {
 	  uint32 a, b = 0;
@@ -620,7 +626,7 @@ int MDFNSS_SaveSM(StateMem *st, int wantpreview, int data_only, const MDFN_Surfa
         // State rewinding code path hack, FIXME
         if(data_only)
         {
-         if(!MDFN_RawInputStateAction(st, 0, data_only))
+ //        if(!MDFN_RawInputStateAction(st, 0, data_only))
           return(0);
         }
 
@@ -745,7 +751,7 @@ int MDFNSS_LoadSM(StateMem *st, int haspreview, int data_only)
 	// State rewinding code path hack, FIXME
 	if(data_only)
 	{
-	 if(!MDFN_RawInputStateAction(st, stateversion, data_only))
+//	 if(!MDFN_RawInputStateAction(st, stateversion, data_only))
 	  return(0);
 	}
 
@@ -843,7 +849,8 @@ void MDFNSS_CheckStates(void)
 
 	 SaveStateStatus[ssel] = 0;
 	 //printf("%s\n", MDFN_MakeFName(MDFNMKF_STATE, ssel, 0).c_str());
-	 if(stat(MDFN_MakeFName(MDFNMKF_STATE, ssel, 0).c_str(), &stat_buf) == 0)
+
+//	 if(stat(MDFN_MakeFName(MDFNMKF_STATE, ssel, 0).c_str(), &stat_buf) == 0)
 	 {
 	  SaveStateStatus[ssel] = 1;
 	  if(stat_buf.st_mtime > last_time)
@@ -855,7 +862,7 @@ void MDFNSS_CheckStates(void)
         }
 
 	CurrentState = 0;
-	MDFND_SetStateStatus(NULL);
+//	MDFND_SetStateStatus(NULL);
 }
 
 void MDFNSS_GetStateInfo(const char *filename, StateStatusStruct *status)
@@ -905,10 +912,10 @@ void MDFNI_SelectState(int w)
 {
  if(w == -1) 
  {  
-  MDFND_SetStateStatus(NULL);
+//  MDFND_SetStateStatus(NULL);
   return; 
  }
- MDFNI_SelectMovie(-1);
+// MDFNI_SelectMovie(-1);
 
  if(w == 666 + 1)
   CurrentState = (CurrentState + 1) % 10;
@@ -922,7 +929,7 @@ void MDFNI_SelectState(int w)
  else
   CurrentState = w;
 
- MDFN_ResetMessages();
+// MDFN_ResetMessages();
 
  StateStatusStruct *status = (StateStatusStruct*)MDFN_calloc(1, sizeof(StateStatusStruct), _("Save state status"));
  
@@ -932,18 +939,18 @@ void MDFNI_SelectState(int w)
  status->recently_saved = RecentlySavedState;
 
  MDFNSS_GetStateInfo(MDFN_MakeFName(MDFNMKF_STATE,CurrentState,NULL).c_str(), status);
- MDFND_SetStateStatus(status);
+// MDFND_SetStateStatus(status);
 }  
 
 void MDFNI_SaveState(const char *fname, const char *suffix, const MDFN_Surface *surface, const MDFN_Rect *DisplayRect, const MDFN_Rect *LineWidths)
 {
- MDFND_SetStateStatus(NULL);
+// MDFND_SetStateStatus(NULL);
  MDFNSS_Save(fname, suffix, surface, DisplayRect, LineWidths);
 }
 
 void MDFNI_LoadState(const char *fname, const char *suffix)
 {
- MDFND_SetStateStatus(NULL);
+// MDFND_SetStateStatus(NULL);
 
  /* For network play and movies, be load the state locally, and then save the state to a temporary buffer,
     and send or record that.  This ensures that if an older state is loaded that is missing some
@@ -956,8 +963,8 @@ void MDFNI_LoadState(const char *fname, const char *suffix)
   if(MDFNnetplay)
    MDFNNET_SendState();
   #endif
-  if(MDFNMOV_IsRecording())
-   MDFNMOV_RecordState();
+//  if(MDFNMOV_IsRecording())
+//   MDFNMOV_RecordState();
  }
 }
 
@@ -1033,8 +1040,8 @@ void MDFN_StateEvilEnd(void)
 
  if(bcs)
  {
-  if(MDFNMOV_IsRecording())
-   MDFN_StateEvilFlushMovieLove();
+//  if(MDFNMOV_IsRecording())
+//   MDFN_StateEvilFlushMovieLove();
 
   for(x = 0;x < SRW_NUM; x++)
   {
@@ -1055,8 +1062,8 @@ void MDFN_StateEvilFlushMovieLove(void)
  {
   if(bcs[bahpos].MovieLove.data)
   {
-   if(bcs[x].data)
-    MDFNMOV_ForceRecord(&bcs[bahpos].MovieLove);
+//   if(bcs[x].data)
+//    MDFNMOV_ForceRecord(&bcs[bahpos].MovieLove);
    free(bcs[bahpos].MovieLove.data);
    bcs[bahpos].MovieLove.data = NULL;
   }
@@ -1132,7 +1139,7 @@ int MDFN_StateEvil(int rewind)
 
    MDFNSS_LoadSM(&sm, 0, 1);
 
-   free(MDFNMOV_GrabRewindJoy().data);
+//   free(MDFNMOV_GrabRewindJoy().data);
    return(1);
   }
  }
@@ -1143,12 +1150,12 @@ int MDFN_StateEvil(int rewind)
 
   bcspos = (bcspos + 1) % SRW_NUM;
 
-  if(MDFNMOV_IsRecording())
+//  if(MDFNMOV_IsRecording())
   {
    if(bcs[bcspos].data && bcs[bcspos].MovieLove.data)
    {
     //printf("Force: %d\n", bcspos);
-    MDFNMOV_ForceRecord(&bcs[bcspos].MovieLove);
+//    MDFNMOV_ForceRecord(&bcs[bcspos].MovieLove);
     free(bcs[bcspos].MovieLove.data);
     bcs[bcspos].MovieLove.data = NULL;
    }
@@ -1166,7 +1173,7 @@ int MDFN_StateEvil(int rewind)
 
   memset(&sm, 0, sizeof(sm));
 
-  MDFNSS_SaveSM(&sm, 0, 1);
+//  MDFNSS_SaveSM(&sm, 0, 1);
 
   bcs[bcspos].data = sm.data;
   bcs[bcspos].compressed_len = 0;
@@ -1217,8 +1224,8 @@ int MDFN_StateEvil(int rewind)
    }
   }
 
-  if(MDFNMOV_IsRecording())
-   bcs[bcspos].MovieLove = MDFNMOV_GrabRewindJoy();
+//  if(MDFNMOV_IsRecording())
+//   bcs[bcspos].MovieLove = MDFNMOV_GrabRewindJoy();
  }
  return(0);
 }

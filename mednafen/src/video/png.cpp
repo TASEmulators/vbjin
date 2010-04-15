@@ -16,6 +16,7 @@
  */
 
 #include "video-common.h"
+#include "memory.h"
 
 #include <zlib.h>
 

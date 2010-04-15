@@ -19,13 +19,16 @@
 #include "timer.h"
 #include "vsu.h"
 #include "vip.h"
-#include "../netplay.h"
+//#include "../netplay.h"
 #include "debug.h"
 #include "input.h"
-#include "../general.h"
-#include "../md5.h"
-#include "../mempatcher.h"
-#include <iconv.h>
+#include "general.h"
+#include "md5.h"
+#include "mempatcher.h"
+//#include <iconv.h>
+#include "endian.h"
+#include "file.h"
+#include "mednafen.h"
 
 namespace MDFN_IEN_VB
 {
@@ -455,9 +458,9 @@ static int Load(const char *name, MDFNFILE *fp)
  md5.update(fp->data, fp->size);
  md5.finish(MDFNGameInfo->MD5);
 
- iconv_t sjis_ict = iconv_open("UTF-8", "shift_jis");
+// iconv_t sjis_ict = iconv_open("UTF-8", "shift_jis");
  char game_title[256];
-
+/*
  if(sjis_ict != (iconv_t)-1)
  {
   char *in_ptr, *out_ptr;
@@ -476,7 +479,7 @@ static int Load(const char *name, MDFNFILE *fp)
 
   MDFN_trim(game_title);
  }
- else
+ else*/
   game_title[0] = 0;
 
  MDFN_printf(_("Title:     %s\n"), game_title);
@@ -732,12 +735,13 @@ static void Emulate(EmulateSpecStruct *espec)
  RebaseTS(v810_timestamp);
 
  VB_V810->ResetTS();
+
 }
 
 }
 
 using namespace MDFN_IEN_VB;
-
+#if 0
 static DebuggerInfoStruct DBGInfo =
 {
  4,
@@ -760,7 +764,7 @@ static DebuggerInfoStruct DBGInfo =
  NULL, 	//KING_SetGraphicsDecode,
  VBDBG_SetLogFunc,
 };
-
+#endif
 
 
 static int StateAction(StateMem *sm, int load, int data_only)

@@ -19,13 +19,14 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
+//#include <unistd.h>
 #include <string.h>
 #include <stdarg.h>
 
 #include <trio/trio.h>
 
 #include "png.h"
+#include "assert.h"
 
 void MDFNI_SaveSnapshot(const MDFN_Surface *src, const MDFN_Rect *DisplayRect)
 {
@@ -73,12 +74,12 @@ void MDFN_DispMessage(const char *format, ...)
  trio_vasprintf(&msg, format,ap);
  va_end(ap);
 
- MDFND_DispMessage((UTF8*)msg);
+// MDFND_DispMessage(msg);//(UTF8*)
 }
 
 void MDFN_ResetMessages(void)
 {
- MDFND_DispMessage(NULL);
+// MDFND_DispMessage(NULL);
 }
 
 MDFN_Surface::MDFN_Surface(uint32 *p_pixels, uint32 p_width, uint32 p_height, uint32 p_pitch32, unsigned int p_colorspace,

@@ -4,6 +4,9 @@
 #ifndef V810_CPU_H_
 #define V810_CPU_H_
 
+#include "assert.h"
+#include "state.h"
+
 #include "fpu-new/softfloat.h"
 
 typedef int32 v810_timestamp_t;
@@ -243,8 +246,8 @@ class V810
  V810_Emu_Mode EmuMode;
  bool VBMode;
 
- void Run_Fast(int32 MDFN_FASTCALL (*event_handler)(const v810_timestamp_t timestamp)) __attribute__((noinline));
- void Run_Accurate(int32 MDFN_FASTCALL (*event_handler)(const v810_timestamp_t timestamp)) __attribute__((noinline));
+ void Run_Fast(int32 MDFN_FASTCALL (*event_handler)(const v810_timestamp_t timestamp)) ;//__attribute__((noinline));
+ void Run_Accurate(int32 MDFN_FASTCALL (*event_handler)(const v810_timestamp_t timestamp));// __attribute__((noinline));
 
  #ifdef WANT_DEBUGGER
  void Run_Fast_Debug(int32 MDFN_FASTCALL (*event_handler)(const v810_timestamp_t timestamp)) __attribute__((noinline));

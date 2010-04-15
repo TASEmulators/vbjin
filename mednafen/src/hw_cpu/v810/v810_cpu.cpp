@@ -41,7 +41,9 @@ found freely through public domain sources.
 //////////////////////////////////////////////////////////
 // CPU routines
 
-#include "mednafen/mednafen.h"
+#include "mednafen.h"
+#include "math_ops.h"
+#include "memory.h"
 //#include "pcfx.h"
 //#include "debug.h"
 
@@ -56,9 +58,11 @@ found freely through public domain sources.
 
 V810::V810()
 {
+#ifdef WANT_DEBUGGER
  MemPeek8 = NULL;
  MemPeek16 = NULL;
  MemPeek32 = NULL;
+#endif
  CPUHook = NULL;
  ADDBT = NULL;
 
@@ -561,7 +565,1213 @@ void V810::Run_Accurate(int32 MDFN_FASTCALL (*event_handler)(const v810_timestam
  const bool RB_AccurateMode = true;
  const bool RB_DebugMode = false;
 
- #include "v810_oploop.inc"
+/* V810 Emulator
+ *
+ * Copyright (C) 2006 David Tucker
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+    uint32 opcode;
+    uint32 tmp2;
+    int val = 0;
+
+    #define ADDCLOCK(__n) { v810_timestamp += __n; }
+
+    #define CHECK_HALTED();	{ if(Halted && v810_timestamp < next_event_ts) { v810_timestamp = next_event_ts; } }
+
+    while(Running)
+    {
+     uint32 tmpop;
+
+     assert(v810_timestamp <= next_event_ts);
+
+     if(!WillInterruptOccur())
+     {
+      if(Halted)
+      {
+       v810_timestamp = next_event_ts;
+      }
+      else if(in_bstr)
+      {
+       tmpop = in_bstr_to;
+       opcode = tmpop >> 9;
+       goto op_BSTR;
+      }
+     }
+
+     while(v810_timestamp < next_event_ts)
+     {
+	if(ilevel >= 0)
+	{ 
+	 int temp_clocks = Int(ilevel);
+	 ADDCLOCK(temp_clocks);
+	}
+
+        P_REG[0] = 0; //Zero the Zero Reg!!!
+
+	if(RB_DebugMode)
+	{
+	 if(CPUHook)
+	  CPUHook(RB_GETPC());
+	}
+
+	{
+	 //printf("%08x\n", RB_GETPC());
+	 tmpop = RB_RDOP(0, 0);
+       	 opcode = tmpop >> 9;
+	 //printf("%02x\n", opcode >> 1);
+#if 0
+	static const void *const op_goto_table[128] =
+	{
+
+&&op_MOV, &&op_MOV, &&op_ADD, &&op_ADD, &&op_SUB, &&op_SUB, &&op_CMP, &&op_CMP, 
+&&op_SHL, &&op_SHL, &&op_SHR, &&op_SHR, &&op_JMP, &&op_JMP, &&op_SAR, &&op_SAR, 
+&&op_MUL, &&op_MUL, &&op_DIV, &&op_DIV, &&op_MULU, &&op_MULU, &&op_DIVU, &&op_DIVU, 
+&&op_OR, &&op_OR, &&op_AND, &&op_AND, &&op_XOR, &&op_XOR, &&op_NOT, &&op_NOT, 
+
+&&op_MOV_I, &&op_MOV_I, &&op_ADD_I, &&op_ADD_I, &&op_SETF, &&op_SETF, &&op_CMP_I, &&op_CMP_I, 
+&&op_SHL_I, &&op_SHL_I, &&op_SHR_I, &&op_SHR_I, &&op_EI, &&op_EI, &&op_SAR_I, &&op_SAR_I, 
+&&op_TRAP, &&op_TRAP, &&op_RETI, &&op_RETI, &&op_HALT, &&op_HALT, &&op_INVALID, &&op_INVALID, 
+&&op_LDSR, &&op_LDSR, &&op_STSR, &&op_STSR, &&op_DI, &&op_DI, &&op_BSTR, &&op_BSTR, 
+
+&&op_BV, &&op_BL, &&op_BE, &&op_BNH, &&op_BN, &&op_BR, &&op_BLT, &&op_BLE, 
+&&op_BNV, &&op_BNL, &&op_BNE, &&op_BH, &&op_BP, &&op_NOP, &&op_BGE, &&op_BGT, 
+&&op_MOVEA, &&op_MOVEA, &&op_ADDI, &&op_ADDI, &&op_JR, &&op_JR, &&op_JAL, &&op_JAL, 
+&&op_ORI, &&op_ORI, &&op_ANDI, &&op_ANDI, &&op_XORI, &&op_XORI, &&op_MOVHI, &&op_MOVHI, 
+
+&&op_LD_B, &&op_LD_B, &&op_LD_H, &&op_LD_H, &&op_INVALID, &&op_INVALID, &&op_LD_W, &&op_LD_W, 
+&&op_ST_B, &&op_ST_B, &&op_ST_H, &&op_ST_H, &&op_INVALID, &&op_INVALID, &&op_ST_W, &&op_ST_W, 
+&&op_IN_B, &&op_IN_B, &&op_IN_H, &&op_IN_H, &&op_CAXI, &&op_CAXI, &&op_IN_W, &&op_IN_W, 
+&&op_OUT_B, &&op_OUT_B, &&op_OUT_H, &&op_OUT_H, &&op_FPP, &&op_FPP, &&op_OUT_W, &&op_OUT_W, 
+
+	};
+#endif
+
+	//AAAAAGGGGGGHHHHHH
+	switch(tmpop >> 9) {
+
+//&&op_MOV, &&op_MOV, &&op_ADD, &&op_ADD, &&op_SUB, &&op_SUB, &&op_CMP, &&op_CMP, 
+
+		case 0: goto op_MOV; break;
+		case 1: goto op_MOV; break;
+		case 2: goto op_ADD; break;
+		case 3: goto op_ADD; break;
+		case 4: goto op_SUB; break;
+		case 5: goto op_SUB; break;
+		case 6: goto op_CMP; break;
+		case 7: goto op_CMP; break;
+//&&op_SHL, &&op_SHL, &&op_SHR, &&op_SHR, &&op_JMP, &&op_JMP, &&op_SAR, &&op_SAR, 
+
+		case 8: goto op_SHL; break;
+		case 9: goto op_SHL; break;
+		case 10: goto op_SHR; break;
+		case 11: goto op_SHR; break;
+		case 12: goto op_JMP; break;
+		case 13: goto op_JMP; break;
+		case 14: goto op_SAR; break;
+		case 15: goto op_SAR; break;
+//&&op_MUL, &&op_MUL, &&op_DIV, &&op_DIV, &&op_MULU, &&op_MULU, &&op_DIVU, &&op_DIVU, 
+
+		case 16: goto op_MUL; break;
+		case 17: goto op_MUL; break;
+		case 18: goto op_DIV; break;
+		case 19: goto op_DIV; break;
+		case 20: goto op_MULU; break;
+		case 21: goto op_MULU; break;
+		case 22: goto op_DIVU; break;
+		case 23: goto op_DIVU; break;
+//&&op_OR, &&op_OR, &&op_AND, &&op_AND, &&op_XOR, &&op_XOR, &&op_NOT, &&op_NOT, 
+		case 24: goto op_OR; break;
+		case 25: goto op_OR; break;
+		case 26: goto op_AND; break;
+		case 27: goto op_AND; break;
+		case 28: goto op_XOR; break;
+		case 29: goto op_XOR; break;
+		case 30: goto op_NOT; break;
+		case 31: goto op_NOT; break;
+
+//&&op_MOV_I, &&op_MOV_I, &&op_ADD_I, &&op_ADD_I, &&op_SETF, &&op_SETF, op_CMP_I&&, &&op_CMP_I, 
+
+		case 32: goto op_MOV_I; break;
+		case 33: goto op_MOV_I; break;
+		case 34: goto op_ADD_I; break;
+		case 35: goto op_ADD_I; break;
+		case 36: goto op_SETF; break;
+		case 37: goto op_SETF; break;
+		case 38: goto op_CMP_I; break;
+		case 39: goto op_CMP_I; break;
+//&&op_SHL_I, &&op_SHL_I, &&op_SHR_I, &&op_SHR_I, &&op_EI, &&op_EI, &&op_SAR_I, &&op_SAR_I, 
+
+		case 40: goto op_SHL_I; break;
+		case 41: goto op_SHL_I; break;
+		case 42: goto op_SHR_I; break;
+		case 43: goto op_SHR_I; break;
+		case 44: goto op_EI; break;
+		case 45: goto op_EI; break;
+		case 46: goto op_SAR_I; break;
+		case 47: goto op_SAR_I; break;
+//&&op_TRAP, &&op_TRAP, &&op_RETI, &&op_RETI, &&op_HALT, &&op_HALT, &&op_INVALID, &&op_INVALID, 
+
+		case 48: goto op_TRAP; break;
+		case 49: goto op_TRAP; break;
+		case 50: goto op_RETI; break;
+		case 51: goto op_RETI; break;
+		case 52: goto op_HALT; break;
+		case 53: goto op_HALT; break;
+		case 54: goto op_INVALID; break;
+		case 55: goto op_INVALID; break;
+//&&op_LDSR, &&op_LDSR, &&op_STSR, &&op_STSR, &&op_DI, &&op_DI, &&op_BSTR, &&op_BSTR, 
+		case 56: goto op_LDSR; break;
+		case 57: goto op_LDSR; break;
+		case 58: goto op_STSR; break;
+		case 59: goto op_STSR; break;
+		case 60: goto op_DI; break;
+		case 61: goto op_DI; break;
+		case 62: goto op_BSTR; break;
+		case 63: goto op_BSTR; break;
+//&&op_BV, &&op_BL, &&op_BE, &&op_BNH, &&op_BN, &&op_BR, &&op_BLT, &&op_BLE, 
+
+		case 64: goto op_BV; break;
+		case 65: goto op_BL; break;
+		case 66: goto op_BE; break;
+		case 67: goto op_BNH; break;
+		case 68: goto op_BN; break;
+		case 69: goto op_BR; break;
+		case 70: goto op_BLT; break;
+		case 71: goto op_BLE; break;
+//&&op_BNV, &&op_BNL, &&op_BNE, &&op_BH, &&op_BP, &&op_NOP, &&op_BGE, &&op_BGT, 
+
+		case 72: goto op_BNV; break;
+		case 73: goto op_BNL; break;
+		case 74: goto op_BNE; break;
+		case 75: goto op_BH; break;
+		case 76: goto op_BP; break;
+		case 77: goto op_NOP; break;
+		case 78: goto op_BGE; break;
+		case 79: goto op_BGT; break;
+//&&op_MOVEA, &&op_MOVEA, &&op_ADDI, &&op_ADDI, &&op_JR, &&op_JR, &&op_JAL, &&op_JAL, 
+
+		case 80: goto op_MOVEA; break;
+		case 81: goto op_MOVEA; break;
+		case 82: goto op_ADDI; break;
+		case 83: goto op_ADDI; break;
+		case 84: goto op_JR; break;
+		case 85: goto op_JR; break;
+		case 86: goto op_JAL; break;
+		case 87: goto op_JAL; break;
+//&&op_ORI, &&op_ORI, &&op_ANDI, &&op_ANDI, &&op_XORI, &&op_XORI, &&op_MOVHI, &&op_MOVHI, 
+		case 88: goto op_ORI; break;
+		case 89: goto op_ORI; break;
+		case 90: goto op_ANDI; break;
+		case 91: goto op_ANDI; break;
+		case 92: goto op_XORI; break;
+		case 93: goto op_XORI; break;
+		case 94: goto op_MOVHI; break;
+		case 95: goto op_MOVHI; break;
+//&&op_LD_B, &&op_LD_B, &&op_LD_H, &&op_LD_H, &&op_INVALID, &&op_INVALID, &&op_LD_W, &&op_LD_W, 
+
+		case 96: goto op_LD_B; break;
+		case 97: goto op_LD_B; break;
+		case 98: goto op_LD_H; break;
+		case 99: goto op_LD_H; break;
+		case 100: goto op_INVALID; break;
+		case 101: goto op_INVALID; break;
+		case 102: goto op_LD_W; break;
+		case 103: goto op_LD_W; break;
+//&&op_ST_B, &&op_ST_B, &&op_ST_H, &&op_ST_H, &&op_INVALID, &&op_INVALID, &&op_ST_W, &&op_ST_W, 
+
+		case 104: goto op_ST_B; break;
+		case 105: goto op_ST_B; break;
+		case 106: goto op_ST_H; break;
+		case 107: goto op_ST_H; break;
+		case 108: goto op_INVALID; break;
+		case 109: goto op_INVALID; break;
+		case 110: goto op_ST_W; break;
+		case 111: goto op_ST_W; break;
+//&&op_IN_B, &&op_IN_B, &&op_IN_H, &&op_IN_H, &&op_CAXI, &&op_CAXI, &&op_IN_W, &&op_IN_W, 
+
+		case 112: goto op_IN_B; break;
+		case 113: goto op_IN_B; break;
+		case 114: goto op_IN_H; break;
+		case 115: goto op_IN_H; break;
+		case 116: goto op_CAXI; break;
+		case 117: goto op_CAXI; break;
+		case 118: goto op_IN_W; break;
+		case 119: goto op_IN_W; break;
+//&&op_OUT_B, &&op_OUT_B, &&op_OUT_H, &&op_OUT_H, &&op_FPP, &&op_FPP, &&op_OUT_W, &&op_OUT_W, 
+		case 120: goto op_OUT_B; break;
+		case 121: goto op_OUT_B; break;
+		case 122: goto op_OUT_H; break;
+		case 123: goto op_OUT_H; break;
+		case 124: goto op_FPP; break;
+		case 125: goto op_FPP; break;
+		case 126: goto op_OUT_W; break;
+		case 127: goto op_OUT_W; break;
+
+	}
+
+//	goto *op_goto_table[tmpop >> 9];
+
+	// Bit string subopcodes
+        #define DO_AM_BSTR()							\
+            const uint32 arg1 = (tmpop >> 5) & 0x1F;				\
+            const uint32 arg2 = (tmpop & 0x1F);					\
+            RB_INCPCBY2();
+
+
+        #define DO_AM_FPP()							\
+            const uint32 arg1 = (tmpop >> 5) & 0x1F;				\
+            const uint32 arg2 = (tmpop & 0x1F);					\
+            const uint32 arg3 = ((RB_RDOP(2) >> 10)&0x3F);			\
+	    RB_INCPCBY4();
+
+
+        #define DO_AM_UDEF()					\
+            RB_INCPCBY2();
+
+        #define DO_AM_I()					\
+            const uint32 arg1 = tmpop & 0x1F;			\
+            const uint32 arg2 = (tmpop >> 5) & 0x1F;		\
+            RB_INCPCBY2();
+						
+	#define DO_AM_II() DO_AM_I();
+
+
+        #define DO_AM_IV()					\
+	    const uint32 arg1 = ((tmpop & 0x000003FF) << 16) | RB_RDOP(2);	\
+
+
+        #define DO_AM_V()					\
+            const uint32 arg3 = (tmpop >> 5) & 0x1F;		\
+            const uint32 arg2 = tmpop & 0x1F;			\
+            const uint32 arg1 = RB_RDOP(2);	\
+            RB_INCPCBY4();						
+
+
+        #define DO_AM_VIa()					\
+            const uint32 arg1 = RB_RDOP(2);	\
+            const uint32 arg2 = tmpop & 0x1F;			\
+            const uint32 arg3 = (tmpop >> 5) & 0x1F;		\
+            RB_INCPCBY4();						\
+
+
+        #define DO_AM_VIb()					\
+            const uint32 arg1 = (tmpop >> 5) & 0x1F;		\
+            const uint32 arg2 = RB_RDOP(2);	\
+            const uint32 arg3 = (tmpop & 0x1F);			\
+            RB_INCPCBY4();					\
+
+        #define DO_AM_IX()					\
+            const uint32 arg1 = (tmpop & 0x1);			\
+            RB_INCPCBY2();					\
+
+        #define DO_AM_III()					\
+            const uint32 arg1 = tmpop & 0x1FE;
+
+	#include "v810_do_am.h"
+
+	 #define BEGIN_OP(meowtmpop) { op_##meowtmpop: DO_##meowtmpop ##_AM();
+	 #define END_OP()	goto OpFinished; }
+	 #define END_OP_SKIPLO()       goto OpFinishedSkipLO; }
+
+	BEGIN_OP(MOV);
+	    ADDCLOCK(1);
+            SetPREG(arg2, P_REG[arg1]);
+	END_OP();
+
+
+	BEGIN_OP(ADD);
+             ADDCLOCK(1);
+             uint32 temp = P_REG[arg2] + P_REG[arg1];
+
+             SetFlag(PSW_OV, ((P_REG[arg2]^(~P_REG[arg1]))&(P_REG[arg2]^temp))&0x80000000);
+             SetFlag(PSW_CY, temp < P_REG[arg2]);
+
+             SetPREG(arg2, temp);
+	     SetSZ(P_REG[arg2]);
+	END_OP();
+
+
+	BEGIN_OP(SUB);
+             ADDCLOCK(1);
+	     uint32 temp = P_REG[arg2] - P_REG[arg1];
+
+             SetFlag(PSW_OV, ((P_REG[arg2]^P_REG[arg1])&(P_REG[arg2]^temp))&0x80000000);
+             SetFlag(PSW_CY, temp > P_REG[arg2]);
+
+	     SetPREG(arg2, temp);
+	     SetSZ(P_REG[arg2]);
+	END_OP();
+
+
+	BEGIN_OP(CMP);
+             ADDCLOCK(1);
+ 	     uint32 temp = P_REG[arg2] - P_REG[arg1];
+
+	     SetSZ(temp);
+             SetFlag(PSW_OV, ((P_REG[arg2]^P_REG[arg1])&(P_REG[arg2]^temp))&0x80000000);
+	     SetFlag(PSW_CY, temp > P_REG[arg2]);
+	END_OP();
+
+
+	BEGIN_OP(SHL);
+            ADDCLOCK(1);
+            val = P_REG[arg1] & 0x1F;
+
+            // set CY before we destroy the regisrer info....
+            SetFlag(PSW_CY, (val != 0) && ((P_REG[arg2] >> (32 - val))&0x01) );
+	    SetFlag(PSW_OV, FALSE);
+            SetPREG(arg2, P_REG[arg2] << val);
+	    SetSZ(P_REG[arg2]);            
+	END_OP();
+			
+	BEGIN_OP(SHR);
+            ADDCLOCK(1);
+            val = P_REG[arg1] & 0x1F;
+            // set CY before we destroy the regisrer info....
+            SetFlag(PSW_CY, (val) && ((P_REG[arg2] >> (val-1))&0x01));
+	    SetFlag(PSW_OV, FALSE);
+	    SetPREG(arg2, P_REG[arg2] >> val);
+	    SetSZ(P_REG[arg2]);
+	END_OP();
+
+	BEGIN_OP(JMP);
+
+	    (void)arg2;		// arg2 is unused.
+
+            ADDCLOCK(3);
+            RB_SETPC((P_REG[arg1] & 0xFFFFFFFE));
+	    if(RB_AccurateMode)
+	    {
+	     BRANCH_ALIGN_CHECK(PC);
+	    }
+	    if(RB_DebugMode)
+	     ADDBT(RB_GETPC());
+	END_OP();
+
+	BEGIN_OP(SAR);
+            ADDCLOCK(1);
+            val = P_REG[arg1] & 0x1F;
+			
+	    SetFlag(PSW_CY, (val) && ((P_REG[arg2]>>(val-1))&0x01) );
+	    SetFlag(PSW_OV, FALSE);
+
+	    SetPREG(arg2, (uint32) ((int32)P_REG[arg2] >> val));
+            
+	    SetSZ(P_REG[arg2]);
+	END_OP();
+
+	BEGIN_OP(OR);
+            ADDCLOCK(1);
+            SetPREG(arg2, P_REG[arg1] | P_REG[arg2]);
+	    SetFlag(PSW_OV, FALSE);
+	    SetSZ(P_REG[arg2]);
+	END_OP();
+
+	BEGIN_OP(AND);
+            ADDCLOCK(1);
+            SetPREG(arg2, P_REG[arg1] & P_REG[arg2]);
+	    SetFlag(PSW_OV, FALSE);
+	    SetSZ(P_REG[arg2]);
+	END_OP();
+
+	BEGIN_OP(XOR);
+            ADDCLOCK(1);
+	    SetPREG(arg2, P_REG[arg1] ^ P_REG[arg2]);
+	    SetFlag(PSW_OV, FALSE);
+	    SetSZ(P_REG[arg2]);
+	END_OP();
+
+	BEGIN_OP(NOT);
+            ADDCLOCK(1);
+	    SetPREG(arg2, ~P_REG[arg1]);
+	    SetFlag(PSW_OV, FALSE);
+	    SetSZ(P_REG[arg2]);
+	END_OP();
+
+	BEGIN_OP(MOV_I);
+            ADDCLOCK(1);
+            SetPREG(arg2,sign_5(arg1));
+	END_OP();
+
+	BEGIN_OP(ADD_I);
+             ADDCLOCK(1);
+             uint32 temp = P_REG[arg2] + sign_5(arg1);
+
+             SetFlag(PSW_OV, ((P_REG[arg2]^(~sign_5(arg1)))&(P_REG[arg2]^temp))&0x80000000);
+	     SetFlag(PSW_CY, (uint32)temp < P_REG[arg2]);
+
+             SetPREG(arg2, (uint32)temp);
+	     SetSZ(P_REG[arg2]);
+	END_OP();
+
+
+	BEGIN_OP(SETF);
+		ADDCLOCK(1);
+
+		//SETF may contain bugs
+		P_REG[arg2] = 0;
+
+		//if(arg1 != 0xe)
+		//printf("SETF: %02x\n", arg1);
+		//snortus();
+		switch (arg1 & 0x0F) 
+		{
+			case COND_V:
+				if (TESTCOND_V) P_REG[arg2] = 1;
+				break;
+			case COND_C:
+				if (TESTCOND_C) P_REG[arg2] = 1;
+				break;
+			case COND_Z:
+				if (TESTCOND_Z) P_REG[arg2] = 1;
+				break;
+			case COND_NH:
+				if (TESTCOND_NH) P_REG[arg2] = 1;
+				break;
+			case COND_S:
+				if (TESTCOND_S) P_REG[arg2] = 1;
+				break;
+			case COND_T:
+				P_REG[arg2] = 1;
+				break;
+			case COND_LT:
+				if (TESTCOND_LT) P_REG[arg2] = 1;
+				break;
+			case COND_LE:
+				if (TESTCOND_LE) P_REG[arg2] = 1;
+				break;
+			case COND_NV:
+				if (TESTCOND_NV) P_REG[arg2] = 1;
+				break;
+			case COND_NC:
+				if (TESTCOND_NC) P_REG[arg2] = 1;
+				break;
+			case COND_NZ:
+				if (TESTCOND_NZ) P_REG[arg2] = 1;
+				break;
+			case COND_H:
+				if (TESTCOND_H) P_REG[arg2] = 1;
+				break;
+			case COND_NS:
+				if (TESTCOND_NS) P_REG[arg2] = 1;
+				break;
+			case COND_F:
+				//always false! do nothing more
+				break;
+			case COND_GE:
+				if (TESTCOND_GE) P_REG[arg2] = 1;
+				break;
+			case COND_GT:
+				if (TESTCOND_GT) P_REG[arg2] = 1;
+				break;
+		}
+	END_OP();
+
+	BEGIN_OP(CMP_I);
+             ADDCLOCK(1);
+	     uint32 temp = P_REG[arg2] - sign_5(arg1);
+
+	     SetSZ(temp);
+             SetFlag(PSW_OV, ((P_REG[arg2]^(sign_5(arg1)))&(P_REG[arg2]^temp))&0x80000000);
+	     SetFlag(PSW_CY, temp > P_REG[arg2]);
+	END_OP();
+
+	BEGIN_OP(SHR_I);
+            ADDCLOCK(1);
+	    SetFlag(PSW_CY, arg1 && ((P_REG[arg2] >> (arg1-1))&0x01) );
+            // set CY before we destroy the regisrer info....
+            SetPREG(arg2, P_REG[arg2] >> arg1);
+	    SetFlag(PSW_OV, FALSE);
+	    SetSZ(P_REG[arg2]);
+	END_OP();
+
+	BEGIN_OP(SHL_I);
+            ADDCLOCK(1);
+            SetFlag(PSW_CY, arg1 && ((P_REG[arg2] >> (32 - arg1))&0x01) );
+            // set CY before we destroy the regisrer info....
+
+            SetPREG(arg2, P_REG[arg2] << arg1);
+	    SetFlag(PSW_OV, FALSE);
+	    SetSZ(P_REG[arg2]);
+	END_OP();
+
+	BEGIN_OP(SAR_I);
+            ADDCLOCK(1);
+ 	    SetFlag(PSW_CY, arg1 && ((P_REG[arg2]>>(arg1-1))&0x01) );
+
+            SetPREG(arg2, (uint32) ((int32)P_REG[arg2] >> arg1));
+
+	    SetFlag(PSW_OV, FALSE);
+	    SetSZ(P_REG[arg2]);
+	END_OP();
+
+	BEGIN_OP(LDSR);		// Loads a Sys Reg with the value in specified PR
+             ADDCLOCK(1);	// ?
+	     SetSREG(arg1 & 0x1F, P_REG[arg2 & 0x1F]);
+	END_OP();
+
+	BEGIN_OP(STSR);		// Loads a PR with the value in specified Sys Reg
+             ADDCLOCK(1);	// ?
+             P_REG[arg2 & 0x1F] = GetSREG(arg1 & 0x1F);
+	END_OP();
+
+        BEGIN_OP(EI);
+	    (void)arg1;         // arg1 is unused.
+	    (void)arg2;         // arg2 is unused.
+
+	    if(VBMode)
+	    {
+             ADDCLOCK(1);
+             S_REG[PSW] = S_REG[PSW] &~ PSW_ID;
+	    }
+	    else
+	    {
+	     puts("EI");
+	     ADDCLOCK(1);
+	     RB_DECPCBY2();
+             Exception(INVALID_OP_HANDLER_ADDR, ECODE_INVALID_OP);
+             CHECK_HALTED();
+	    }
+        END_OP();
+
+	BEGIN_OP(DI);
+            (void)arg1;         // arg1 is unused.
+            (void)arg2;         // arg2 is unused.
+
+            if(VBMode)
+            {
+             ADDCLOCK(1);
+             S_REG[PSW] |= PSW_ID;
+	    }
+	    else
+            {
+	     puts("DI");
+             ADDCLOCK(1);
+	     RB_DECPCBY2();
+             Exception(INVALID_OP_HANDLER_ADDR, ECODE_INVALID_OP);
+             CHECK_HALTED();
+            }
+	END_OP();
+
+
+	#define COND_BRANCH(cond)			\
+		if(cond) 				\
+		{ 					\
+		 ADDCLOCK(3);				\
+		 RB_PCRELCHANGE(sign_9(arg1) & 0xFFFFFFFE);	\
+		 if(RB_AccurateMode)			\
+		 {					\
+		  BRANCH_ALIGN_CHECK(PC);		\
+		 }					\
+		 if(RB_DebugMode)			\
+		 {					\
+		  ADDBT(RB_GETPC());			\
+		 }					\
+		}					\
+		else					\
+		{					\
+		 ADDCLOCK(1);				\
+		 RB_INCPCBY2();				\
+		}
+
+	BEGIN_OP(BV);
+		COND_BRANCH(TESTCOND_V);
+	END_OP();
+
+
+	BEGIN_OP(BL);
+        	COND_BRANCH(TESTCOND_L);
+	END_OP();
+
+	BEGIN_OP(BE);
+        	COND_BRANCH(TESTCOND_E);
+	END_OP();
+
+	BEGIN_OP(BNH);
+          	COND_BRANCH(TESTCOND_NH);
+	END_OP();
+
+	BEGIN_OP(BN);
+          	COND_BRANCH(TESTCOND_N);
+	END_OP();
+
+	BEGIN_OP(BR);
+          	COND_BRANCH(TRUE);
+	END_OP();
+
+	BEGIN_OP(BLT);
+          	COND_BRANCH(TESTCOND_LT);
+	END_OP();
+
+	BEGIN_OP(BLE);
+          	COND_BRANCH(TESTCOND_LE);
+	END_OP();
+
+	BEGIN_OP(BNV);
+          	COND_BRANCH(TESTCOND_NV);
+	END_OP();
+
+	BEGIN_OP(BNL);
+          	COND_BRANCH(TESTCOND_NL);
+	END_OP();
+
+	BEGIN_OP(BNE);
+          	COND_BRANCH(TESTCOND_NE);
+	END_OP();
+
+	BEGIN_OP(BH);
+          	COND_BRANCH(TESTCOND_H);
+	END_OP();
+
+	BEGIN_OP(BP);
+          	COND_BRANCH(TESTCOND_P);
+	END_OP();
+
+	BEGIN_OP(BGE);
+          	COND_BRANCH(TESTCOND_GE);
+	END_OP();
+
+	BEGIN_OP(BGT);
+          	COND_BRANCH(TESTCOND_GT);
+	END_OP();
+
+	BEGIN_OP(JR);
+            ADDCLOCK(3);
+            RB_PCRELCHANGE(sign_26(arg1) & 0xFFFFFFFE);
+            if(RB_AccurateMode)
+            {
+             BRANCH_ALIGN_CHECK(PC);
+            }
+            if(RB_DebugMode)
+             ADDBT(RB_GETPC());
+	END_OP();
+
+	BEGIN_OP(JAL);
+            ADDCLOCK(3);
+	    P_REG[31] = RB_GETPC() + 4;
+            RB_PCRELCHANGE(sign_26(arg1) & 0xFFFFFFFE);
+            if(RB_AccurateMode)
+            {
+             BRANCH_ALIGN_CHECK(PC);
+            }
+            if(RB_DebugMode)
+             ADDBT(RB_GETPC());
+	END_OP();
+
+	BEGIN_OP(MOVEA);
+            ADDCLOCK(1);
+	    SetPREG(arg3, P_REG[arg2] + sign_16(arg1));
+	END_OP();
+
+	BEGIN_OP(ADDI);
+             ADDCLOCK(1);
+             uint32 temp = P_REG[arg2] + sign_16(arg1);
+
+             SetFlag(PSW_OV, ((P_REG[arg2]^(~sign_16(arg1)))&(P_REG[arg2]^temp))&0x80000000);
+	     SetFlag(PSW_CY, (uint32)temp < P_REG[arg2]);
+
+             SetPREG(arg3, (uint32)temp);
+	     SetSZ(P_REG[arg3]);
+	END_OP();
+
+	BEGIN_OP(ORI);
+            ADDCLOCK(1);
+            SetPREG(arg3, arg1 | P_REG[arg2]);
+	    SetFlag(PSW_OV, FALSE);
+	    SetSZ(P_REG[arg3]);
+	END_OP();
+
+	BEGIN_OP(ANDI);
+            ADDCLOCK(1);
+            SetPREG(arg3, (arg1 & P_REG[arg2]));
+	    SetFlag(PSW_OV, FALSE);
+	    SetSZ(P_REG[arg3]);
+	END_OP();
+
+	BEGIN_OP(XORI);
+            ADDCLOCK(1);
+	    SetPREG(arg3, arg1 ^ P_REG[arg2]);
+	    SetFlag(PSW_OV, FALSE);
+	    SetSZ(P_REG[arg3]);
+	END_OP();
+
+	BEGIN_OP(MOVHI);
+            ADDCLOCK(1);
+            SetPREG(arg3, (arg1 << 16) + P_REG[arg2]);
+	END_OP();
+
+	// LD.B
+	BEGIN_OP(LD_B);
+		        ADDCLOCK(1);
+			tmp2 = (sign_16(arg1)+P_REG[arg2])&0xFFFFFFFF;
+			
+			SetPREG(arg3, sign_8(MemRead8(v810_timestamp, tmp2)));
+
+			//should be 3 clocks when executed alone, 2 when precedes another LD, or 1
+			//when precedes an instruction with many clocks (I'm guessing FP, MUL, DIV, etc)
+			if(lastop >= 0)
+			{
+				if(lastop == LASTOP_LD)
+				{ 
+				 ADDCLOCK(1);
+				}
+				else
+				{
+				 ADDCLOCK(2);
+				}
+			}
+			lastop = LASTOP_LD;
+	END_OP_SKIPLO();
+
+	// LD.H
+	BEGIN_OP(LD_H);
+                        ADDCLOCK(1);
+			tmp2 = (sign_16(arg1)+P_REG[arg2]) & 0xFFFFFFFE;
+		        SetPREG(arg3, sign_16(MemRead16(v810_timestamp, tmp2)));
+
+		        if(lastop >= 0)
+			{
+                                if(lastop == LASTOP_LD)
+				{
+				 ADDCLOCK(1);
+				}
+                                else
+				{
+				 ADDCLOCK(2);
+				}
+                        }
+			lastop = LASTOP_LD;
+	END_OP_SKIPLO();
+
+
+	// LD.W
+	BEGIN_OP(LD_W);
+                        ADDCLOCK(1);
+
+                        tmp2 = (sign_16(arg1)+P_REG[arg2]) & 0xFFFFFFFC;
+
+	                if(MemReadBus32[tmp2 >> 24])
+			{
+			 SetPREG(arg3, MemRead32(v810_timestamp, tmp2));
+			
+			 if(lastop >= 0)
+			 {
+				if(lastop == LASTOP_LD)
+				{
+				 ADDCLOCK(1);
+				}
+				else
+				{
+				 ADDCLOCK(2);
+				}
+			 }
+			}
+			else
+			{
+                         SetPREG(arg3, MemRead16(v810_timestamp, tmp2) | (MemRead16(v810_timestamp, tmp2 | 2) << 16));
+
+                         if(lastop >= 0)
+                         {
+                                if(lastop == LASTOP_LD)
+				{
+				 ADDCLOCK(3);
+				}
+                                else
+				{
+				 ADDCLOCK(4);
+				}
+                         }
+			}
+			lastop = LASTOP_LD;
+	END_OP_SKIPLO();
+
+	// ST.B
+	BEGIN_OP(ST_B);
+             ADDCLOCK(1);
+             MemWrite8(v810_timestamp, sign_16(arg2)+P_REG[arg3], P_REG[arg1] & 0xFF);
+
+             if(lastop == LASTOP_ST)
+	     {
+	      ADDCLOCK(1); 
+	     }
+	     lastop = LASTOP_ST;
+	END_OP_SKIPLO();
+
+	// ST.H
+	BEGIN_OP(ST_H);
+             ADDCLOCK(1);
+
+             MemWrite16(v810_timestamp, (sign_16(arg2)+P_REG[arg3])&0xFFFFFFFE, P_REG[arg1] & 0xFFFF);
+
+             if(lastop == LASTOP_ST)
+	     {
+	      ADDCLOCK(1);
+	     }
+	     lastop = LASTOP_ST;
+	END_OP_SKIPLO();
+
+	// ST.W
+	BEGIN_OP(ST_W);
+             ADDCLOCK(1);
+  	     tmp2 = (sign_16(arg2)+P_REG[arg3]) & 0xFFFFFFFC;
+
+	     if(MemWriteBus32[tmp2 >> 24])
+	     {
+	      MemWrite32(v810_timestamp, tmp2, P_REG[arg1]);
+
+              if(lastop == LASTOP_ST)
+	      {
+	       ADDCLOCK(1);
+	      }
+	     }
+	     else
+	     {
+              MemWrite16(v810_timestamp, tmp2, P_REG[arg1] & 0xFFFF);
+              MemWrite16(v810_timestamp, tmp2 | 2, P_REG[arg1] >> 16);
+
+              if(lastop == LASTOP_ST)
+	      {
+	       ADDCLOCK(3);
+	      }
+	     }
+	     lastop = LASTOP_ST;
+	END_OP_SKIPLO();
+
+	// IN.B
+	BEGIN_OP(IN_B);
+	    {
+             ADDCLOCK(3);
+             SetPREG(arg3, IORead8(v810_timestamp, sign_16(arg1)+P_REG[arg2]));
+	    }
+	    lastop = LASTOP_IN;
+	END_OP_SKIPLO();
+
+
+	// IN.H
+	BEGIN_OP(IN_H);
+	    {
+             ADDCLOCK(3);
+             SetPREG(arg3, IORead16(v810_timestamp, (sign_16(arg1)+P_REG[arg2]) & 0xFFFFFFFE));
+	    }
+	    lastop = LASTOP_IN;
+	END_OP_SKIPLO();
+
+
+	// IN.W
+	BEGIN_OP(IN_W);
+	     if(IORead32)
+	     {
+              ADDCLOCK(3);
+              SetPREG(arg3, IORead32(v810_timestamp, (sign_16(arg1)+P_REG[arg2]) & 0xFFFFFFFC));
+	     }
+	     else
+	     {
+	      uint32 eff_addr = (sign_16(arg1) + P_REG[arg2]) & 0xFFFFFFFC;
+
+	      ADDCLOCK(5);
+              SetPREG(arg3, IORead16(v810_timestamp, eff_addr) | ((IORead16(v810_timestamp, eff_addr | 2) << 16)));
+	     }
+	     lastop = LASTOP_IN;
+	END_OP_SKIPLO();
+
+
+	// OUT.B
+	BEGIN_OP(OUT_B);
+             ADDCLOCK(1);
+             IOWrite8(v810_timestamp, sign_16(arg2)+P_REG[arg3],P_REG[arg1]&0xFF);
+
+	     if(lastop == LASTOP_OUT)
+	     {
+	      ADDCLOCK(1); 
+	     }
+	     lastop = LASTOP_OUT;
+	END_OP_SKIPLO();
+
+
+	// OUT.H
+	BEGIN_OP(OUT_H);
+             ADDCLOCK(1);
+             IOWrite16(v810_timestamp, (sign_16(arg2)+P_REG[arg3])&0xFFFFFFFE,P_REG[arg1]&0xFFFF);
+
+             if(lastop == LASTOP_OUT)
+             {
+              ADDCLOCK(1);
+             }
+	     lastop = LASTOP_OUT;
+	END_OP_SKIPLO();
+
+
+	// OUT.W
+	BEGIN_OP(OUT_W);
+             ADDCLOCK(1);
+
+	     if(IOWrite32)
+              IOWrite32(v810_timestamp, (sign_16(arg2)+P_REG[arg3])&0xFFFFFFFC,P_REG[arg1]);
+	     else
+	     {
+	      uint32 eff_addr = (sign_16(arg2)+P_REG[arg3])&0xFFFFFFFC;
+              IOWrite16(v810_timestamp, eff_addr, P_REG[arg1] & 0xFFFF);
+              IOWrite16(v810_timestamp, eff_addr | 2, P_REG[arg1] >> 16);
+	     }
+
+             if(lastop == LASTOP_OUT)
+             {
+	      if(IOWrite32)
+              {
+	       ADDCLOCK(1);
+	      }
+	      else
+	      {
+	       ADDCLOCK(3);
+	      }	      
+             }
+	     lastop = LASTOP_OUT;
+	END_OP_SKIPLO();
+
+	BEGIN_OP(NOP);
+            (void)arg1;         // arg1 is unused.
+
+            ADDCLOCK(1);
+	    RB_INCPCBY2();
+	END_OP();
+
+	BEGIN_OP(RETI);
+            (void)arg1;         // arg1 is unused.
+
+            ADDCLOCK(10);
+
+            //Return from Trap/Interupt
+            if(S_REG[PSW] & PSW_NP) { // Read the FE Reg
+                RB_SETPC(S_REG[FEPC] & 0xFFFFFFFE);
+                S_REG[PSW] = S_REG[FEPSW];
+            } else { 	//Read the EI Reg Interupt
+                RB_SETPC(S_REG[EIPC] & 0xFFFFFFFE);
+                S_REG[PSW] = S_REG[EIPSW];
+            }
+            if(RB_DebugMode)
+             ADDBT(RB_GETPC());
+	END_OP();
+
+	BEGIN_OP(MUL);
+             ADDCLOCK(13);
+
+             uint64 temp = (int64)(int32)P_REG[arg1] * (int32)P_REG[arg2];
+
+             SetPREG(30, (uint32)(temp >> 32));
+             SetPREG(arg2, temp);
+	     SetSZ(P_REG[arg2]);
+	     SetFlag(PSW_OV, temp != (uint32)temp);
+	     lastop = -1;
+	END_OP_SKIPLO();
+
+	BEGIN_OP(MULU);
+             ADDCLOCK(13);
+             uint64 temp = (uint64)P_REG[arg1] * (uint64)P_REG[arg2];
+
+             SetPREG(30, (uint32)(temp >> 32));
+ 	     SetPREG(arg2, (uint32)temp);
+
+	     SetSZ(P_REG[arg2]);
+	     SetFlag(PSW_OV, temp != (uint32)temp);
+	     lastop = -1;
+	END_OP_SKIPLO();
+
+	BEGIN_OP(DIVU);
+            ADDCLOCK(36);
+            if(P_REG[arg1] == 0) // Divide by zero!
+	    {
+	     RB_DECPCBY2();
+	     Exception(ZERO_DIV_HANDLER_ADDR, ECODE_ZERO_DIV);
+	     CHECK_HALTED();
+            } 
+	    else 
+	    {
+	     // Careful here, since arg2 can be == 30
+	     uint32 quotient = (uint32)P_REG[arg2] / (uint32)P_REG[arg1];
+	     uint32 remainder = (uint32)P_REG[arg2] % (uint32)P_REG[arg1];
+
+	     SetPREG(30, remainder);
+             SetPREG(arg2, quotient);
+
+	     SetFlag(PSW_OV, FALSE);
+	     SetSZ(quotient);
+            }
+	    lastop = -1;
+	END_OP_SKIPLO();
+
+	BEGIN_OP(DIV);
+             //if(P_REG[arg1] & P_REG[arg2] & 0x80000000)
+             //{
+             // printf("Div: %08x %08x\n", P_REG[arg1], P_REG[arg2]);
+             //}
+
+            ADDCLOCK(38);
+            if((uint32)P_REG[arg1] == 0) // Divide by zero!
+	    { 
+	     RB_DECPCBY2();
+	     Exception(ZERO_DIV_HANDLER_ADDR, ECODE_ZERO_DIV);
+	     CHECK_HALTED();
+            } 
+	    else 
+	    {
+                if((P_REG[arg2]==0x80000000)&&(P_REG[arg1]==0xFFFFFFFF)) 
+		{
+			SetFlag(PSW_OV, TRUE);
+			P_REG[30]=0;
+	                SetPREG(arg2, 0x80000000);
+	                SetSZ(P_REG[arg2]);
+		}
+		else
+		{
+		     // Careful here, since arg2 can be == 30
+        	     uint32 quotient = (int32)P_REG[arg2] / (int32)P_REG[arg1];
+	             uint32 remainder = (int32)P_REG[arg2] % (int32)P_REG[arg1];
+
+	             SetPREG(30, remainder);
+	             SetPREG(arg2, quotient);
+
+	             SetFlag(PSW_OV, FALSE);
+	             SetSZ(quotient);
+		}
+	    }
+	    lastop = -1;
+	END_OP_SKIPLO();
+
+	BEGIN_OP(FPP);
+            ADDCLOCK(1);
+	    fpu_subop(v810_timestamp, arg3, arg1, arg2);
+	    lastop = -1;
+	    CHECK_HALTED();
+	END_OP_SKIPLO();
+
+	BEGIN_OP(BSTR);
+	    if(!in_bstr)
+	    {
+             ADDCLOCK(1);
+	    }
+
+            if(bstr_subop(v810_timestamp, arg2, arg1))
+	    {
+	     RB_DECPCBY2();
+             in_bstr = TRUE;
+             in_bstr_to = tmpop;
+	    }
+	    else
+	    {
+	     in_bstr = FALSE;
+	     have_src_cache = have_dst_cache = FALSE;
+	    }
+	END_OP();
+
+	BEGIN_OP(HALT);
+            (void)arg1;         // arg1 is unused.
+
+            ADDCLOCK(1);
+	    Halted = HALT_HALT;
+            //printf("Untested opcode: HALT\n");
+	END_OP();
+
+	BEGIN_OP(TRAP);
+            (void)arg2;         // arg2 is unused.
+
+            ADDCLOCK(15);
+
+	    Exception(TRAP_HANDLER_BASE + (arg1 & 0x10), ECODE_TRAP_BASE + (arg1 & 0x1F));
+	    CHECK_HALTED();
+	END_OP();
+
+	BEGIN_OP(CAXI);
+            //printf("Untested opcode: caxi\n");
+
+	    // Lock bus(N/A)
+
+            ADDCLOCK(26);
+
+	    {
+	     uint32 addr, tmp, compare_temp;
+	     uint32 to_write;
+
+             addr = sign_16(arg1) + P_REG[arg2];
+	     addr &= ~3;
+
+	     if(MemReadBus32[addr >> 24])
+	      tmp = MemRead32(v810_timestamp, addr);
+	     else
+	      tmp = MemRead16(v810_timestamp, addr) | (MemRead16(v810_timestamp, addr | 2) << 16);
+
+             compare_temp = P_REG[arg3] - tmp;
+
+             SetSZ(compare_temp);
+             SetFlag(PSW_OV, ((P_REG[arg3]^tmp)&(P_REG[arg3]^compare_temp))&0x80000000);
+             SetFlag(PSW_CY, compare_temp > P_REG[arg3]);
+
+	     if(!compare_temp) // If they're equal...
+	      to_write = P_REG[30];
+	     else
+	      to_write = tmp;
+
+	     if(MemWriteBus32[addr >> 24])
+	      MemWrite32(v810_timestamp, addr, to_write);
+	     else
+	     {
+              MemWrite16(v810_timestamp, addr, to_write & 0xFFFF);
+              MemWrite16(v810_timestamp, addr | 2, to_write >> 16);
+	     }
+	     P_REG[arg3] = tmp;
+	    }
+
+	    // Unlock bus(N/A)
+
+	END_OP();
+
+	BEGIN_OP(INVALID);
+	    RB_DECPCBY2();
+	    if(!RB_AccurateMode)
+	    {
+	     RB_SETPC(RB_GETPC());
+	     if((uint32)(RB_RDOP(0, 0) >> 9) != opcode)
+	     {
+	      //printf("Trampoline: %08x %02x\n", RB_GETPC(), opcode >> 1);
+	     }
+	     else
+	     {
+              ADDCLOCK(1);
+              Exception(INVALID_OP_HANDLER_ADDR, ECODE_INVALID_OP);
+              CHECK_HALTED();
+	     }
+	    }
+	    else
+	    {
+	     ADDCLOCK(1);
+	     Exception(INVALID_OP_HANDLER_ADDR, ECODE_INVALID_OP);
+	     CHECK_HALTED();
+	    }
+	END_OP();
+
+	}
+
+	OpFinished:	;
+	lastop = opcode;
+	OpFinishedSkipLO: ;
+     }	// end  while(v810_timestamp < next_event_ts)
+     next_event_ts = event_handler(v810_timestamp);
+     //printf("Next: %d, Cur: %d\n", next_event_ts, v810_timestamp);
+    }
+
 }
 
 #ifdef WANT_DEBUGGER
@@ -601,7 +1811,7 @@ void V810::Run_Fast_Debug(int32 MDFN_FASTCALL (*event_handler)(const v810_timest
 v810_timestamp_t V810::Run(int32 MDFN_FASTCALL (*event_handler)(const v810_timestamp_t timestamp))
 {
  Running = true;
-
+#ifdef WANT_DEBUGGER
  if(CPUHook)
  {
   if(EmuMode == V810_EMU_MODE_FAST)
@@ -610,6 +1820,7 @@ v810_timestamp_t V810::Run(int32 MDFN_FASTCALL (*event_handler)(const v810_times
    Run_Accurate_Debug(event_handler);
  }
  else
+#endif
  {
   if(EmuMode == V810_EMU_MODE_FAST)
    Run_Fast(event_handler);
@@ -623,12 +1834,13 @@ void V810::Exit(void)
 {
  Running = false;
 }
-
+#ifdef WANT_DEBUGGER
 void V810::SetCPUHook(void (*newhook)(uint32 PC), void (*new_ADDBT)(uint32 PC))
 {
  CPUHook = newhook;
  ADDBT = new_ADDBT;
 }
+#endif
 //#endif
 
 uint32 V810::GetPC(void)

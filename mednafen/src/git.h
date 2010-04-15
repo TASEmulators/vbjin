@@ -4,7 +4,7 @@
 #include <string>
 
 #include "video.h"
-#include "sound.h"
+//#include "sound.h"
 
 typedef struct
 {
@@ -64,7 +64,7 @@ typedef enum
  IDIT_BYTE_SPECIAL,
 } InputDeviceInputType;
 
-#include "git-virtb.h"
+//#include "git-virtb.h"
 
 typedef struct
 {
