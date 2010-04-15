@@ -83,19 +83,34 @@ void MovieRecord::clear()
 	commands = 0;
 	touch.padding = 0;
 }
+/*
 
+Table 4.1 - Button Data
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+rdd rdl sel str ldu ldd ldl ldr rdr rdu lbb rbb b a 1 bat
+rdx – Right DPad, where x is Up, Down, Left, Right
+ldx – Left DPad, where x is Up, Down, Left, Right
+sel – Select
+str – Start
+lbb, rbb – Left/Right Button on back of controller
+bat – Battery low, may flicker so test multiple times.
+*/
 
 //const char MovieRecord::mnemonics[13] = {'R','L','D','U','T','S','B','A','Y','X','W','E','G'};
-const char MovieRecord::mnemonics[8] = {'U','D','L','R','1','2','N','S'};
+//const char MovieRecord::mnemonics[8] = {'U','D','L','R','1','2','N','S'};
+//const char MovieRecord::mnemonics[14] = {'U', 'D', 'L', 'R', 'N', 'S', 'E', 'W', 'A', 'B', 'C', 'T', 'F', 'G'};
+
+
+const char MovieRecord::mnemonics[14] = {'S', 'W', 'C', 'T', '^', 'v', '<', '>', 'E', 'N', 'L', 'R', 'B', 'A'};
 void MovieRecord::dumpPad(std::ostream* os, uint16 pad)
 {
 	//these are mnemonics for each joystick bit.
 	//since we usually use the regular joypad, these will be more helpful.
 	//but any character other than ' ' or '.' should count as a set bit
 	//maybe other input types will need to be encoded another way..
-	for(int bit=0;bit<8;bit++)
+	for(int bit=0;bit<14;bit++)
 	{
-		int bitmask = (1<<(7-bit));
+		int bitmask = (1<<(13-bit));
 		char mnemonic = mnemonics[bit];
 		//if the bit is set write the mnemonic
 		if(pad & bitmask)
@@ -114,10 +129,10 @@ void MovieRecord::dumpPad(std::ostream* os, uint16 pad)
 
 void MovieRecord::parsePad(std::istream* is, uint16& pad)
 {
-	char buf[8];
-	is->read(buf,8);
+	char buf[14];
+	is->read(buf,14);
 	pad = 0;
-	for(int i=0;i<8;i++)
+	for(int i=0;i<14;i++)
 	{
 		pad <<= 1;
 		pad |= ((buf[i]=='.'||buf[i]==' ')?0:1);
@@ -446,6 +461,7 @@ void ClearPCESRAM(void) {
 //  memcpy(SaveRAM, "HUBM\x00\xa0\x10\x80", 8);  
 
 }
+#include "vb.h"
 //begin playing an existing movie
 void FCEUI_LoadMovie(const char *fname, bool _read_only, bool tasedit, int _pauseframe)
 {
@@ -485,7 +501,9 @@ void FCEUI_LoadMovie(const char *fname, bool _read_only, bool tasedit, int _paus
 
 //	extern bool _HACK_DONT_STOPMOVIE;
 //	_HACK_DONT_STOPMOVIE = true;
-//NEWTODO	PCE_Power();
+//	extern void VB_Power(void);
+
+	MDFN_IEN_VB::VB_Power();
 //	_HACK_DONT_STOPMOVIE = false;
 	////WE NEED TO LOAD A SAVESTATE
 	//if(currMovieData.savestate.size() != 0)
@@ -551,7 +569,7 @@ static void openRecordingMovie(const char* fname)
 //	_HACK_DONT_STOPMOVIE = true;
 	pcejin.lagFrameCounter = 0;
 	pcejin.isLagFrame = false;
-//NEWTODO	PCE_Power();
+MDFN_IEN_VB::VB_Power();
 //	_HACK_DONT_STOPMOVIE = false;
 	currMovieData.ports = controllers;
 
@@ -608,7 +626,13 @@ void NDS_setPadFromMovie(uint16 pad[])
 	for (int i = 0; i < currMovieData.ports; i++) {
 	pcepad = 0;
 
-	if(pad[i] &(1 << 7)) pcepad |= (1 << 4);//u
+	for (int j = 0; j < 14; j++) {
+		if(pad[i] &(1 << j)) 
+			pcepad |= (1 << j);//u
+	}
+/*
+	if(pad[i] &(1 << 7)) 
+		pcepad |= (1 << 4);//u
 	if(pad[i] &(1 << 6)) pcepad |= (1 << 6);//d
 	if(pad[i] &(1 << 5)) pcepad |= (1 << 7);//l
 	if(pad[i] &(1 << 4)) pcepad |= (1 << 5);//r
@@ -616,7 +640,7 @@ void NDS_setPadFromMovie(uint16 pad[])
 	if(pad[i] &(1 << 2)) pcepad |= (1 << 1);//t
 	if(pad[i] &(1 << 0)) pcepad |= (1 << 2);//s
 	if(pad[i] &(1 << 1)) pcepad |= (1 << 3);//n
-
+*/
 	pcejin.pads[i] = pcepad;
 	}
 
@@ -652,12 +676,12 @@ void FCEUMOV_AddInputState()
 			 MovieRecord* mr = &currMovieData.records[currFrameCounter];
 
 			 //reset if necessary
-//NEWTODO			 if(mr->command_reset())
-//NEWTODO				 PCE_Power();
+			 if(mr->command_reset())
+				 MDFN_IEN_VB::VB_Power();
 
 
-//NEWTODO			 if(mr->command_power())
-//NEWTODO				 PCE_Power();
+			 if(mr->command_power())
+				MDFN_IEN_VB::VB_Power();
 
 			// {}
 			 //ResetNES();
@@ -695,10 +719,15 @@ void FCEUMOV_AddInputState()
 
 		 int II, I, n, s, u, r, d, l;
 
-		 for (int i = 0; i < currMovieData.ports; i++) {
+	//	 for (int i = 0; i < currMovieData.ports; i++) {
 
-			 pcepad = pcejin.pads[i];
+			 pcepad = pcejin.pads[0];
+			 mr.pad[0] = pcepad;
 
+	//		 assert(false);
+
+			 //wtf is this crap
+/*
 #define FIX(b) (b?1:0)
 			 II = FIX(pcepad &(1 << 1));
 			 I = FIX(pcepad & (1 << 0));
@@ -718,7 +747,8 @@ void FCEUMOV_AddInputState()
 				 (FIX(II)<<2)|
 				 (FIX(s)<<1)|
 				 (FIX(n)<<0);
-		 }
+				 */
+	//	 }
 
 		 mr.dump(&currMovieData, osRecordingMovie,currMovieData.records.size());
 		 currMovieData.records.push_back(mr);
@@ -934,11 +964,12 @@ bool mov_loadstate(std::istream* is, int size)//std::istream* is
 	return true;
 }
 
-void SaveStateMovie(char* filename) {
+void SaveStateMovie(std::string filename) {
 
-	strcat (filename, "mov");
+	filename+="mov";
+//	strcat (filename, "mov");
 	filebuf fb;
-	fb.open (filename, ios::out | ios::binary);//ios::out
+	fb.open (filename.c_str(), ios::out | ios::binary);//ios::out
 	ostream os(&fb);
 	mov_savestate(&os);
 	fb.close();

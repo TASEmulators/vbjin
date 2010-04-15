@@ -446,6 +446,7 @@ static const MDFNCS *FindSetting(const char *name)
 
  if(!ret)
  {
+	 assert(false);
   printf("\n\nINCONCEIVABLE!  Setting not found: %s\n\n", name);
   exit(1);
  }
@@ -559,6 +560,10 @@ bool MDFN_GetSettingB(const char *name)
 	if(!strcmp("dfmd5",name))
 		return true;
 	if(!strcmp("filesys.sav_samedir",name))
+		return true;
+	if(!strcmp("filesys.state_samedir",name))
+		return true;
+	if(!strcmp("filesys.disablesavegz",name))
 		return true;
 	if(!strcmp("vb.disable_parallax",name))
 		return false;

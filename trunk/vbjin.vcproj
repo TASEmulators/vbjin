@@ -208,7 +208,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				EnableFiberSafeOptimizations="true"
-				AdditionalIncludeDirectories="blip;compress;zlib;trio;.;&quot;libcdio-0.81\include\&quot;;&quot;libcdio-0.81\lib\driver&quot;;src;src\pce;agg\include;directx;utils;lua"
+				AdditionalIncludeDirectories="blip;compress;zlib;trio;.;&quot;libcdio-0.81\include\&quot;;&quot;libcdio-0.81\lib\driver&quot;;src;src\pce;agg\include;directx;utils;lua;mednafen;mednafen\include;mednafen\src;mednafen\src\compress;mednafen\src\trio;mednafen\src\vb"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;WANT_PCE_EMU;NEED_CDEMU;EXTERNAL_LIBCDIO_CONFIG_H;NO_CODECS;HAVE_DIRECTSOUND"
 				StringPooling="true"
 				RuntimeLibrary="0"

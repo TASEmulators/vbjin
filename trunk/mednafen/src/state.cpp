@@ -641,7 +641,7 @@ int MDFNSS_SaveSM(StateMem *st, int wantpreview, int data_only, const MDFN_Surfa
 	}
 	return(1);
 }
-
+#include "movie.h"
 int MDFNSS_Save(const char *fname, const char *suffix, const MDFN_Surface *surface, const MDFN_Rect *DisplayRect, const MDFN_Rect *LineWidths)
 {
 	StateMem st;
@@ -674,6 +674,9 @@ int MDFNSS_Save(const char *fname, const char *suffix, const MDFN_Surface *surfa
 
 	 return(0);
 	}
+
+	std::string bleh = MDFN_MakeFName(MDFNMKF_STATE,CurrentState,suffix);
+	SaveStateMovie(bleh);
 
 	free(st.data);
 
@@ -823,6 +826,7 @@ int MDFNSS_Load(const char *fname, const char *suffix)
 	{
 	 if(!fname && !suffix)
 	 {
+		  LoadStateMovie((char*)MDFN_MakeFName(MDFNMKF_STATE,CurrentState,suffix).c_str());
           SaveStateStatus[CurrentState]=1;
           MDFN_DispMessage(_("State %d loaded."),CurrentState);
           SaveStateStatus[CurrentState]=1;
@@ -841,6 +845,9 @@ int MDFNSS_Load(const char *fname, const char *suffix)
 
 void MDFNSS_CheckStates(void)
 {
+
+	//NEWTODO
+	return;
 	time_t last_time = 0;
 
 	for(int ssel = 0; ssel < 10; ssel++)

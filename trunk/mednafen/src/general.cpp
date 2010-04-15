@@ -75,7 +75,7 @@ static bool IsAbsolutePath(const char *path)
  return(FALSE);
 }
 
-#define PSS ":"
+#define PSS "\\"
 std::string MDFN_MakeFName(MakeFName_Type type, int id1, const char *cd1)
 {
  char tmp_path[4096];
@@ -128,7 +128,8 @@ std::string MDFN_MakeFName(MakeFName_Type type, int id1, const char *cd1)
 		     {
                       trio_snprintf(tmp_path, 4096, "%s"PSS"%s.%s", eff_dir.c_str(), FileBase.c_str(), cd1?cd1:numtmp);
 
-		      if(tmp_dfmd5 && stat(tmp_path, &tmpstat) == -1)
+					  //seriously WTF NEWTODO
+//		      if(tmp_dfmd5 && stat(tmp_path, &tmpstat) == -1)
                        trio_snprintf(tmp_path, 4096, "%s"PSS"%s.%s.%s", eff_dir.c_str(), FileBase.c_str(), md5_context::asciistr(MDFNGameInfo->MD5, 0).c_str(),cd1?cd1:numtmp);
 		     }
                      break;

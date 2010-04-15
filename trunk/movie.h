@@ -101,7 +101,7 @@ public:
 	void parsePad(std::istream* is, uint16& pad);
 	void dumpPad(std::ostream* os, uint16 pad);
 	
-	static const char mnemonics[8];
+	static const char mnemonics[14];
 
 private:
 	int mask(int bit) { return 1<<bit; }
@@ -214,7 +214,7 @@ char* GetMovieLengthStr();
 
 void FCEUMOV_AddInputState();
 
-void SaveStateMovie(char* filename);
+void SaveStateMovie(std::string filename);
 void LoadStateMovie(char* filename);
 
 void FCEUI_MoviePlayFromBeginning(void);

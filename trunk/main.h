@@ -12,8 +12,8 @@ void GetINIPath();
 extern HWND g_hWnd;
 extern HINSTANCE g_hInstance;
 
-int MDFNSS_Save(const char *fname, const char *suffix, uint32 *fb, MDFN_Rect *LineWidths);
-int MDFNSS_Load(const char *fname, const char *suffix);
+//int MDFNSS_Save(const char *fname, const char *suffix, uint32 *fb, MDFN_Rect *LineWidths);
+//int MDFNSS_Load(const char *fname, const char *suffix);
 extern volatile MDFN_Surface *VTBuffer[2]; 
 extern MDFN_Rect *VTLineWidths[2]; 
 extern volatile int VTBackBuffer;
@@ -34,7 +34,7 @@ void DecreaseSpeed();
 
 LRESULT CALLBACK BiosSettingsDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-void SetInputDisplayCharacters(uint8 new_data[]);
+void SetInputDisplayCharacters(uint16 new_data[]);
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 extern EmulateSpecStruct espec;
 extern void render();

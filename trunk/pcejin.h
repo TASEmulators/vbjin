@@ -36,7 +36,7 @@ public:
 	bool fastForward;
 	bool slow;
 
-	u8 pads[5];
+	u16 pads[5];
 
 	virtual void pause() {
 

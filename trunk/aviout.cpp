@@ -23,7 +23,7 @@ static void EMU_PrintMessage(const char* msg) {
 #define VIDEO_STREAM	0
 #define AUDIO_STREAM	1
 
-#define VIDEO_WIDTH		256
+#define VIDEO_WIDTH		384
 
 static struct AVIFile
 {
@@ -298,22 +298,22 @@ bool malloced = false;
 
 static void do_video_conversion(const uint8* buffer, EmulateSpecStruct *espec) {
 //NEWTODO
-#if 0
+//#if 0
 uint8 *pb_ptr = avi_file->convert_buffer;//pixel_buffer;
 
- for(int y = MDFNGameInfo->DisplayRect.y + MDFNGameInfo->DisplayRect.h; y > MDFNGameInfo->DisplayRect.y; y--)
+ for(int y = espec->DisplayRect.y + espec->DisplayRect.h; y > espec->DisplayRect.y; y--)
  {
-  uint16 meow_width = (espec->LineWidths[0].w == ~0) ? MDFNGameInfo->DisplayRect.w : espec->LineWidths[y].w;
-  int meow_x = (espec->LineWidths[0].w == ~0) ? MDFNGameInfo->DisplayRect.x : espec->LineWidths[y].x;
-  uint32 *fb_line = espec->pixels + y * (MDFNGameInfo->pitch >> 2) + meow_x;
+  uint16 meow_width = (espec->LineWidths[0].w == ~0) ? espec->DisplayRect.w : espec->LineWidths[y].w;
+  int meow_x = (espec->LineWidths[0].w == ~0) ? espec->DisplayRect.x : espec->LineWidths[y].x;
+  uint32 *fb_line = espec->surface->pixels + y * (MDFNGameInfo->pitch >> 2) + meow_x;
 
   for(int x = 0; x < meow_width; x++)
   {
    uint32 pixel = fb_line[x];
    int r, g, b;
 
- //  espec->surface->DecodeColor(pixel, r, g, b);
-   DECOMP_COLOR(pixel, r, g, b);
+   espec->surface->DecodeColor(pixel, r, g, b);
+ //  DECOMP_COLOR(pixel, r, g, b);
   
    *pb_ptr++ = b;
    *pb_ptr++ = g;
@@ -321,7 +321,7 @@ uint8 *pb_ptr = avi_file->convert_buffer;//pixel_buffer;
    
   }
  }
-#endif
+//#endif
 }
 
 

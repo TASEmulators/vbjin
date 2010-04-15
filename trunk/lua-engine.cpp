@@ -2011,7 +2011,8 @@ DEFINE_LUA_FUNCTION(state_load, "location[,option]")
 //			if(info.rerecordCountingDisabled)
 //				SkipNextRerecordIncrement = true;
 			CurrentState = luaL_checkinteger(L,1);
-			MDFNSS_Load(NULL, NULL);
+//nEWTODO
+//			MDFNSS_Load(NULL, NULL);
 //			Set_Current_State(stateNumber, false,!g_disableStatestateWarnings);
 //			char Name [1024] = {0};
 //			Get_State_File_Name(Name);
