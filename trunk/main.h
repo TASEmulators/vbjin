@@ -1,4 +1,4 @@
-#include "sound.h"
+#include "dxsound.h"
 #include "windows.h"
 #include "git.h"
 
