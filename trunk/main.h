@@ -14,9 +14,9 @@ extern HINSTANCE g_hInstance;
 
 int MDFNSS_Save(const char *fname, const char *suffix, uint32 *fb, MDFN_Rect *LineWidths);
 int MDFNSS_Load(const char *fname, const char *suffix);
-extern uint32 *VTBuffer[2];
-extern MDFN_Rect *VTLineWidths[2];
-extern volatile int VTBackBuffer ;
+extern volatile MDFN_Surface *VTBuffer[2]; 
+extern MDFN_Rect *VTLineWidths[2]; 
+extern volatile int VTBackBuffer;
 
 extern int CurrentState;
 

@@ -33,7 +33,7 @@
 //#include "main.h"
 //#include "NDSSystem.h"
 #include "ramwatch.h"
-#include "inttypes.h"
+//#include "inttypes.h"
 #include "prefix.h"
 
 #include "ramsearch.h"
@@ -80,9 +80,10 @@ static BOOL s_itemIndicesInvalid = true; // if true, the link from listbox items
 static BOOL s_prevValuesNeedUpdate = true; // if true, the "prev" values should be updated using the "cur" values on the next frame update signaled
 static unsigned int s_maxItemIndex = 0; // max currently valid item index, the listbox sometimes tries to update things past the end of the list so we need to know this to ignore those attempts
 
-extern uint8 BaseRAM[32768];
-extern uint8 *CDRAM; //262144;
-extern uint8 *ACRAM; //0x200000
+//NEWTODO
+uint8 BaseRAM[32768];
+uint8 *CDRAM; //262144;
+uint8 *ACRAM; //0x200000
 static const MemoryRegion s_prgRegion    = {  0x1F0000, 0x8000, (unsigned char*)BaseRAM,     false};//ARM9Mem.MAIN_MEM//should be 0x01F0000
 
 static MemoryRegion CDRAMRegion;

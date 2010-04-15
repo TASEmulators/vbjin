@@ -244,7 +244,7 @@ int MovieData::dump(std::ostream *os, bool binary)
 	*os << "emuVersion " << emuVersion << endl;
 	*os << "rerecordCount " << rerecordCount << endl;
 	*os << "ports " << ports << endl;
-	*os << "PCECD " << PCE_IsCD << endl;
+//	*os << "PCECD " << PCE_IsCD << endl;
 /*	*os << "cdGameName " << cdip->gamename << endl;
 	*os << "cdInfo " << cdip->cdinfo << endl;
 	*os << "cdItemNum " << cdip->itemnum << endl;
@@ -441,9 +441,9 @@ void FCEUI_StopMovie()
 extern uint8 SaveRAM[2048];
 
 void ClearPCESRAM(void) {
-
-  memset(SaveRAM, 0x00, 2048);
-  memcpy(SaveRAM, "HUBM\x00\xa0\x10\x80", 8);  
+//NEWTODO
+//  memset(SaveRAM, 0x00, 2048);
+//  memcpy(SaveRAM, "HUBM\x00\xa0\x10\x80", 8);  
 
 }
 //begin playing an existing movie
@@ -485,7 +485,7 @@ void FCEUI_LoadMovie(const char *fname, bool _read_only, bool tasedit, int _paus
 
 //	extern bool _HACK_DONT_STOPMOVIE;
 //	_HACK_DONT_STOPMOVIE = true;
-	PCE_Power();
+//NEWTODO	PCE_Power();
 //	_HACK_DONT_STOPMOVIE = false;
 	////WE NEED TO LOAD A SAVESTATE
 	//if(currMovieData.savestate.size() != 0)
@@ -551,7 +551,7 @@ static void openRecordingMovie(const char* fname)
 //	_HACK_DONT_STOPMOVIE = true;
 	pcejin.lagFrameCounter = 0;
 	pcejin.isLagFrame = false;
-	PCE_Power();
+//NEWTODO	PCE_Power();
 //	_HACK_DONT_STOPMOVIE = false;
 	currMovieData.ports = controllers;
 
@@ -652,12 +652,12 @@ void FCEUMOV_AddInputState()
 			 MovieRecord* mr = &currMovieData.records[currFrameCounter];
 
 			 //reset if necessary
-			 if(mr->command_reset())
-				 PCE_Power();
+//NEWTODO			 if(mr->command_reset())
+//NEWTODO				 PCE_Power();
 
 
-			 if(mr->command_power())
-				 PCE_Power();
+//NEWTODO			 if(mr->command_power())
+//NEWTODO				 PCE_Power();
 
 			// {}
 			 //ResetNES();

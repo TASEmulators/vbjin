@@ -206,14 +206,15 @@ template<typename T, int bpp> static void doRotate(void* dst) {
 
 //32bit to 32bit
 static void __forceinline convert32(const uint8* buffer, EmulateSpecStruct *espec){
-
+//NEWTODO
+//#if 0
 	uint8 *pb_ptr = (uint8*)convert_buffer;
 
-	for(int y = MDFNGameInfo->DisplayRect.y; y < MDFNGameInfo->DisplayRect.y + MDFNGameInfo->DisplayRect.h; y++)
+	for(int y = espec->DisplayRect.y; y < espec->DisplayRect.y + espec->DisplayRect.h; y++)
 	{
-		uint16 meow_width = (espec->LineWidths[0].w == ~0) ? MDFNGameInfo->DisplayRect.w : espec->LineWidths[y].w;
-		int meow_x = (espec->LineWidths[0].w == ~0) ? MDFNGameInfo->DisplayRect.x : espec->LineWidths[y].x;
-		uint32 *fb_line = espec->pixels + y * (MDFNGameInfo->pitch >> 2) + meow_x;
+		uint16 meow_width = 384;//(espec->LineWidths[0].w == ~0) ? espec->DisplayRect.w : espec->LineWidths[y].w;
+		int meow_x = (espec->LineWidths[0].w == ~0) ? espec->DisplayRect.x : espec->LineWidths[y].x;
+		uint32 *fb_line = espec->surface->pixels + y * (MDFNGameInfo->pitch >> 2) + meow_x;
 
 		for(int x = 0; x < meow_width; x++)
 		{
@@ -221,7 +222,8 @@ static void __forceinline convert32(const uint8* buffer, EmulateSpecStruct *espe
 
 			int r, g, b;
 
-			DECOMP_COLOR(pixel, r, g, b);
+			espec->surface->DecodeColor(pixel, r, g, b);
+//			DECOMP_COLOR(pixel, r, g, b);
 
 			*pb_ptr++ = b;
 			*pb_ptr++ = g;
@@ -229,10 +231,12 @@ static void __forceinline convert32(const uint8* buffer, EmulateSpecStruct *espe
 			*pb_ptr++ = 255;
 		}
 	}
+//#endif
 }
 
 static void convert24(const uint8* buffer, EmulateSpecStruct *espec){
-
+//NEWTODO
+#if 0
 	uint8 *pb_ptr = (uint8*)convert_buffer;
 
 	for(int y = MDFNGameInfo->DisplayRect.y; y < MDFNGameInfo->DisplayRect.y + MDFNGameInfo->DisplayRect.h; y++)
@@ -254,10 +258,12 @@ static void convert24(const uint8* buffer, EmulateSpecStruct *espec){
 			*pb_ptr++ = r;
 		}
 	}
+#endif
 }
 
 static void convert16(const uint8* buffer, EmulateSpecStruct *espec){
-
+//NEWTODO
+#if 0
 	uint16 *pb_ptr = (uint16*)convert_buffer;
 
 	for(int y = MDFNGameInfo->DisplayRect.y; y < MDFNGameInfo->DisplayRect.y + MDFNGameInfo->DisplayRect.h; y++)
@@ -281,13 +287,15 @@ static void convert16(const uint8* buffer, EmulateSpecStruct *espec){
 			//	*pb_ptr++ = r;
 		}
 	}
+#endif
 }
 
 void render() {
 
-	if(!pcejin.romLoaded || espec.skip)
-		return;
- 
+//	if(!pcejin.romLoaded || espec.skip)
+//		return;
+ //NEWTODO
+#if 0
 	if(pcejin.width != MDFNGameInfo->DisplayRect.w) {
 		pcejin.width = MDFNGameInfo->DisplayRect.w;
 		pcejin.height = MDFNGameInfo->DisplayRect.h;
@@ -298,7 +306,7 @@ void render() {
 
 	pcejin.width = MDFNGameInfo->DisplayRect.w;
 	pcejin.height = MDFNGameInfo->DisplayRect.h;
-
+#endif
 	uint32 *src = (uint32*)convert_buffer;
 
 	SetInputDisplayCharacters(pcejin.pads);
@@ -324,9 +332,12 @@ void render() {
 
 	switch(ddsd.ddpfPixelFormat.dwRGBBitCount)
 	{
-	case 32: convert32((uint8*)espec.pixels, &espec); break;
-	case 24: convert24((uint8*)espec.pixels, &espec); break;
-	case 16: convert16((uint8*)espec.pixels, &espec); break;
+		//NEWTODO
+//#if 0
+	case 32: convert32((uint8*)espec.surface->pixels, &espec); break;
+	case 24: convert24((uint8*)espec.surface->pixels, &espec); break;
+	case 16: convert16((uint8*)espec.surface->pixels, &espec); break;
+//#endif
 	default:
 		{
 			printf("wrong color");

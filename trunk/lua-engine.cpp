@@ -1642,57 +1642,59 @@ DEFINE_LUA_FUNCTION(gens_redraw, "")
 }
 */
 //uint32 PCEDBG_MemPeek(uint32 A, unsigned int bsize, bool hl, bool logical)
+
+//NEWTODO all this
 DEFINE_LUA_FUNCTION(memory_readbyte, "address")
 {
-	int address = luaL_checkinteger(L,1);
-	unsigned char value = (unsigned char)(PCEDBG_MemPeek(address, 1, true, false) & 0xFF);
-	lua_settop(L,0);
-	lua_pushinteger(L, value);
+	//int address = luaL_checkinteger(L,1);
+	//unsigned char value = (unsigned char)(PCEDBG_MemPeek(address, 1, true, false) & 0xFF);
+	//lua_settop(L,0);
+	//lua_pushinteger(L, value);
 	return 1; // we return the number of return values
 }
 DEFINE_LUA_FUNCTION(memory_readbytesigned, "address")
 {
-	int address = luaL_checkinteger(L,1);
-	signed char value = (signed char)(PCEDBG_MemPeek(address, 1, true, false) & 0xFF);
-	lua_settop(L,0);
-	lua_pushinteger(L, value);
+	//int address = luaL_checkinteger(L,1);
+	//signed char value = (signed char)(PCEDBG_MemPeek(address, 1, true, false) & 0xFF);
+	//lua_settop(L,0);
+	//lua_pushinteger(L, value);
 	return 1;
 }
 DEFINE_LUA_FUNCTION(memory_readword, "address")
 {
-	int address = luaL_checkinteger(L,1);
-	unsigned short value = (unsigned short)(PCEDBG_MemPeek(address, 2, true, false) & 0xFFFF);
-	lua_settop(L,0);
-	lua_pushinteger(L, value);
+	//int address = luaL_checkinteger(L,1);
+	//unsigned short value = (unsigned short)(PCEDBG_MemPeek(address, 2, true, false) & 0xFFFF);
+	//lua_settop(L,0);
+	//lua_pushinteger(L, value);
 	return 1;
 }
 DEFINE_LUA_FUNCTION(memory_readwordsigned, "address")
 {
-	int address = luaL_checkinteger(L,1);
-	signed short value = (signed short)(PCEDBG_MemPeek(address, 2, true, false) & 0xFFFF);
-	lua_settop(L,0);
-	lua_pushinteger(L, value);
+	//int address = luaL_checkinteger(L,1);
+	//signed short value = (signed short)(PCEDBG_MemPeek(address, 2, true, false) & 0xFFFF);
+	//lua_settop(L,0);
+	//lua_pushinteger(L, value);
 	return 1;
 }
 DEFINE_LUA_FUNCTION(memory_readdword, "address")
 {
-	int address = luaL_checkinteger(L,1);
-	unsigned long value = (unsigned long)(PCEDBG_MemPeek(address, 2, true, false));
-	lua_settop(L,0);
-	lua_pushinteger(L, value);
+	//int address = luaL_checkinteger(L,1);
+	//unsigned long value = (unsigned long)(PCEDBG_MemPeek(address, 2, true, false));
+	//lua_settop(L,0);
+	//lua_pushinteger(L, value);
 	return 1;
 }
 DEFINE_LUA_FUNCTION(memory_readdwordsigned, "address")
 {
-	int address = luaL_checkinteger(L,1);
-	signed long value = (signed long)(PCEDBG_MemPeek(address, 2, true, false));
-	lua_settop(L,0);
-	lua_pushinteger(L, value);
+	//int address = luaL_checkinteger(L,1);
+	//signed long value = (signed long)(PCEDBG_MemPeek(address, 2, true, false));
+	//lua_settop(L,0);
+	//lua_pushinteger(L, value);
 	return 1;
 }
 
-extern uint8 BaseRAM[32768];
-extern writefunc PCEWrite[0x100];
+//extern uint8 BaseRAM[32768];
+//extern writefunc PCEWrite[0x100];
 
 void memWrite(int Address, int Length, unsigned char* Buffer) {
 
@@ -1702,7 +1704,7 @@ void memWrite(int Address, int Length, unsigned char* Buffer) {
 
 		uint8 wmpr = Address >> 13;
 
-		PCEWrite[wmpr](Address, *Buffer);
+//		PCEWrite[wmpr](Address, *Buffer);
 
 		Address++;
 		Buffer++;
@@ -1756,8 +1758,9 @@ DEFINE_LUA_FUNCTION(memory_readbyterange, "address,length")
 	{
 //		if(IsHardwareAddressValid(a))
 //		{
-			unsigned char value = (unsigned char)(PCEDBG_MemPeek(address, 1, true, false) & 0xFF);
-			lua_pushinteger(L, value);
+		//NEWTODO
+//			unsigned char value = (unsigned char)(PCEDBG_MemPeek(address, 1, true, false) & 0xFF);
+//			lua_pushinteger(L, value);
 			lua_rawseti(L, -2, n);
 //		}
 		// else leave the value nil
@@ -1957,7 +1960,7 @@ DEFINE_LUA_FUNCTION(state_save, "location[,option]")
 		default:
 		{
 			CurrentState = luaL_checkinteger(L,1);
-			MDFNSS_Save(NULL, NULL, (uint32 *)VTBuffer[VTBackBuffer], (MDFN_Rect *)VTLineWidths[VTBackBuffer]);
+	//NEWTODO		MDFNSS_Save(NULL, NULL, (uint32 *)VTBuffer[VTBackBuffer], (MDFN_Rect *)VTLineWidths[VTBackBuffer]);
 		//	Set_Current_State(stateNumber, false,false);
 		//	char Name [1024] = {0};
 		//	Get_State_File_Name(Name);
