@@ -3098,7 +3098,8 @@ void CopyCustomKeys (SCustomKeys *dst, const SCustomKeys *src)
 void HK_Screenshot(int param)
 {
 void MDFNI_SaveSnapshot(void);
-MDFNI_SaveSnapshot();
+//NEWTODO
+//MDFNI_SaveSnapshot();
     /*
 	OPENFILENAME ofn;
 	char * ptr;
@@ -3139,13 +3140,15 @@ MDFNI_SaveSnapshot();
 void HK_StateSaveSlot(int num)
 {
 	CurrentState = num;
-	MDFNSS_Save(NULL, NULL, (uint32 *)VTBuffer[VTBackBuffer], (MDFN_Rect *)VTLineWidths[VTBackBuffer]);
+	//NEWTODO
+//	MDFNSS_Save(NULL, NULL, (uint32 *)VTBuffer[VTBackBuffer], (MDFN_Rect *)VTLineWidths[VTBackBuffer]);
 }
 
 void HK_StateLoadSlot(int num)
 {
 	CurrentState = num;
-	MDFNSS_Load(NULL, NULL);
+	//NEWTODO
+//	MDFNSS_Load(NULL, NULL);
 }
 
 void HK_StateSetSlot(int num)
@@ -3158,12 +3161,12 @@ void HK_StateSetSlot(int num)
 
 void HK_StateQuickSaveSlot(int)
 {
-	MDFNSS_Save(NULL, NULL, (uint32 *)VTBuffer[VTBackBuffer], (MDFN_Rect *)VTLineWidths[VTBackBuffer]);
+//NEWTODO	MDFNSS_Save(NULL, NULL, (uint32 *)VTBuffer[VTBackBuffer], (MDFN_Rect *)VTLineWidths[VTBackBuffer]);
 }
 
 void HK_StateQuickLoadSlot(int)
 {
-	MDFNSS_Load(NULL, NULL);
+//NEWTODO	MDFNSS_Load(NULL, NULL);
 }
 
 void HK_AutoHoldClearKeyDown(int) {
@@ -3171,9 +3174,9 @@ void HK_AutoHoldClearKeyDown(int) {
 //	ClearAutoHold();
 }
 
-extern void PCE_Power(void);
-void HK_Reset(int) {PCE_Power();}
-void HK_HardReset(int) {PCE_Power();}
+//NEWTODO extern void PCE_Power(void);
+void HK_Reset(int) {}//NEWTODOPCE_Power();}
+void HK_HardReset(int) {}//NEWTODOPCE_Power();}
 
 void HK_RecordAVI(int) {RecordAvi();}
 void HK_StopAVI(int) {StopAvi();}
@@ -3194,11 +3197,11 @@ void HK_RecordMovie(int) {}//RecordMovie(g_hWnd);}
 void HK_StopMovie(int)   {FCEUI_StopMovie();}
 
 bool VDC_ToggleLayer(int which);
-
-void HK_ToggleNBG0(int) {VDC_ToggleLayer(0);}
-void HK_ToggleNBG1(int) {VDC_ToggleLayer(1);}
-void HK_ToggleNBG2(int) {VDC_ToggleLayer(2);}
-void HK_ToggleNBG3(int) {VDC_ToggleLayer(3);}			
+//NEWTODO
+void HK_ToggleNBG0(int){} //{VDC_ToggleLayer(0);}
+void HK_ToggleNBG1(int) {}//{VDC_ToggleLayer(1);}
+void HK_ToggleNBG2(int){} //{VDC_ToggleLayer(2);}
+void HK_ToggleNBG3(int) {}//{VDC_ToggleLayer(3);}			
 void HK_ToggleOSD(int) {};//ToggleFPS();}			
 /*
 void HK_AutoHoldKeyDown(int) {AutoHoldPressed = true;}

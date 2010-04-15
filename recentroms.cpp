@@ -227,8 +227,8 @@ void OpenRecentROM(int listNum)
 	
 	pcejin.romLoaded = true;
 	pcejin.started = true;
-	
-	if(!MDFNI_LoadGame(filename)) 
+	//NEWTODO
+//	if(!MDFNI_LoadGame(filename)) 
 	{
 		pcejin.started = false;
 		pcejin.romLoaded = false;		

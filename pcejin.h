@@ -1,7 +1,9 @@
 #include <string>
-#include "utils\svnrev.h"
+//#include "utils\svnrev.h"
 #include "main.h"
 
+
+#define SVN_REV_STR "9999"
 class Pcejin
 {
 public:

@@ -31,7 +31,7 @@
 
 #include "replay.h"
 #include "pcejin.h"
-#include "svnrev.h"
+//#include "svnrev.h"
 #include "xstring.h"
 #include "lua-engine.h"
 
@@ -39,6 +39,13 @@
 
 #include "recentroms.h"
 #include "ParseCmdLine.h"
+
+
+volatile MDFN_Surface *VTBuffer[2] = { NULL, NULL };
+MDFN_Rect *VTLineWidths[2] = { NULL, NULL };
+volatile int VTBackBuffer = 0;
+
+uint16 PadData;//NEWTODO this sucks
 
 Pcejin pcejin;
 
@@ -259,6 +266,94 @@ HWND Create( int nCmdShow, int w, int h )
 	return hwnd;
 }
 
+extern MDFNGI EmulatedVB;
+
+static int16 *EmuModBuffer = NULL;
+static int32 EmuModBufferSize = 0;	// In frames.
+
+void sndinit() {
+	EmuModBufferSize = (500 * 44100 + 999) / 1000;//format.rate
+	EmuModBuffer = (int16 *)calloc(sizeof(int16) * 2, EmuModBufferSize);//format.channels
+}
+void vbjinInit() {
+
+	MDFNGameInfo = &EmulatedVB;
+
+	MDFNFILE* fp = new MDFNFILE();
+	fp->Open("C:\\wario.vb",NULL);
+	MDFNGameInfo->Load(NULL,fp);
+
+//	initialized = true;
+
+	//	extern void VBINPUT_SetInput(int port, const char *type, void *ptr);
+
+	const char * typez;
+	const char * padData;
+//	padData = malloc(8);
+//	typez = (const char*)malloc(16);
+	//	VBINPUT_SetInput(1,typez,blah);
+//	MDFNGameInfo->SetInput(1,typez,adData);
+
+	sndinit();
+
+	MDFNGameInfo->SetSoundRate(44100);
+
+
+
+	MDFNGI *CurGame=NULL;
+
+	CurGame = MDFNGameInfo;
+	VTBuffer[0] = new MDFN_Surface(NULL, CurGame->pitch / sizeof(uint32), CurGame->fb_height, CurGame->pitch / sizeof(uint32), MDFN_COLORSPACE_RGB, 0, 8, 16, 24);
+	VTBuffer[1] = new MDFN_Surface(NULL, CurGame->pitch / sizeof(uint32), CurGame->fb_height, CurGame->pitch / sizeof(uint32), MDFN_COLORSPACE_RGB, 0, 8, 16, 24);
+	VTLineWidths[0] = (MDFN_Rect *)calloc(CurGame->fb_height, sizeof(MDFN_Rect));
+	VTLineWidths[1] = (MDFN_Rect *)calloc(CurGame->fb_height, sizeof(MDFN_Rect));
+}
+
+
+void MDFNI_Emulate(EmulateSpecStruct *espec) {
+	MDFNGameInfo->Emulate(espec);
+}
+EmulateSpecStruct vbjinEmulate() {
+
+//	EmulateSpecStruct espec;
+
+	memset(&espec, 0, sizeof(EmulateSpecStruct));
+	espec.VideoFormatChanged = true;
+
+	espec.surface = (MDFN_Surface *)VTBuffer[VTBackBuffer];
+	espec.LineWidths = (MDFN_Rect *)VTLineWidths[VTBackBuffer];
+	espec.skip = 0;
+
+	espec.soundmultiplier = 1;
+	espec.SoundVolume = 1;
+	espec.NeedRewind = false;
+	////
+
+	espec.SoundBuf = EmuModBuffer;
+	espec.SoundBufMaxSize = EmuModBufferSize;
+	espec.SoundVolume = 1;//(double)MDFN_GetSettingUI("soundvol") / 100;
+
+	static double average_time = 0;
+
+	int color =5555555;
+	int h = 224;
+
+	for(uint32 i = 0; i < 320 * h; i++)
+	{
+		//	VTBuffer[VTBackBuffer]->pixels[i] = color;
+	}
+
+//frames++;
+
+//PadData = setPad();
+
+	MDFNI_Emulate(&espec);
+
+
+	return espec;
+}
+
+
 void LoadGame(){
 
 	char szChoice[MAX_PATH]={0};
@@ -285,11 +380,14 @@ void LoadGame(){
 				return;
 			}
 		}
+
+
+		/*NEWTODO
 		if(!MDFNI_LoadGame(szChoice)) {
 			pcejin.started = false;
 			pcejin.romLoaded = false;
 			
-		}
+		}*/
 		if (AutoRWLoad)
 		{
 			//Open Ram Watch if its auto-load setting is checked
@@ -611,7 +709,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			//-------------------------------------------------------
 			//Else load it as a ROM
 			//-------------------------------------------------------
-			
+			/*NEWTODO
 			else if(MDFNI_LoadGame(filename))
 			{
 				pcejin.romLoaded = true;
@@ -626,7 +724,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				}
 				UpdateRecentRoms(filename);
 				////////////////////////////////
-			}
+			}*/
 		}
 		return 0;
 	case WM_ENTERMENULOOP:
@@ -708,7 +806,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			PostQuitMessage(0);
 			break;
 		case IDM_RESET:
-			PCE_Power();
+//NEWTODO			PCE_Power();
 			break;
 		case IDM_OPEN_ROM:
 			soundDriver->pause();
@@ -861,11 +959,15 @@ if (lpdd7 != NULL) IDirectDraw7_Release(lpdd7);*/
 void initespec();
 void initsound();
 
+
+
 void initialize(){
 
 	puts("initialize");
 
-	MDFNGameInfo = &EmulatedPCE;
+	MDFNGameInfo = &EmulatedVB;
+
+	vbjinInit();
 
 //	MDFNI_LoadGame("m:\\pce roms\\leg.pce");
 //	pcejin.started = true;
@@ -874,22 +976,19 @@ void initialize(){
 	initsound();
 }
 
-uint32 *VTBuffer[2] = { NULL, NULL };
-MDFN_Rect *VTLineWidths[2] = { NULL, NULL };
-volatile int VTBackBuffer = 0;
-
 int16 *sound;
 int32 ssize;
 
 void initvideo();
 
 void initinput(){
-
+	//NEWTODO
+/*
 	PCEINPUT_SetInput(0, "gamepad", &pcejin.pads[0]);
 	PCEINPUT_SetInput(1, "gamepad", &pcejin.pads[1]);
 	PCEINPUT_SetInput(2, "gamepad", &pcejin.pads[2]);
 	PCEINPUT_SetInput(3, "gamepad", &pcejin.pads[3]);
-	PCEINPUT_SetInput(4, "gamepad", &pcejin.pads[4]);
+	PCEINPUT_SetInput(4, "gamepad", &pcejin.pads[4]);*/
 }
 
 const char* Buttons[8] = {"I ", "II ", "S", "Run ", "U", "R", "D", "L"};
@@ -917,11 +1016,13 @@ void SetInputDisplayCharacters(uint8 new_data[]){
 }
 
 void initespec(){
-
+//NEWTODO
+	/*
 	VTBuffer[0] = (uint32 *)malloc(MDFNGameInfo->pitch * 256);
 	VTBuffer[1] = (uint32 *)malloc(MDFNGameInfo->pitch * 256);
 	VTLineWidths[0] = (MDFN_Rect *)calloc(256, sizeof(MDFN_Rect));
 	VTLineWidths[1] = (MDFN_Rect *)calloc(256, sizeof(MDFN_Rect));
+	*/
 	initvideo();
 	initinput();
 
@@ -929,19 +1030,22 @@ void initespec(){
 
 void MDFNI_SetSoundVolume(uint32 volume)
 {
+	/*NEWTODO
 	FSettings.SoundVolume=volume;
 	if(MDFNGameInfo)
 	{
 		MDFNGameInfo->SetSoundVolume(volume);
-	}
+	}*/
 }
 
 void MDFNI_Sound(int Rate)
 {
-	FSettings.SndRate=Rate;
+	//NEWTODO
+//	FSettings.SndRate=Rate;
 	if(MDFNGameInfo)
 	{
-		EmulatedPCE.Sound(Rate);
+//NEWTODO
+	//	EmulatedPCE.Sound(Rate);
 	}
 }
 
@@ -965,18 +1069,21 @@ bool soundInit()
 void initsound(){
 	MDFNI_Sound(44100);
 	MDFNI_SetSoundVolume(100);
-	FSettings.soundmultiplier = 1;
+	//NEWTODO
+//	FSettings.soundmultiplier = 1;
 }
 
 
 void initvideo(){
-
-	MDFNI_SetPixelFormat(0,8,16,24);
+//NEWTODO
+//	MDFNI_SetPixelFormat(0,8,16,24);
 }
 
 extern u32 joypads [8];
 
 void emulate(){
+
+	vbjinEmulate();
 	
 	if(!pcejin.started  || !pcejin.romLoaded)
 		return;
@@ -1002,10 +1109,10 @@ void emulate(){
 
 	memset(&espec, 0, sizeof(EmulateSpecStruct));
 
-	espec.pixels = (uint32 *)VTBuffer[VTBackBuffer];
+//NEWTODO	espec.pixels = (uint32 *)VTBuffer[VTBackBuffer];
 	espec.LineWidths = (MDFN_Rect *)VTLineWidths[VTBackBuffer];
-	espec.SoundBuf = &sound;
-	espec.SoundBufSize = &ssize;
+//NEWTODO	espec.SoundBuf = &sound;
+//NEWTODO espec.SoundBufSize = &ssize;
 	espec.soundmultiplier = 1;
 
 	if(pcejin.fastForward && currFrameCounter%30 && !DRV_AviIsRecording())
@@ -1022,10 +1129,10 @@ void emulate(){
 	Update_RAM_Search();
 	Update_RAM_Watch();
 
-	soundDriver->write((u16*)*espec.SoundBuf, *espec.SoundBufSize);
+//NEWTODO	soundDriver->write((u16*)*espec.SoundBuf, *espec.SoundBufSize);
 
-	DRV_AviSoundUpdate(*espec.SoundBuf, *espec.SoundBufSize);
-	DRV_AviVideoUpdate((uint16*)espec.pixels, &espec);
+//NEWTODO	DRV_AviSoundUpdate(*espec.SoundBuf, *espec.SoundBufSize);
+//NEWTODO DRV_AviVideoUpdate((uint16*)espec.pixels, &espec);
 
 	if (pcejin.frameAdvance)
 	{

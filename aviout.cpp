@@ -297,7 +297,8 @@ static uint8 *pixel_buffer = NULL;
 bool malloced = false;
 
 static void do_video_conversion(const uint8* buffer, EmulateSpecStruct *espec) {
-
+//NEWTODO
+#if 0
 uint8 *pb_ptr = avi_file->convert_buffer;//pixel_buffer;
 
  for(int y = MDFNGameInfo->DisplayRect.y + MDFNGameInfo->DisplayRect.h; y > MDFNGameInfo->DisplayRect.y; y--)
@@ -320,6 +321,7 @@ uint8 *pb_ptr = avi_file->convert_buffer;//pixel_buffer;
    
   }
  }
+#endif
 }
 
 
