@@ -1,7 +1,7 @@
 // MFC
 #include "windows.h"
 
-#include "sound.h"
+#include "dxsound.h"
 #include "main.h"
 #include "pcejin.h"
 
