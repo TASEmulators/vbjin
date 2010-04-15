@@ -39,7 +39,6 @@ public:
 	void doUserMute();
 };
 
-
 DirectSound::DirectSound()
 {
 	pDirectSound  = NULL;
