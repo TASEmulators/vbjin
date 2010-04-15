@@ -972,9 +972,9 @@ void initialize(){
 
 	vbjinInit();
 
-	MDFNI_LoadGame(NULL,"c:\\wario.vb");
-	pcejin.started = true;
-	pcejin.romLoaded = true;
+//	MDFNI_LoadGame(NULL,"c:\\wario.vb");
+//	pcejin.started = true;
+//	pcejin.romLoaded = true;
 	initespec();
 	initsound();
 }
