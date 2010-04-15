@@ -1,7 +1,7 @@
 #ifndef __QUICKLZ_H
 #define __QUICKLZ_H
 
-#include <inttypes.h>
+#include <types.h>
 
 #ifdef __cplusplus
 extern "C" {

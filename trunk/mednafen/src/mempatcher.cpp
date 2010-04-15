@@ -229,14 +229,14 @@ void MDFN_LoadGameCheats(FILE *override)
 
   MDFN_printf("\n");
   MDFN_printf(_("Loading cheats from %s...\n"), fn.c_str());
-  MDFN_indent(1);
+//  MDFN_indent(1);
 
   if(!(fp = fopen(fn.c_str(),"rb")))
   {
-   ErrnoHolder ene(errno);
+//   ErrnoHolder ene(errno);
 
-   MDFN_printf(_("Error opening file: %s\n"), ene.StrError());
-   MDFN_indent(-1);
+ //  MDFN_printf(_("Error opening file: %s\n"), ene.StrError());
+//   MDFN_indent(-1);
    return;
   }
  }
@@ -311,7 +311,7 @@ void MDFN_LoadGameCheats(FILE *override)
  if(!override)
  {
   MDFN_printf(_("%lu cheats loaded.\n"), (unsigned long)cheats.size());
-  MDFN_indent(-1);
+//  MDFN_indent(-1);
   fclose(fp);
  }
 }

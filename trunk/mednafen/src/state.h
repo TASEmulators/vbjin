@@ -3,14 +3,14 @@
 
 #include <zlib.h>
 
-#include "video.h"
+//#include "video.h"
 #include "state-common.h"
 
 void MDFNSS_GetStateInfo(const char *filename, StateStatusStruct *status);
 
-int MDFNSS_Save(const char *, const char *suffix, const MDFN_Surface *surface = (MDFN_Surface *)NULL, const MDFN_Rect *DisplayRect = (MDFN_Rect*)NULL, const MDFN_Rect *LineWidths = (MDFN_Rect *)NULL);
-int MDFNSS_Load(const char *, const char *suffix);
-int MDFNSS_SaveFP(gzFile fp, const MDFN_Surface *surface = (MDFN_Surface *)NULL, const MDFN_Rect *DisplayRect = (MDFN_Rect*)NULL, const MDFN_Rect *LineWidths = (MDFN_Rect *)NULL);
+//int MDFNSS_Save(const char *, const char *suffix, const MDFN_Surface *surface = (MDFN_Surface *)NULL, const MDFN_Rect *DisplayRect = (MDFN_Rect*)NULL, const MDFN_Rect *LineWidths = (MDFN_Rect *)NULL);
+//int MDFNSS_Load(const char *, const char *suffix);
+//int MDFNSS_SaveFP(gzFile fp, const MDFN_Surface *surface = (MDFN_Surface *)NULL, const MDFN_Rect *DisplayRect = (MDFN_Rect*)NULL, const MDFN_Rect *LineWidths = (MDFN_Rect *)NULL);
 int MDFNSS_LoadFP(gzFile fp);
 
 typedef struct
@@ -34,7 +34,7 @@ int32 smem_seek(StateMem *st, uint32 offset, int whence);
 int smem_write32le(StateMem *st, uint32 b);
 int smem_read32le(StateMem *st, uint32 *b);
 
-int MDFNSS_SaveSM(StateMem *st, int wantpreview, int data_only, const MDFN_Surface *surface = (MDFN_Surface *)NULL, const MDFN_Rect *DisplayRect = (MDFN_Rect*)NULL, const MDFN_Rect *LineWidths = (MDFN_Rect *)NULL);
+//int MDFNSS_SaveSM(StateMem *st, int wantpreview, int data_only, const MDFN_Surface *surface = (MDFN_Surface *)NULL, const MDFN_Rect *DisplayRect = (MDFN_Rect*)NULL, const MDFN_Rect *LineWidths = (MDFN_Rect *)NULL);
 int MDFNSS_LoadSM(StateMem *st, int haspreview, int data_only);
 
 void MDFNSS_CheckStates(void);
@@ -105,8 +105,9 @@ INLINE int SF_FORCE_D(double *) { return(0); }
 #define SFARRAY64N(x, l, n) {x, (l * sizeof(uint64)), MDFNSTATE_RLSB64 | SF_FORCE_A64(x), n }
 #define SFARRAY64(x, l) SFARRAY64N(x, l, #x)
 
+//TODO WTF is this shit
 #if SIZEOF_DOUBLE != 8
-#error "sizeof(double) != 8"
+//#error "sizeof(double) != 8"
 #endif
 
 #define SFARRAYDN(x, l, n) {x, (l * 8), MDFNSTATE_RLSB64 | SF_FORCE_D(x), n }

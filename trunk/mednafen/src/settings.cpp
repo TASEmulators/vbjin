@@ -20,12 +20,16 @@
 #include <string.h>
 #include <vector>
 #include <string>
-#include <trio/trio.h>
+//#include <trio/trio.h>
 #include <map>
 #include <list>
 #include "settings.h"
 #include "md5.h"
-#include "string/world_strtod.h"
+#include "types.h"
+//#include "string/world_strtod.h"
+#include "assert.h"
+
+#define trio_fprintf fprintf
 
 typedef struct
 {
@@ -144,7 +148,7 @@ static bool ValidateSetting(const char *value, const MDFNSetting *setting)
   double dvalue;
   char *endptr = NULL;
 
-  dvalue = world_strtod(value, &endptr);
+//  dvalue = world_strtod(value, &endptr);
 
   if(!endptr || *endptr != 0)
   {
@@ -155,7 +159,7 @@ static bool ValidateSetting(const char *value, const MDFNSetting *setting)
   {
    double minimum;
 
-   minimum = world_strtod(setting->minimum, NULL);
+//   minimum = world_strtod(setting->minimum, NULL);
    if(dvalue < minimum)
    {
     MDFN_PrintError(_("Setting \"%s\" is set too small(\"%s\"); the minimum acceptable value is \"%s\"."), setting->name, value, setting->minimum);
@@ -166,7 +170,7 @@ static bool ValidateSetting(const char *value, const MDFNSetting *setting)
   {
    double maximum;
 
-   maximum = world_strtod(setting->maximum, NULL);
+//   maximum = world_strtod(setting->maximum, NULL);
    if(dvalue > maximum)
    {
     MDFN_PrintError(_("Setting \"%s\" is set too large(\"%s\"); the maximum acceptable value is \"%s\"."), setting->name, value, setting->maximum);
@@ -233,7 +237,7 @@ bool MFDN_LoadSettings(const char *basedir)
  FILE *fp;
 
  fname = basedir;
- fname += PSS;
+// fname += PSS;
  fname += "mednafen-09x.cfg";
 
  MDFN_printf(_("Loading settings from \"%s\"..."), fname.c_str());
@@ -241,13 +245,13 @@ bool MFDN_LoadSettings(const char *basedir)
  //printf("%s\n", fname.c_str());
  if(!(fp = fopen(fname.c_str(), "rb")))
  {
-  ErrnoHolder ene(errno);
+////  ErrnoHolder ene(errno);
 
-  MDFN_printf(_("Failed: %s\n"), ene.StrError());
+//  MDFN_printf(_("Failed: %s\n"), ene.StrError());
 
-  if(ene.Errno() == ENOENT) // Don't return failure if the file simply doesn't exist.
+//  if(ene.Errno() == ENOENT) // Don't return failure if the file simply doesn't exist.
    return(1);
-  else
+ // else
    return(0);
  }
  MDFN_printf("\n");
@@ -374,7 +378,7 @@ bool MDFN_SaveSettings(void)
  if(!(fp = fopen(fname.c_str(), "wb")))
   return(0);
 
- trio_fprintf(fp, ";VERSION %s\n", MEDNAFEN_VERSION);
+// trio_fprintf(fp, ";VERSION %s\n", MEDNAFEN_VERSION);
 
  trio_fprintf(fp, _(";Edit this file at your own risk!\n"));
  trio_fprintf(fp, _(";File format: <key><single space><value><LF or CR+LF>\n\n"));
@@ -417,6 +421,8 @@ bool MDFN_SaveSettings(void)
 
 static const MDFNCS *FindSetting(const char *name)
 {
+
+	assert(false);
  const MDFNCS *ret = NULL;
  uint32 name_hash;
 
@@ -478,9 +484,33 @@ static int GetEnum(const MDFNCS *setting, const char *value)
  assert(found);
  return(ret);
 }
+/*
+static MDFNSetting VBSettings[] =
+{
+ { "vb.cpu_emulation", gettext_noop("Select CPU emulation mode."), MDFNST_ENUM, "fast", NULL, NULL, NULL, NULL, V810Mode_List },
+ { "vb.input.instant_read_hack", gettext_noop("Hack to return the current pad state, rather than latched state, to reduce latency."), MDFNST_BOOL, "1" },
 
+ { "vb.3dmode", gettext_noop("3D mode."), MDFNST_ENUM, "anaglyph", NULL, NULL, NULL, NULL, VB3DMode_List },
+ { "vb.disable_parallax", gettext_noop("Disable parallax for BG and OBJ rendering."), MDFNST_BOOL, "0" },
+ { "vb.default_color", gettext_noop("Default maximum-brightness color to use in non-anaglyph 3D modes."), MDFNST_UINT, "0xF0F0F0", "0", "0xFFFFFF" },
+ { "vb.anaglyph.preset", gettext_noop("Anaglyph preset colors."), MDFNST_ENUM, "red_blue", NULL, NULL, NULL, NULL, AnaglyphPreset_List },
+ { "vb.anaglyph.lcolor", gettext_noop("Anaglyph maximum-brightness color for left view."), MDFNST_UINT, "0xffba00", "0", "0xFFFFFF" },
+ { "vb.anaglyph.rcolor", gettext_noop("Anaglyph maximum-brightness color for right view."), MDFNST_UINT, "0x00baff", "0", "0xFFFFFF" },
+ { NULL }
+};
+*/
 uint64 MDFN_GetSettingUI(const char *name)
 {
+
+	if(!strcmp("vb.3dmode",name))
+		return 0;//VB3DMODE_ANAGLYPH
+	if(!strcmp("vb.anaglyph.lcolor",name))
+		return 0xffba00;
+	if(!strcmp("vb.anaglyph.rcolor",name))
+		return 0x00baff;
+	if(!strcmp("vb.default_color",name))
+		return 0xF0F0F0;
+
  const MDFNCS *setting = FindSetting(name);
  const char *value = GetSetting(setting);
 
@@ -496,6 +526,11 @@ uint64 MDFN_GetSettingUI(const char *name)
 
 int64 MDFN_GetSettingI(const char *name)
 {
+	if(!strcmp(name,"vb.cpu_emulation"))
+		return 1;
+	if(!strcmp(name,"vb.anaglyph.preset"))
+		return 1;
+
  const MDFNCS *setting = FindSetting(name);
  const char *value = GetSetting(FindSetting(name));
 
@@ -512,12 +547,27 @@ int64 MDFN_GetSettingI(const char *name)
 
 double MDFN_GetSettingF(const char *name)
 { 
- return(world_strtod(GetSetting(FindSetting(name)), (char **)NULL));
+	assert(false);
+	//TODO
+// return(world_strtod(GetSetting(FindSetting(name)), (char **)NULL));
+	return 1.0;
 }
 
 bool MDFN_GetSettingB(const char *name)
 {
- return(strtoull(GetSetting(FindSetting(name)), NULL, 10));
+
+	if(!strcmp("dfmd5",name))
+		return true;
+	if(!strcmp("filesys.sav_samedir",name))
+		return true;
+	if(!strcmp("vb.disable_parallax",name))
+		return false;
+	if(!strcmp("vb.input.instant_read_hack"	,name))
+		return false;
+	if(!strcmp("cheats"	,name))
+		return false;
+
+	return(strtoull(GetSetting(FindSetting(name)), NULL, 10));
 }
 
 std::string MDFN_GetSettingS(const char *name)
@@ -609,7 +659,7 @@ bool MDFNI_SetSettingUI(const char *name, uint64 value)
 {
  char tmpstr[32];
 
- trio_snprintf(tmpstr, 32, "%llu", value);
+// trio_snprintf(tmpstr, 32, "%llu", value);
  return(MDFNI_SetSetting(name, tmpstr, FALSE));
 }
 

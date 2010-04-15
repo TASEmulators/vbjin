@@ -16,6 +16,7 @@ architectures than x86 and x64 */
 #include "../types.h"
 #include <memory.h>
 #include "quicklz.h"
+#include "string.h" //WTF have to include this to get memcpy?
 
 #if defined(__amd64__) || defined(__x86_64__) || defined(_M_AMD64) || defined(__386__) || defined(__i386__) || defined(__i386) || defined(_M_IX86) || defined(_M_I386)
 #define UNALIGNED_MEMORY_ACCESSES_OK	1
@@ -26,7 +27,7 @@ architectures than x86 and x64 */
 #endif
 
 //#define memory_safe
-//#define no_time_overhead
+//#define no_time_overheadF
 #define test_rle
 #define speedup_incompressible
 #define STREAM_BUFFER_SIZE 1000000

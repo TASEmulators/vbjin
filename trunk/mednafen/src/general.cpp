@@ -22,14 +22,14 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
+//#include <unistd.h>
 
 #include <string>
 #include <trio/trio.h>
 
 #include "general.h"
 #include "state.h"
-#include "movie.h"
+//#include "movie.h"
 
 #include "md5.h"
 
@@ -75,6 +75,7 @@ static bool IsAbsolutePath(const char *path)
  return(FALSE);
 }
 
+#define PSS ":"
 std::string MDFN_MakeFName(MakeFName_Type type, int id1, const char *cd1)
 {
  char tmp_path[4096];
@@ -187,8 +188,9 @@ std::string MDFN_MakeFName(MakeFName_Type type, int id1, const char *cd1)
 		   {
                     trio_snprintf(tmp_path, 4096, "%s"PSS"%s.%s", eff_dir.c_str(),FileBase.c_str(),cd1);
 
-                    if(tmp_dfmd5 && stat(tmp_path,&tmpstat) == -1)
-                     trio_snprintf(tmp_path, 4096, "%s"PSS"%s.%s.%s",eff_dir.c_str(),FileBase.c_str(),md5_context::asciistr(MDFNGameInfo->MD5, 0).c_str(),cd1);
+					//NEWTODO WTF stack overflow
+         //           if(tmp_dfmd5 && stat(tmp_path,&tmpstat) == -1)
+           //          trio_snprintf(tmp_path, 4096, "%s"PSS"%s.%s.%s",eff_dir.c_str(),FileBase.c_str(),md5_context::asciistr(MDFNGameInfo->MD5, 0).c_str(),cd1);
 		   }
                    break;
 
@@ -292,7 +294,7 @@ void GetFileBase(const char *f)
      }
      else
      {
-      char tmpfn[tp1 - f + 1];
+      char tmpfn[128];//[tp1 - f + 1];
 
       memcpy(tmpfn,f,tp1-f);
       tmpfn[tp1-f]=0;
@@ -303,7 +305,7 @@ void GetFileBase(const char *f)
 
      if(((tp3=strrchr(f,'.'))!=NULL) && (tp3>tp1))
      {
-      char tmpbase[tp3 - tp1 + 1];
+      char tmpbase[128];//[tp3 - tp1 + 1];
 
       memcpy(tmpbase,tp1,tp3-tp1);
       tmpbase[tp3-tp1]=0;

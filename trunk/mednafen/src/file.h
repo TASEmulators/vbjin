@@ -2,6 +2,7 @@
 #define MDFN_FILE_H
 
 #include <string>
+#include "git.h"
 
 #define MDFNFILE_EC_NOTFOUND	1
 #define MDFNFILE_EC_OTHER	2

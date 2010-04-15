@@ -26,7 +26,7 @@ static bool IntPending;
 
 static uint16 *data_ptr;
 
-static uint16 PadData;
+//static uint16 PadData;
 static uint16 PadLatched;
 
 static uint8 SCR;
@@ -139,7 +139,7 @@ void VBINPUT_Write(v810_timestamp_t &timestamp, uint32 A, uint8 V)
 
 void VBINPUT_Frame(void)
 {
- PadData = (*data_ptr << 2) | 0x2;
+// PadData = PadData << 2 | 0x2; //(*data_ptr << 2) | 0x2;
 }
 
 v810_timestamp_t VBINPUT_Update(const v810_timestamp_t timestamp)

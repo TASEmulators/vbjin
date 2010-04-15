@@ -18,6 +18,8 @@
 #include "vb.h"
 #include "vip.h"
 #include <math.h>
+#include "endian.h"
+#include "git.h"
 
 #define VIP_DBGMSG(format, ...) { }
 //#define VIP_DBGMSG(format, ...) printf(format "\n", ## __VA_ARGS__)
@@ -45,11 +47,11 @@ static uint16 InterruptEnable;
 static uint8 BRTA, BRTB, BRTC, REST;
 static uint8 Repeat;
 
-static void CopyFBColumnToTarget_Anaglyph(void) __attribute__((noinline));
-static void CopyFBColumnToTarget_AnaglyphSlow(void) __attribute__((noinline));
-static void CopyFBColumnToTarget_CScope(void) __attribute__((noinline));
-static void CopyFBColumnToTarget_SideBySide(void) __attribute__((noinline));
-static void CopyFBColumnToTarget_PBarrier(void) __attribute__((noinline));
+static void CopyFBColumnToTarget_Anaglyph(void) ;//__attribute__((noinline));
+static void CopyFBColumnToTarget_AnaglyphSlow(void);// __attribute__((noinline));
+static void CopyFBColumnToTarget_CScope(void) ;//__attribute__((noinline));
+static void CopyFBColumnToTarget_SideBySide(void) ;//__attribute__((noinline));
+static void CopyFBColumnToTarget_PBarrier(void) ;//__attribute__((noinline));
 static void (*CopyFBColumnToTarget)(void) = NULL;
 static uint32 VB3DMode;
 static uint32 ColorLUT[2][256];
@@ -188,9 +190,11 @@ static void RecalcBrightnessCache(void)
 
 static void Recalc3DModeStuff(bool non_rgb_output = false)
 {
+
  switch(VB3DMode)
  {
   default: 
+
 	   if(((Anaglyph_Colors[0] & 0xFF) && (Anaglyph_Colors[1] & 0xFF)) ||
 		((Anaglyph_Colors[0] & 0xFF00) && (Anaglyph_Colors[1] & 0xFF00)) ||
 		((Anaglyph_Colors[0] & 0xFF0000) && (Anaglyph_Colors[1] & 0xFF0000)) ||
@@ -767,11 +771,17 @@ void VIP_Write16(int32 &timestamp, uint32 A, uint16 V)
 static MDFN_Surface *surface;
 static bool skip;
 
+bool first = true;
+
 void VIP_StartFrame(EmulateSpecStruct *espec)
 {
 // puts("Start frame");
- if(espec->VideoFormatChanged)
+//	
+
+ if(first || espec->VideoFormatChanged)
  {
+	 if(first)
+		 first = false;
   MakeColorLUT(espec->surface->format);
   Recalc3DModeStuff(espec->surface->format.colorspace != MDFN_COLORSPACE_RGB);
  }
@@ -828,32 +838,34 @@ static int32 CalcNextEvent(void)
 
 static INLINE void CopyFBColumnToTarget_Anaglyph_BASE(const bool DisplayActive_arg, const int lr)
 {
-     const int fb = DisplayFB;
-     uint32 *target = surface->pixels + Column;
-     const int32 pitch32 = surface->pitch32;
-     const uint8 *fb_source = &FB[fb][lr][64 * Column];
+	const int fb = DisplayFB;
+	uint32 *target = surface->pixels + Column;
+	const int32 pitch32 = surface->pitch32;
+	const uint8 *fb_source = &FB[fb][lr][64 * Column];
 
-     for(int y = 56; y; y--)
-     {
-      uint32 source_bits = *fb_source;
+	for(int y = 56; y; y--)
+	{
+		uint32 source_bits = *fb_source;
 
-      for(int y_sub = 4; y_sub; y_sub--)
-      {
-       uint32 pixel = BrightCLUT[lr][source_bits & 3];
+		for(int y_sub = 4; y_sub; y_sub--)
+		{
+			uint32 pixel = BrightCLUT[lr][source_bits & 3];
 
-       if(!DisplayActive_arg)
-        pixel = 0;
+			if(!DisplayActive_arg)
+				pixel = 0;
 
-       if(lr)
-	*target |= pixel;
-       else
-        *target = pixel;
+			if(lr)
+				*target |= pixel;
+			else
+				*target = pixel;
 
-       source_bits >>= 2;
-       target += pitch32;
-      }
-      fb_source++;
-     }
+			source_bits >>= 2;
+			target += pitch32;
+		}
+		fb_source++;
+
+
+	}
 }
 
 static void CopyFBColumnToTarget_Anaglyph(void)
@@ -1110,9 +1122,15 @@ v810_timestamp_t MDFN_FASTCALL VIP_Update(const v810_timestamp_t timestamp)
    DrawingCounter -= chunk_clocks;
    if(DrawingCounter <= 0)
    {
-    uint8 DrawingBuffers[2][512 * 8] __attribute__((aligned(8)));	// Don't decrease this from 512 unless you adjust vip_draw.inc(including areas that draw off-visible >= 384 and >= -7 for speed reasons)
+    __declspec(align(8)) uint8 DrawingBuffers[2][512 * 8] ;// __attribute__((aligned(8)));	// Don't decrease this from 512 unless you adjust vip_draw.inc(including areas that draw off-visible >= 384 and >= -7 for speed reasons)
 
     VIP_DrawBlock(DrawingBlock, DrawingBuffers[0] + 8, DrawingBuffers[1] + 8);
+
+	for(int zz = 0; zz < 512 * 8; zz++) {
+
+	//	if(DrawingBuffers[0][zz] != 0 || DrawingBuffers[1][zz] != 0)
+	//		printf("wtf");
+	}
 
     for(int lr = 0; lr < 2; lr++)
     {
@@ -1129,6 +1147,10 @@ v810_timestamp_t MDFN_FASTCALL VIP_Update(const v810_timestamp_t timestamp)
                                   | (DrawingBuffers[lr][8 + x + 512 * 5] << 2)
                                   | (DrawingBuffers[lr][8 + x + 512 * 6] << 4) 
                                   | (DrawingBuffers[lr][8 + x + 512 * 7] << 6);
+
+//	  if(FB_Target[64 * x + 0] != 0 || FB_Target[64 * x + 1] != 0)
+//		  printf("wtf");
+
 
      }
     }

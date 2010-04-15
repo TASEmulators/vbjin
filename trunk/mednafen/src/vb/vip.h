@@ -1,6 +1,8 @@
 #ifndef __VB_VIP_H
 #define __VB_VIP_H
 
+#include "git.h"
+
 namespace MDFN_IEN_VB
 {
 

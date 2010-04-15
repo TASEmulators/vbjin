@@ -1,12 +1,14 @@
 #ifndef __MDFN_VIDEO_H
 #define __MDFN_VIDEO_H
 
-#include "video/primitives.h"
-#include "video/text.h"
+#include "types.h"
+
+//#include "video/primitives.h"
+//#include "video/text.h"
 
 void MDFN_ResetMessages(void);
 void MDFN_InitFontData(void);
-void MDFN_DispMessage(const char *format, ...) __attribute__ ((format (printf, 1, 2)));
+void MDFN_DispMessage(const char *format, ...);// { }//__attribute__ ((format (printf, 1, 2)));
 
 int MDFN_InitVirtualVideo(void);
 void MDFN_KillVirtualVideo(void);
