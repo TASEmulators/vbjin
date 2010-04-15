@@ -292,21 +292,21 @@ static void convert16(const uint8* buffer, EmulateSpecStruct *espec){
 
 void render() {
 
-//	if(!pcejin.romLoaded || espec.skip)
-//		return;
+	if(!pcejin.romLoaded || espec.skip)
+		return;
  //NEWTODO
-#if 0
-	if(pcejin.width != MDFNGameInfo->DisplayRect.w) {
-		pcejin.width = MDFNGameInfo->DisplayRect.w;
-		pcejin.height = MDFNGameInfo->DisplayRect.h;
+//#if 0
+	if(pcejin.width != espec.DisplayRect.w) {
+		pcejin.width = espec.DisplayRect.w;
+		pcejin.height = espec.DisplayRect.h;
 		CreateDDrawBuffers();
 		if(!pcejin.maximized)
 			ScaleScreen(pcejin.windowSize);
 	}
 
-	pcejin.width = MDFNGameInfo->DisplayRect.w;
-	pcejin.height = MDFNGameInfo->DisplayRect.h;
-#endif
+	pcejin.width = espec.DisplayRect.w;
+	pcejin.height = espec.DisplayRect.h;
+//#endif
 	uint32 *src = (uint32*)convert_buffer;
 
 	SetInputDisplayCharacters(pcejin.pads);

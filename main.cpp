@@ -45,7 +45,7 @@ volatile MDFN_Surface *VTBuffer[2] = { NULL, NULL };
 MDFN_Rect *VTLineWidths[2] = { NULL, NULL };
 volatile int VTBackBuffer = 0;
 
-uint16 PadData;//NEWTODO this sucks
+//uint16 PadData;//NEWTODO this sucks
 
 Pcejin pcejin;
 
@@ -277,6 +277,7 @@ void sndinit() {
 }
 void vbjinInit() {
 
+	return;
 	MDFNGameInfo = &EmulatedVB;
 
 	MDFNFILE* fp = new MDFNFILE();
@@ -290,8 +291,8 @@ void vbjinInit() {
 	const char * typez;
 	const char * padData;
 //	padData = malloc(8);
-//	typez = (const char*)malloc(16);
-	//	VBINPUT_SetInput(1,typez,blah);
+	typez = (const char*)malloc(16);
+	MDFNGameInfo->SetInput(1,typez,&pcejin.pads[0]);
 //	MDFNGameInfo->SetInput(1,typez,adData);
 
 	sndinit();
@@ -361,7 +362,8 @@ void LoadGame(){
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = g_hWnd;
-	ofn.lpstrFilter = "PC Engine Files (*.pce, *.cue, *.toc, *.sgx *.zip)\0*.pce;*.cue;*.toc;*.sgx;*.zip\0All files(*.*)\0*.*\0\0";
+	ofn.lpstrFilter = "VB Files (*.vb, *.zip)\0*.vb;*.cue;*.toc;*.sgx;*.zip\0All files(*.*)\0*.*\0\0";
+//	ofn.lpstrFilter = "PC Engine Files (*.pce, *.cue, *.toc, *.sgx *.zip)\0*.pce;*.cue;*.toc;*.sgx;*.zip\0All files(*.*)\0*.*\0\0";
 	ofn.lpstrFile = (LPSTR)szChoice;
 	ofn.lpstrTitle = "Select a file to open";
 	ofn.lpstrDefExt = "pce";
@@ -382,12 +384,12 @@ void LoadGame(){
 		}
 
 
-		/*NEWTODO
-		if(!MDFNI_LoadGame(szChoice)) {
+		//NEWTODO
+		if(!MDFNI_LoadGame(NULL,szChoice)) {
 			pcejin.started = false;
 			pcejin.romLoaded = false;
 			
-		}*/
+		}
 		if (AutoRWLoad)
 		{
 			//Open Ram Watch if its auto-load setting is checked
@@ -667,6 +669,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				{
 					if ((fileDropped[fileDropped.length()-1] >= '0' && fileDropped[fileDropped.length()-1] <= '9'))
 					{
+						extern int MDFNSS_Load(const char *fname, const char *suffix);
 						MDFNSS_Load(filename, NULL);
 						Update_RAM_Watch();			
 						Update_RAM_Search();		
@@ -969,20 +972,21 @@ void initialize(){
 
 	vbjinInit();
 
-//	MDFNI_LoadGame("m:\\pce roms\\leg.pce");
-//	pcejin.started = true;
-//	pcejin.romLoaded = true;
+	MDFNI_LoadGame(NULL,"c:\\wario.vb");
+	pcejin.started = true;
+	pcejin.romLoaded = true;
 	initespec();
 	initsound();
 }
 
-int16 *sound;
-int32 ssize;
+//int16 *sound;
+//int32 ssize;
 
 void initvideo();
 
 void initinput(){
 	//NEWTODO
+	MDFNGameInfo->SetInput(1,NULL,&pcejin.pads[0]);
 /*
 	PCEINPUT_SetInput(0, "gamepad", &pcejin.pads[0]);
 	PCEINPUT_SetInput(1, "gamepad", &pcejin.pads[1]);
@@ -991,31 +995,40 @@ void initinput(){
 	PCEINPUT_SetInput(4, "gamepad", &pcejin.pads[4]);*/
 }
 
-const char* Buttons[8] = {"I ", "II ", "S", "Run ", "U", "R", "D", "L"};
-const char* Spaces[8] = {" ", " ", " ", " ", " ", " ", " ", " "};
+//const char* Buttons[8] = {"I ", "II ", "S", "Run ", "U", "R", "D", "L"};
+const char* Buttons[16] = {"A ", "B ", "RS", "LS ", "RUp", "RRight", "LRight", "LLeft", "LDown", "LUp", "Start", "Select", "RLeft", "RDown"};
+const char* Spaces[16] =  {" ", " ", " ", " ", " ", " ", " ", " "," ", " ", " ", " ", " ", " ", " ", " "};
 
 char str[64];
 
-void SetInputDisplayCharacters(uint8 new_data[]){
+//NEWTODO
+void SetInputDisplayCharacters(uint16 new_data[]){
 
 	strcpy(str, "");
 
-	for ( int i = 0; i < 5; i++) {
+//	for ( int i = 0; i < 5; i++) {
 
-		for (int x = 0; x < 8; x++) {
+		for (int x = 0; x < 16; x++) {
 
-			if(new_data[i] & (1 << x)) {
+			if(new_data[0] & (1 << x)) {
 				strcat(str, Buttons[x]);
 			}
 			else
 				strcat(str, Spaces[x]);
 		}
-	}
+//	}
 
+//		printf("\n");
+//		printf(str);
+//		printf("\n");
 	strcpy(pcejin.inputDisplayString, str);
 }
 
 void initespec(){
+	VTBuffer[0] = new MDFN_Surface(NULL, MDFNGameInfo->pitch / sizeof(uint32), MDFNGameInfo->fb_height, MDFNGameInfo->pitch / sizeof(uint32), MDFN_COLORSPACE_RGB, 0, 8, 16, 24);
+	VTBuffer[1] = new MDFN_Surface(NULL, MDFNGameInfo->pitch / sizeof(uint32), MDFNGameInfo->fb_height, MDFNGameInfo->pitch / sizeof(uint32), MDFN_COLORSPACE_RGB, 0, 8, 16, 24);
+	VTLineWidths[0] = (MDFN_Rect *)calloc(MDFNGameInfo->fb_height, sizeof(MDFN_Rect));
+	VTLineWidths[1] = (MDFN_Rect *)calloc(MDFNGameInfo->fb_height, sizeof(MDFN_Rect));
 //NEWTODO
 	/*
 	VTBuffer[0] = (uint32 *)malloc(MDFNGameInfo->pitch * 256);
@@ -1067,7 +1080,14 @@ bool soundInit()
 }
 
 void initsound(){
-	MDFNI_Sound(44100);
+	EmuModBufferSize = (500 * 44100 + 999) / 1000;//format.rate
+	EmuModBuffer = (int16*)malloc(EmuModBufferSize * (sizeof(short)*2));
+//	EmuModBuffer = (int16 *)calloc(sizeof(short) * 2, EmuModBufferSize);//format.channels
+	MDFNGameInfo->SetSoundRate(44100);
+
+	espec.SoundBuf = EmuModBuffer;
+
+	//	MDFNI_Sound(44100);
 	MDFNI_SetSoundVolume(100);
 	//NEWTODO
 //	FSettings.soundmultiplier = 1;
@@ -1082,9 +1102,13 @@ void initvideo(){
 extern u32 joypads [8];
 
 void emulate(){
-
-	vbjinEmulate();
+	/*
+	//NEWTODO fix these
 	
+
+	pcejin.pads[0] = joypads [0];
+	vbjinEmulate();
+	*/
 	if(!pcejin.started  || !pcejin.romLoaded)
 		return;
 	
@@ -1095,13 +1119,12 @@ void emulate(){
 	}
 	pcejin.isLagFrame = true;
 
-	S9xUpdateJoypadButtons();
-
 	pcejin.pads[0] = joypads [0];
-	pcejin.pads[1] = joypads [1];
-	pcejin.pads[2] = joypads [2];
-	pcejin.pads[3] = joypads [3];
-	pcejin.pads[4] = joypads [4];
+
+//	pcejin.pads[1] = joypads [1];
+//	pcejin.pads[2] = joypads [2];
+//	pcejin.pads[3] = joypads [3];
+//	pcejin.pads[4] = joypads [4];
 
 	FCEUMOV_AddInputState();
 
@@ -1109,11 +1132,15 @@ void emulate(){
 
 	memset(&espec, 0, sizeof(EmulateSpecStruct));
 
-//NEWTODO	espec.pixels = (uint32 *)VTBuffer[VTBackBuffer];
+	espec.surface = (MDFN_Surface *)VTBuffer[VTBackBuffer];
+//espec.surface->pixels = (uint32 *)VTBuffer[VTBackBuffer];
 	espec.LineWidths = (MDFN_Rect *)VTLineWidths[VTBackBuffer];
-//NEWTODO	espec.SoundBuf = &sound;
-//NEWTODO espec.SoundBufSize = &ssize;
+//espec.SoundBuf = sound;
+//espec.SoundBufSize = ssize;
 	espec.soundmultiplier = 1;
+
+	espec.SoundBuf = EmuModBuffer;
+	espec.SoundBufMaxSize = EmuModBufferSize;
 
 	if(pcejin.fastForward && currFrameCounter%30 && !DRV_AviIsRecording())
 		espec.skip = 1;
@@ -1122,6 +1149,7 @@ void emulate(){
 
 	CallRegisteredLuaFunctions(LUACALL_BEFOREEMULATION);
 
+	S9xUpdateJoypadButtons();
 	MDFNGameInfo->Emulate(&espec);
 
 	CallRegisteredLuaFunctions(LUACALL_AFTEREMULATION);
@@ -1129,10 +1157,11 @@ void emulate(){
 	Update_RAM_Search();
 	Update_RAM_Watch();
 
-//NEWTODO	soundDriver->write((u16*)*espec.SoundBuf, *espec.SoundBufSize);
+	//NEWTODO
+	soundDriver->write((u16*)espec.SoundBuf, espec.SoundBufSize);
 
-//NEWTODO	DRV_AviSoundUpdate(*espec.SoundBuf, *espec.SoundBufSize);
-//NEWTODO DRV_AviVideoUpdate((uint16*)espec.pixels, &espec);
+	DRV_AviSoundUpdate((u16*)espec.SoundBuf, espec.SoundBufSize);
+	DRV_AviVideoUpdate((uint16*)espec.surface->pixels, &espec);
 
 	if (pcejin.frameAdvance)
 	{
@@ -1144,7 +1173,7 @@ void emulate(){
 		pcejin.lagFrameCounter++;
 
 
-	if(pcejin.slow  && !pcejin.fastForward)
+	if(!pcejin.fastForward)//pcejin.slow  && 
 		while(SpeedThrottle())
 		{
 		}

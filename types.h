@@ -59,7 +59,7 @@ typedef struct
 #define strtoll _strtoi64
 #define S_ISREG(x) 0
 
-extern uint16 PadData;
+//extern uint16 PadData;
 
 typedef unsigned char u8;
 typedef unsigned short u16;

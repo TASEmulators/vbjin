@@ -51,30 +51,49 @@ InputCust * GetInputCustom(HWND hwnd);
 
 struct SJoypad {
     BOOL Enabled;
-    WORD Left;
-    WORD Right;
-    WORD Up;
-    WORD Down;
     WORD Left_Up;
     WORD Left_Down;
+    WORD Left_Right;
+    WORD Left_Left;
     WORD Right_Up;
     WORD Right_Down;
-    WORD Run;
+    WORD Right_Left;
+    WORD Right_Right;
+    WORD Start;
     WORD Select;
-	WORD Lid;
-    WORD Debug;
-    WORD I;
-    WORD II;
-    WORD X;
-    WORD Y;
+	WORD B;
+    WORD A;
+    WORD ___I;
+	WORD ___II;
+    WORD ___X;
+    WORD ___Y;
     WORD L;
     WORD R;
 };
 
-#define I_MASK 0x0001
-#define II_MASK 0x0002
+//Right_Down, Right_Left, Select, Start, Left_Up, Left_Down, Left_Left, Left_Rigth, Right_Right, Right_Up, L, R, B, A
+
+//these get shifted over by two in the vb core
+#define A_MASK 0x0001
+#define B_MASK 0x0002
+#define R_MASK 0x0004
+#define L_MASK 0x0008
+
+#define RIGHT_UP_MASK 0x0010
+#define RIGHT_RIGHT_MASK 0x0020
+#define LEFT_RIGHT_MASK 0x0040
+#define LEFT_LEFT_MASK 0x0080
+
+#define LEFT_DOWN_MASK 0x0100
+#define LEFT_UP_MASK 0x0200
+#define START_MASK 0x0400
+#define SELECT_MASK 0x0800
+
+#define RIGHT_LEFT_MASK 0x1000
+#define RIGHT_DOWN_MASK 0x2000
+/*
 #define SELECT_MASK 0x0004
-#define RUN_MASK 0x0008
+#define START_MASK 0x0008
 #define UP_MASK 0x0010
 #define RIGHT_MASK 0x0020
 #define DOWN_MASK 0x0040
@@ -84,8 +103,7 @@ struct SJoypad {
 #define DEBUG_MASK 0x0080
 #define X_MASK 0x0400
 #define Y_MASK 0x0800
-#define L_MASK 0x1000
-#define R_MASK 0x2000
+*/
 
 struct SJoyState{
     bool Attached;
@@ -438,22 +456,22 @@ void LoadInputConfig()
 	for(int i = 0; i < 10; i++) {
 		snprintf(temp, 40, "Controller%d", i);
 
-		ReadControl("Left",temp,Joypad[i].Left);
-		ReadControl("Right",temp,Joypad[i].Right);
-		ReadControl("Up",temp,Joypad[i].Up);
-		ReadControl("Down",temp,Joypad[i].Down);
+		ReadControl("Left_Left",temp,Joypad[i].Left_Left);
+		ReadControl("Left_Right",temp,Joypad[i].Left_Right);
 		ReadControl("Left_Up",temp,Joypad[i].Left_Up);
 		ReadControl("Left_Down",temp,Joypad[i].Left_Down);
+		ReadControl("Right_Left",temp,Joypad[i].Right_Left);
+		ReadControl("Right_Right",temp,Joypad[i].Right_Right);
 		ReadControl("Right_Up",temp,Joypad[i].Right_Up);
 		ReadControl("Right_Down",temp,Joypad[i].Right_Down);
-		ReadControl("Run",temp,Joypad[i].Run);
+		ReadControl("Start",temp,Joypad[i].Start);
 		ReadControl("Select",temp,Joypad[i].Select);
-		ReadControl("Lid",temp,Joypad[i].Lid);
-		ReadControl("Debug",temp,Joypad[i].Debug);
-		ReadControl("I",temp,Joypad[i].I);
-		ReadControl("II",temp,Joypad[i].II);
-		ReadControl("X",temp,Joypad[i].X);
-		ReadControl("Y",temp,Joypad[i].Y);
+//		ReadControl("Lid",temp,Joypad[i].Lid);
+//		ReadControl("Debug",temp,Joypad[i].Debug);
+		ReadControl("B",temp,Joypad[i].B);
+		ReadControl("A",temp,Joypad[i].A);
+//		ReadControl("X",temp,Joypad[i].X);
+//		ReadControl("Y",temp,Joypad[i].Y);
 		ReadControl("L",temp,Joypad[i].L);
 		ReadControl("R",temp,Joypad[i].R);
 	}
@@ -469,7 +487,25 @@ static void SaveInputConfig()
 	char temp[50];
 	for(int i = 0; i < 10; i++) {
 		snprintf(temp, 40, "Controller%d", i);
-
+		WriteControl("Left_Left",temp,Joypad[i].Left_Left);
+		WriteControl("Left_Right",temp,Joypad[i].Left_Right);
+		WriteControl("Left_Up",temp,Joypad[i].Left_Up);
+		WriteControl("Left_Down",temp,Joypad[i].Left_Down);
+		WriteControl("Right_Left",temp,Joypad[i].Right_Left);
+		WriteControl("Right_Right",temp,Joypad[i].Right_Right);
+		WriteControl("Right_Up",temp,Joypad[i].Right_Up);
+		WriteControl("Right_Down",temp,Joypad[i].Right_Down);
+		WriteControl("Start",temp,Joypad[i].Start);
+		WriteControl("Select",temp,Joypad[i].Select);
+//		ReadControl("Lid",temp,Joypad[i].Lid);
+//		ReadControl("Debug",temp,Joypad[i].Debug);
+		WriteControl("B",temp,Joypad[i].B);
+		WriteControl("A",temp,Joypad[i].A);
+//		ReadControl("X",temp,Joypad[i].X);
+//		ReadControl("Y",temp,Joypad[i].Y);
+		WriteControl("L",temp,Joypad[i].L);
+		WriteControl("R",temp,Joypad[i].R);
+/*
 		WriteControl("Left",temp,Joypad[i].Left);
 		WriteControl("Right",temp,Joypad[i].Right);
 		WriteControl("Up",temp,Joypad[i].Up);
@@ -488,6 +524,8 @@ static void SaveInputConfig()
 		WriteControl("Y",temp,Joypad[i].Y);
 		WriteControl("L",temp,Joypad[i].L);
 		WriteControl("R",temp,Joypad[i].R);
+		
+		*/
 	}
 }
 
@@ -940,24 +978,24 @@ int GetNumButtonsAssignedTo (WORD Key)
 		if(!Joypad[J%5].Enabled || Key == 0 || Key == VK_ESCAPE)
 			continue;
 
-		if(Key == Joypad[J].Left)       count++;
-		if(Key == Joypad[J].Right)      count++;
+		if(Key == Joypad[J].Left_Left)       count++;
+		if(Key == Joypad[J].Left_Right)      count++;
 		if(Key == Joypad[J].Left_Up)    count++;
 		if(Key == Joypad[J].Left_Down)  count++;
 		if(Key == Joypad[J].Right_Up)   count++;
 		if(Key == Joypad[J].Right_Down) count++;
-		if(Key == Joypad[J].Up)         count++;
-		if(Key == Joypad[J].Down)       count++;
-		if(Key == Joypad[J].Run)      count++;
+		if(Key == Joypad[J].Right_Left)         count++;
+		if(Key == Joypad[J].Right_Right)       count++;
+		if(Key == Joypad[J].Start)      count++;
 		if(Key == Joypad[J].Select)     count++;
-		if(Key == Joypad[J].I)          count++;
-		if(Key == Joypad[J].II)          count++;
-		if(Key == Joypad[J].X)          count++;
-		if(Key == Joypad[J].Y)          count++;
+		if(Key == Joypad[J].A)          count++;
+		if(Key == Joypad[J].B)          count++;
+//		if(Key == Joypad[J].X)          count++;
+//		if(Key == Joypad[J].Y)          count++;
 		if(Key == Joypad[J].L)          count++;
 		if(Key == Joypad[J].R)          count++;
-		if(Key == Joypad[J].Lid)          count++;
-		if(Key == Joypad[J].Debug)          count++;
+//		if(Key == Joypad[J].Lid)          count++;
+//		if(Key == Joypad[J].Debug)          count++;
     }
 	return count;
 }
@@ -1298,17 +1336,23 @@ static bool keyPressLock = false;
 
 static void set_buttoninfo(int index, HWND hDlg)
 {
-	SendDlgItemMessage(hDlg,IDC_UP,WM_USER+44,Joypad[index].Up,0);
-	SendDlgItemMessage(hDlg,IDC_LEFT,WM_USER+44,Joypad[index].Left,0);
-	SendDlgItemMessage(hDlg,IDC_DOWN,WM_USER+44,Joypad[index].Down,0);
-	SendDlgItemMessage(hDlg,IDC_RIGHT,WM_USER+44,Joypad[index].Right,0);
-	SendDlgItemMessage(hDlg,IDC_I,WM_USER+44,Joypad[index].I,0);
-	SendDlgItemMessage(hDlg,IDC_II,WM_USER+44,Joypad[index].II,0);
+	SendDlgItemMessage(hDlg,IDC_UP,WM_USER+44,Joypad[index].Left_Up,0);
+	SendDlgItemMessage(hDlg,IDC_LEFT,WM_USER+44,Joypad[index].Left_Left,0);
+	SendDlgItemMessage(hDlg,IDC_DOWN,WM_USER+44,Joypad[index].Left_Down,0);
+	SendDlgItemMessage(hDlg,IDC_RIGHT,WM_USER+44,Joypad[index].Left_Right,0);
+	//NEWTODO
+	SendDlgItemMessage(hDlg,IDC_Right_UP,WM_USER+44,Joypad[index].Right_Up,0);
+	SendDlgItemMessage(hDlg,IDC_Right_LEFT,WM_USER+44,Joypad[index].Right_Left,0);
+	SendDlgItemMessage(hDlg,IDC_Right_DOWN,WM_USER+44,Joypad[index].Right_Down,0);
+	SendDlgItemMessage(hDlg,IDC_Right_RIGHT,WM_USER+44,Joypad[index].Right_Right,0);
+
+	SendDlgItemMessage(hDlg,IDC_I,WM_USER+44,Joypad[index].A,0);
+	SendDlgItemMessage(hDlg,IDC_II,WM_USER+44,Joypad[index].B,0);
 //	SendDlgItemMessage(hDlg,IDC_X,WM_USER+44,Joypad[index].X,0);
 //	SendDlgItemMessage(hDlg,IDC_Y,WM_USER+44,Joypad[index].Y,0);
-//	SendDlgItemMessage(hDlg,IDC_L,WM_USER+44,Joypad[index].L,0);
-//	SendDlgItemMessage(hDlg,IDC_R,WM_USER+44,Joypad[index].R,0);
-	SendDlgItemMessage(hDlg,IDC_RUN,WM_USER+44,Joypad[index].Run,0);
+	SendDlgItemMessage(hDlg,IDC_L,WM_USER+44,Joypad[index].L,0);
+	SendDlgItemMessage(hDlg,IDC_R,WM_USER+44,Joypad[index].R,0);
+	SendDlgItemMessage(hDlg,IDC_RUN,WM_USER+44,Joypad[index].Start,0);
 	SendDlgItemMessage(hDlg,IDC_SELECT,WM_USER+44,Joypad[index].Select,0);
 //	SendDlgItemMessage(hDlg,IDC_LID,WM_USER+44,Joypad[index].Lid,0);
 //	SendDlgItemMessage(hDlg,IDC_DEBUG,WM_USER+44,Joypad[index].Debug,0);
@@ -1482,35 +1526,35 @@ switch(msg)
 		switch(which)
 		{
 		case IDC_UP:
-			Joypad[index].Up = wParam;
+			Joypad[index].Left_Up = wParam;
 
 			break;
 		case IDC_DOWN:
-			Joypad[index].Down = wParam;
+			Joypad[index].Left_Down = wParam;
 
 			break;
 		case IDC_LEFT:
-			Joypad[index].Left = wParam;
+			Joypad[index].Left_Left = wParam;
 
 			break;
 		case IDC_RIGHT:
-			Joypad[index].Right = wParam;
+			Joypad[index].Left_Right = wParam;
 
 			break;
 		case IDC_I:
-			Joypad[index].I = wParam;
+			Joypad[index].A = wParam;
 
 			break;
 		case IDC_II:
-			Joypad[index].II = wParam;
+			Joypad[index].B = wParam;
 
 			break;
 		case IDC_X:
-			Joypad[index].X = wParam;
+//			Joypad[index].X = wParam;
 
 			break;		
 		case IDC_Y:
-			Joypad[index].Y = wParam;
+//			Joypad[index].Y = wParam;
 
 			break;
 		case IDC_L:
@@ -1526,7 +1570,7 @@ switch(msg)
 
 			break;
 		case IDC_RUN:
-			Joypad[index].Run = wParam;
+			Joypad[index].Start = wParam;
 
 			break;
 		case IDC_UPLEFT:
@@ -1686,42 +1730,42 @@ void S9xWinScanJoypads ()
 			// toggle checks
 			{
        	     	PadState  = 0;
-				PadState |= ToggleJoypadStorage[J].Left||TurboToggleJoypadStorage[J].Left			? LEFT_MASK : 0;
-				PadState |= ToggleJoypadStorage[J].Right||TurboToggleJoypadStorage[J].Right			? RIGHT_MASK : 0;
-				PadState |= ToggleJoypadStorage[J].Up||TurboToggleJoypadStorage[J].Up				? UP_MASK : 0;
-				PadState |= ToggleJoypadStorage[J].Down||TurboToggleJoypadStorage[J].Down			? DOWN_MASK : 0;
-				PadState |= ToggleJoypadStorage[J].Run||TurboToggleJoypadStorage[J].Run			? RUN_MASK : 0;
+				PadState |= ToggleJoypadStorage[J].Left_Left||TurboToggleJoypadStorage[J].Left_Left			? LEFT_LEFT_MASK : 0;
+				PadState |= ToggleJoypadStorage[J].Left_Right||TurboToggleJoypadStorage[J].Left_Right			? LEFT_RIGHT_MASK : 0;
+				PadState |= ToggleJoypadStorage[J].Left_Up||TurboToggleJoypadStorage[J].Left_Up				? LEFT_UP_MASK : 0;
+				PadState |= ToggleJoypadStorage[J].Left_Down||TurboToggleJoypadStorage[J].Left_Down			? LEFT_DOWN_MASK : 0;
+				PadState |= ToggleJoypadStorage[J].Start||TurboToggleJoypadStorage[J].Start			? START_MASK : 0;
 				PadState |= ToggleJoypadStorage[J].Select||TurboToggleJoypadStorage[J].Select		? SELECT_MASK : 0;
-				PadState |= ToggleJoypadStorage[J].Lid||TurboToggleJoypadStorage[J].Lid				? LID_MASK : 0;
-				PadState |= ToggleJoypadStorage[J].Debug||TurboToggleJoypadStorage[J].Debug			? DEBUG_MASK : 0;
-				PadState |= ToggleJoypadStorage[J].I||TurboToggleJoypadStorage[J].I					? I_MASK : 0;
-				PadState |= ToggleJoypadStorage[J].II||TurboToggleJoypadStorage[J].II					? II_MASK : 0;
-				PadState |= ToggleJoypadStorage[J].X||TurboToggleJoypadStorage[J].X					? X_MASK : 0;
-				PadState |= ToggleJoypadStorage[J].Y||TurboToggleJoypadStorage[J].Y					? Y_MASK : 0;
+//				PadState |= ToggleJoypadStorage[J].Lid||TurboToggleJoypadStorage[J].Lid				? LID_MASK : 0;
+//				PadState |= ToggleJoypadStorage[J].Debug||TurboToggleJoypadStorage[J].Debug			? DEBUG_MASK : 0;
+				PadState |= ToggleJoypadStorage[J].A||TurboToggleJoypadStorage[J].A					? A_MASK : 0;
+				PadState |= ToggleJoypadStorage[J].B||TurboToggleJoypadStorage[J].B					? B_MASK : 0;
+//				PadState |= ToggleJoypadStorage[J].X||TurboToggleJoypadStorage[J].X					? X_MASK : 0;
+//				PadState |= ToggleJoypadStorage[J].Y||TurboToggleJoypadStorage[J].Y					? Y_MASK : 0;
 				PadState |= ToggleJoypadStorage[J].L||TurboToggleJoypadStorage[J].L					? L_MASK : 0;
 				PadState |= ToggleJoypadStorage[J].R||TurboToggleJoypadStorage[J].R				    ? R_MASK : 0;
 			}
 			// auto-hold AND regular key/joystick presses
-			if(S9xGetState(Joypad[J+5].Left))//if the autohold modifier isn't held
+			if(S9xGetState(Joypad[J+5].Left_Left))//if the autohold modifier isn't held
 			{
 				PadState ^= (!S9xGetState(Joypad[J].R)||!S9xGetState(Joypad[J+5].R))      ?  R_MASK : 0;
 				PadState ^= (!S9xGetState(Joypad[J].L)||!S9xGetState(Joypad[J+5].L))      ?  L_MASK : 0;
-				PadState ^= (!S9xGetState(Joypad[J].X)||!S9xGetState(Joypad[J+5].X))      ?  X_MASK : 0;
-				PadState ^= (!S9xGetState(Joypad[J].I)||!S9xGetState(Joypad[J+5].I))      ? I_MASK : 0;
-				PadState ^= (!S9xGetState(Joypad[J].Right))  ?   RIGHT_MASK : 0;
-				PadState ^= (!S9xGetState(Joypad[J].Right_Up))  ? RIGHT_MASK + UP_MASK : 0;
-				PadState ^= (!S9xGetState(Joypad[J].Right_Down)) ? RIGHT_MASK + DOWN_MASK : 0;
-				PadState ^= (!S9xGetState(Joypad[J].Left))   ?   LEFT_MASK : 0;
-				PadState ^= (!S9xGetState(Joypad[J].Left_Up)) ?   LEFT_MASK + UP_MASK : 0;
-				PadState ^= (!S9xGetState(Joypad[J].Left_Down)) ?  LEFT_MASK + DOWN_MASK : 0;
-				PadState ^= (!S9xGetState(Joypad[J].Down))   ?   DOWN_MASK : 0;
-				PadState ^= (!S9xGetState(Joypad[J].Up))     ?   UP_MASK : 0;
-				PadState ^= (!S9xGetState(Joypad[J].Run)||!S9xGetState(Joypad[J+5].Run))  ?  RUN_MASK : 0;
+////				PadState ^= (!S9xGetState(Joypad[J].X)||!S9xGetState(Joypad[J+5].X))      ?  X_MASK : 0;
+				PadState ^= (!S9xGetState(Joypad[J].A)||!S9xGetState(Joypad[J+5].A))      ? A_MASK : 0;
+				PadState ^= (!S9xGetState(Joypad[J].Left_Right))  ?   LEFT_RIGHT_MASK : 0;
+//				PadState ^= (!S9xGetState(Joypad[J].Right_Up))  ? RIGHT_MASK + UP_MASK : 0;
+//				PadState ^= (!S9xGetState(Joypad[J].Right_Down)) ? RIGHT_MASK + DOWN_MASK : 0;
+				PadState ^= (!S9xGetState(Joypad[J].Left_Left))   ?   LEFT_LEFT_MASK : 0;
+//				PadState ^= (!S9xGetState(Joypad[J].Left_Up)) ?   LEFT_MASK + UP_MASK : 0;
+//				PadState ^= (!S9xGetState(Joypad[J].Left_Down)) ?  LEFT_MASK + DOWN_MASK : 0;
+				PadState ^= (!S9xGetState(Joypad[J].Left_Down))   ?   LEFT_DOWN_MASK : 0;
+				PadState ^= (!S9xGetState(Joypad[J].Left_Up))     ?   LEFT_UP_MASK : 0;
+				PadState ^= (!S9xGetState(Joypad[J].Start)||!S9xGetState(Joypad[J+5].Start))  ?  START_MASK : 0;
 				PadState ^= (!S9xGetState(Joypad[J].Select)||!S9xGetState(Joypad[J+5].Select)) ?  SELECT_MASK : 0;
-				PadState ^= (!S9xGetState(Joypad[J].Y)||!S9xGetState(Joypad[J+5].Y))      ?  Y_MASK : 0;
-				PadState ^= (!S9xGetState(Joypad[J].II)||!S9xGetState(Joypad[J+5].II))      ? II_MASK : 0;
-				PadState ^= (!S9xGetState(Joypad[J].Lid)||!S9xGetState(Joypad[J+5].Lid))      ?  LID_MASK : 0;
-				PadState ^= (!S9xGetState(Joypad[J].Debug)||!S9xGetState(Joypad[J+5].Debug))      ? DEBUG_MASK : 0;
+//				PadState ^= (!S9xGetState(Joypad[J].Y)||!S9xGetState(Joypad[J+5].Y))      ?  Y_MASK : 0;
+				PadState ^= (!S9xGetState(Joypad[J].B)||!S9xGetState(Joypad[J+5].B))      ? B_MASK : 0;
+//				PadState ^= (!S9xGetState(Joypad[J].Lid)||!S9xGetState(Joypad[J+5].Lid))      ?  LID_MASK : 0;
+//				PadState ^= (!S9xGetState(Joypad[J].Debug)||!S9xGetState(Joypad[J+5].Debug))      ? DEBUG_MASK : 0;
 			}
 /*
 			bool turbofy = !S9xGetState(Joypad[J+8].Up); // All Mod for turbo
@@ -1771,6 +1815,9 @@ void S9xWinScanJoypads ()
 			//	if((PadState[1] & 8) != 0)
 			//		PadState[1] &= ~(4);
 			//}
+
+			if(PadState != 0)
+				printf("%d",PadState);
 
             joypads [J] = PadState | 0x80000000;
         }
@@ -2156,21 +2203,21 @@ int HandleKeyMessage(WPARAM wParam, LPARAM lParam, int modifiers)
 	for (int J = 0; J < 5; J++)
 	{
 		extern bool S9xGetState (WORD KeyIdent);
-		if(Joypad[J].Enabled && (!S9xGetState(Joypad[J+5].Left))) // enabled and Togglify
+		if(Joypad[J].Enabled && (!S9xGetState(Joypad[J+5].Left_Left))) // enabled and Togglify
 		{
 			SJoypad & p = ToggleJoypadStorage[J];
 			if(wParam == Joypad[J].L) p.L = !p.L;
 			if(wParam == Joypad[J].R) p.R = !p.R;
-			if(wParam == Joypad[J].I) p.I = !p.I;
-			if(wParam == Joypad[J].II) p.II = !p.II;
-			if(wParam == Joypad[J].Y) p.Y = !p.Y;
-			if(wParam == Joypad[J].X) p.X = !p.X;
-			if(wParam == Joypad[J].Run) p.Run = !p.Run;
+			if(wParam == Joypad[J].A) p.A = !p.A;
+			if(wParam == Joypad[J].B) p.B = !p.B;
+//			if(wParam == Joypad[J].Y) p.Y = !p.Y;
+//			if(wParam == Joypad[J].X) p.X = !p.X;
+			if(wParam == Joypad[J].Start) p.Start = !p.Start;
 			if(wParam == Joypad[J].Select) p.Select = !p.Select;
-			if(wParam == Joypad[J].Left) p.Left = !p.Left;
-			if(wParam == Joypad[J].Right) p.Right = !p.Right;
-			if(wParam == Joypad[J].Up) p.Up = !p.Up;
-			if(wParam == Joypad[J].Down) p.Down = !p.Down;
+			if(wParam == Joypad[J].Left_Left) p.Left_Left = !p.Left_Left;
+			if(wParam == Joypad[J].Left_Right) p.Left_Right = !p.Left_Right;
+			if(wParam == Joypad[J].Left_Up) p.Left_Up = !p.Left_Up;
+			if(wParam == Joypad[J].Left_Down) p.Left_Down = !p.Left_Down;
 ///					if(wParam == Joypad[J].Left_Down) p.Left_Down = !p.Left_Down;
 ///					if(wParam == Joypad[J].Left_Up) p.Left_Up = !p.Left_Up;
 ///					if(wParam == Joypad[J].Right_Down) p.Right_Down = !p.Right_Down;
@@ -2210,37 +2257,37 @@ int HandleKeyMessage(WPARAM wParam, LPARAM lParam, int modifiers)
 					p.Up = p.Down = false;
 			}*/
 //		}
-		if(wParam == Joypad[J+5].Right) // clear all
+		if(wParam == Joypad[J+5].Left_Right) // clear all
 		{
 			{
 				SJoypad & p = ToggleJoypadStorage[J];
 				p.L = false;
 				p.R = false;
-				p.I = false;
-				p.II = false;
-				p.Y = false;
-				p.X = false;
-				p.Run = false;
+				p.A = false;
+				p.B = false;
+//				p.Y = false;
+//				p.X = false;
+				p.Start = false;
 				p.Select = false;
-				p.Left = false;
-				p.Right = false;
-				p.Up = false;
-				p.Down = false;
+				p.Left_Left = false;
+				p.Left_Right = false;
+				p.Left_Up = false;
+				p.Left_Down = false;
 			}
 			{
 				SJoypad & p = TurboToggleJoypadStorage[J];
 				p.L = false;
 				p.R = false;
-				p.I = false;
-				p.II = false;
-				p.Y = false;
-				p.X = false;
-				p.Run = false;
+				p.A = false;
+				p.B = false;
+//				p.Y = false;
+//				p.X = false;
+				p.Start = false;
 				p.Select = false;
-				p.Left = false;
-				p.Right = false;
-				p.Up = false;
-				p.Down = false;
+				p.Left_Left = false;
+				p.Left_Right = false;
+				p.Left_Up = false;
+				p.Left_Down = false;
 			}
 			//MacroDisableAll();
 //			MacroChangeState(J, false);
@@ -3136,19 +3183,22 @@ void MDFNI_SaveSnapshot(void);
 }
 
 
-
+extern int MDFNSS_Load(const char *fname, const char *suffix);
 void HK_StateSaveSlot(int num)
 {
 	CurrentState = num;
 	//NEWTODO
-//	MDFNSS_Save(NULL, NULL, (uint32 *)VTBuffer[VTBackBuffer], (MDFN_Rect *)VTLineWidths[VTBackBuffer]);
+	extern int MDFNSS_Save(const char *fname, const char *suffix, const MDFN_Surface *surface, const MDFN_Rect *DisplayRect, const MDFN_Rect *LineWidths);
+//	MDFNSS_Save(NULL, NULL, reinterpret_cast<const MDFN_Surface*> (VTBuffer[VTBackBuffer]), NULL, (MDFN_Rect *)VTLineWidths[VTBackBuffer]);
+	MDFNSS_Save(NULL, NULL, espec.surface, (MDFN_Rect*)&espec.DisplayRect, (MDFN_Rect *)VTLineWidths[VTBackBuffer]);
+//(MDFN_Rect *)&VTDisplayRects[VTBackBuffer]
 }
 
 void HK_StateLoadSlot(int num)
 {
 	CurrentState = num;
 	//NEWTODO
-//	MDFNSS_Load(NULL, NULL);
+	MDFNSS_Load(NULL, NULL);
 }
 
 void HK_StateSetSlot(int num)

@@ -398,7 +398,7 @@ static void ForceEventUpdates(const v810_timestamp_t timestamp)
  //printf("FEU: %d %d %d\n", next_vip_ts, next_timer_ts, next_input_ts);
 }
 
-static void VB_Power(void)
+void VB_Power(void)
 {
  memset(WRAM, 0, 65536);
 

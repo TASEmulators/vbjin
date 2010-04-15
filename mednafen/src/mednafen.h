@@ -25,6 +25,8 @@ void MDFN_PrintError(const char *format, ...) ;//__attribute__ ((format (printf,
 //void MDFN_printf(const char *format, ...) ;//__attribute__ ((format (printf, 1, 2)));
 void MDFN_DispMessage(const char *format, ...) ;//__attribute__ ((format (printf, 1, 2)));
 
+MDFNGI *MDFNI_LoadGame(const char *force_module, const char *name);
+
 class MDFNException
 {
 	public:
