@@ -212,7 +212,7 @@ static void __forceinline convert32(const uint8* buffer, EmulateSpecStruct *espe
 
 	for(int y = espec->DisplayRect.y; y < espec->DisplayRect.y + espec->DisplayRect.h; y++)
 	{
-		uint16 meow_width = 384;//(espec->LineWidths[0].w == ~0) ? espec->DisplayRect.w : espec->LineWidths[y].w;
+		uint16 meow_width = (espec->LineWidths[0].w == ~0) ? espec->DisplayRect.w : espec->LineWidths[y].w;
 		int meow_x = (espec->LineWidths[0].w == ~0) ? espec->DisplayRect.x : espec->LineWidths[y].x;
 		uint32 *fb_line = espec->surface->pixels + y * (MDFNGameInfo->pitch >> 2) + meow_x;
 
