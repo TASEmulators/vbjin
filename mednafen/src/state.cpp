@@ -36,6 +36,8 @@
 #include <map>
 #include "assert.h"
 #include "memory.h"
+#include "movie.h"
+#include "pcejin.h"
 
 static int SaveStateStatus[10];
 
@@ -580,7 +582,9 @@ int MDFNSS_SaveSM(StateMem *st, int wantpreview, int data_only, const MDFN_Surfa
 	if(!data_only)
 	{
          memset(header+16,0,16);
-	 MDFN_en32lsb(header + 16, MEDNAFEN_VERSION_NUMERIC);
+		MDFN_en32lsb(header + 12, currFrameCounter);
+		MDFN_en32lsb(header + 16, pcejin.lagFrameCounter);
+//	 MDFN_en32lsb(header + 16, MEDNAFEN_VERSION_NUMERIC);
 	 MDFN_en32lsb(header + 24, neowidth);
 	 MDFN_en32lsb(header + 28, neoheight);
 	 smem_write(st, header, 32);
@@ -719,27 +723,30 @@ int MDFNSS_SaveFP(gzFile fp, const MDFN_Surface *surface, const MDFN_Rect *Displ
 
 int MDFNSS_LoadSM(StateMem *st, int haspreview, int data_only)
 {
-        uint8 header[32];
+	uint8 header[32];
 	uint32 stateversion;
 
 	if(data_only)
 	{
-	 stateversion = MEDNAFEN_VERSION_NUMERIC;
+		stateversion = MEDNAFEN_VERSION_NUMERIC;
 	}
 	else
 	{
-         smem_read(st, header, 32);
-         if(memcmp(header,"MEDNAFENSVESTATE",16))
-          return(0);
+		smem_read(st, header, 32);
+		//       if(memcmp(header,"MEDNAFENSVESTATE",16))
+		//      return(0);
 
-	 stateversion = MDFN_de32lsb(header + 16);
+		stateversion = MDFN_de32lsb(header + 16);
 
-	 if(stateversion < 0x0600)
- 	 {
-	  printf("State too old: %08x\n", stateversion);
-	  return(0);
-	 }
+		if(stateversion < 0x0600)
+		{
+	//		printf("State too old: %08x\n", stateversion);
+	//		return(0);
+		}
 	}
+
+	currFrameCounter = MDFN_de32lsb(header + 12);  
+	pcejin.lagFrameCounter = MDFN_de32lsb(header + 16);
 
 	if(haspreview)
         {
@@ -799,48 +806,48 @@ int MDFNSS_Load(const char *fname, const char *suffix)
 {
 	gzFile st;
 
-        if(!MDFNGameInfo->StateAction)
-        {
-         MDFN_DispMessage(_("Module \"%s\" doesn't support save states."), MDFNGameInfo->shortname);
-         return(0);
-        }
+	if(!MDFNGameInfo->StateAction)
+	{
+		MDFN_DispMessage(_("Module \"%s\" doesn't support save states."), MDFNGameInfo->shortname);
+		return(0);
+	}
 
-        if(fname)
-         st=gzopen(fname, "rb");
-        else
-        {
-         st=gzopen(MDFN_MakeFName(MDFNMKF_STATE,CurrentState,suffix).c_str(),"rb");
+	if(fname)
+		st=gzopen(fname, "rb");
+	else
+	{
+		st=gzopen(MDFN_MakeFName(MDFNMKF_STATE,CurrentState,suffix).c_str(),"rb");
 	}
 
 	if(st == NULL)
 	{
-	 if(!fname && !suffix)
-	 {
-          MDFN_DispMessage(_("State %d load error."),CurrentState);
-          SaveStateStatus[CurrentState]=0;
-	 }
-	 return(0);
+		if(!fname && !suffix)
+		{
+			MDFN_DispMessage(_("State %d load error."),CurrentState);
+			SaveStateStatus[CurrentState]=0;
+		}
+		return(0);
 	}
 
 	if(MDFNSS_LoadFP(st))
 	{
-	 if(!fname && !suffix)
-	 {
-		  LoadStateMovie((char*)MDFN_MakeFName(MDFNMKF_STATE,CurrentState,suffix).c_str());
-          SaveStateStatus[CurrentState]=1;
-          MDFN_DispMessage(_("State %d loaded."),CurrentState);
-          SaveStateStatus[CurrentState]=1;
-	 }
-	 gzclose(st);
-         return(1);
-        }   
-        else
-        {
-         SaveStateStatus[CurrentState]=1;
-         MDFN_DispMessage(_("State %d read error!"),CurrentState);
-	 gzclose(st);
-         return(0);
-        }
+		if(!fname && !suffix)
+		{
+			LoadStateMovie((char*)MDFN_MakeFName(MDFNMKF_STATE,CurrentState,suffix).c_str());
+			SaveStateStatus[CurrentState]=1;
+			MDFN_DispMessage(_("State %d loaded."),CurrentState);
+			SaveStateStatus[CurrentState]=1;
+		}
+		gzclose(st);
+		return(1);
+	}
+	else
+	{
+		SaveStateStatus[CurrentState]=1;
+		MDFN_DispMessage(_("State %d read error!"),CurrentState);
+		gzclose(st);
+		return(0);
+	}
 }
 
 void MDFNSS_CheckStates(void)
