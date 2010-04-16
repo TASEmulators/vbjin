@@ -371,9 +371,7 @@ void LoadGame(){
 	if(GetOpenFileName(&ofn)) {
 		pcejin.romLoaded = true;
 		pcejin.started = true;
-		
-
-		//NEWTODO
+	
 		if(!MDFNI_LoadGame(NULL,szChoice)) {
 			pcejin.started = false;
 			pcejin.romLoaded = false;
@@ -659,8 +657,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			//-------------------------------------------------------
 			//Else load it as a ROM
 			//-------------------------------------------------------
-			/*NEWTODO
-			else if(MDFNI_LoadGame(filename))
+			else if(MDFNI_LoadGame(NULL,filename))
 			{
 				pcejin.romLoaded = true;
 				pcejin.started = true;
@@ -674,7 +671,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 				}
 				UpdateRecentRoms(filename);
 				////////////////////////////////
-			}*/
+			}
 		}
 		return 0;
 	case WM_ENTERMENULOOP:
