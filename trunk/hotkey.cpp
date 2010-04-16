@@ -79,6 +79,8 @@ struct SJoypad {
 #define R_MASK 0x0004
 #define L_MASK 0x0008
 
+//these should be correct but let's try...
+#if 0
 #define RIGHT_UP_MASK 0x0010
 #define RIGHT_RIGHT_MASK 0x0020
 #define LEFT_RIGHT_MASK 0x0040
@@ -91,6 +93,22 @@ struct SJoypad {
 
 #define RIGHT_LEFT_MASK 0x1000
 #define RIGHT_DOWN_MASK 0x2000
+#endif
+
+//these. why did i have to swap right down and right right? something is probably messed in the hotkeys somewhere
+#define RIGHT_UP_MASK 0x0010
+#define RIGHT_RIGHT_MASK 0x2000
+#define LEFT_RIGHT_MASK 0x0040
+#define LEFT_LEFT_MASK 0x0080
+
+#define LEFT_DOWN_MASK 0x0100
+#define LEFT_UP_MASK 0x0200
+#define START_MASK 0x0400
+#define SELECT_MASK 0x0800
+
+#define RIGHT_LEFT_MASK 0x1000
+#define RIGHT_DOWN_MASK 0x0020
+
 /*
 #define SELECT_MASK 0x0004
 #define START_MASK 0x0008
@@ -174,10 +192,10 @@ LRESULT InputCustom_OnPaint(InputCust *ccp, WPARAM wParam, LPARAM lParam);
 #define INPUTCONFIG_LABEL_R "R"
 #define INPUTCONFIG_LABEL_RUN "Run"
 #define INPUTCONFIG_LABEL_SELECT "Select"
-#define INPUTCONFIG_LABEL_UPLEFT "Up Left"
-#define INPUTCONFIG_LABEL_UPRIGHT "Up Right"
-#define INPUTCONFIG_LABEL_DOWNRIGHT "Dn Right"
-#define INPUTCONFIG_LABEL_DOWNLEFT "Dn Left"
+#define INPUTCONFIG_LABEL_UPLEFT "R-Up"
+#define INPUTCONFIG_LABEL_UPRIGHT "R-Left"
+#define INPUTCONFIG_LABEL_DOWNRIGHT "R-Down"
+#define INPUTCONFIG_LABEL_DOWNLEFT "R-Right"
 #define INPUTCONFIG_LABEL_BLUE "Blue means the button is already mapped.\nPink means it conflicts with a custom hotkey.\nRed means it's reserved by Windows.\nButtons can be disabled using Escape.\nGrayed buttons arent supported yet (sorry!)"
 #define INPUTCONFIG_LABEL_UNUSED ""
 #define INPUTCONFIG_LABEL_CLEAR_TOGGLES_AND_TURBO "Clear All"
@@ -312,7 +330,7 @@ u32 joypads [8];
 SJoypad DefaultJoypad[16] = {
     {
         true,					/* Joypad 1 enabled */
-			VK_LEFT, VK_RIGHT, VK_UP, VK_DOWN,	/* Left, Right, Up, Down */
+			VK_UP, VK_DOWN, VK_RIGHT, VK_LEFT ,	/* Left, Right, Up, Down */
 			0, 0, 0, 0,             /* Left_Up, Left_Down, Right_Up, Right_Down */
 			VK_RETURN, VK_RSHIFT,    /* Start, Select */
 			0, 0,					/* Lid, Debug */
@@ -460,10 +478,12 @@ void LoadInputConfig()
 		ReadControl("Left_Right",temp,Joypad[i].Left_Right);
 		ReadControl("Left_Up",temp,Joypad[i].Left_Up);
 		ReadControl("Left_Down",temp,Joypad[i].Left_Down);
+
 		ReadControl("Right_Left",temp,Joypad[i].Right_Left);
 		ReadControl("Right_Right",temp,Joypad[i].Right_Right);
 		ReadControl("Right_Up",temp,Joypad[i].Right_Up);
 		ReadControl("Right_Down",temp,Joypad[i].Right_Down);
+
 		ReadControl("Start",temp,Joypad[i].Start);
 		ReadControl("Select",temp,Joypad[i].Select);
 //		ReadControl("Lid",temp,Joypad[i].Lid);
@@ -982,10 +1002,12 @@ int GetNumButtonsAssignedTo (WORD Key)
 		if(Key == Joypad[J].Left_Right)      count++;
 		if(Key == Joypad[J].Left_Up)    count++;
 		if(Key == Joypad[J].Left_Down)  count++;
+
 		if(Key == Joypad[J].Right_Up)   count++;
 		if(Key == Joypad[J].Right_Down) count++;
 		if(Key == Joypad[J].Right_Left)         count++;
 		if(Key == Joypad[J].Right_Right)       count++;
+
 		if(Key == Joypad[J].Start)      count++;
 		if(Key == Joypad[J].Select)     count++;
 		if(Key == Joypad[J].A)          count++;
@@ -1333,18 +1355,19 @@ static LRESULT CALLBACK GuitarInputCustomWndProc(HWND hwnd, UINT msg, WPARAM wPa
 }
 
 static bool keyPressLock = false;
-
+#include "assert.h"
 static void set_buttoninfo(int index, HWND hDlg)
 {
+	assert(false);
 	SendDlgItemMessage(hDlg,IDC_UP,WM_USER+44,Joypad[index].Left_Up,0);
 	SendDlgItemMessage(hDlg,IDC_LEFT,WM_USER+44,Joypad[index].Left_Left,0);
 	SendDlgItemMessage(hDlg,IDC_DOWN,WM_USER+44,Joypad[index].Left_Down,0);
 	SendDlgItemMessage(hDlg,IDC_RIGHT,WM_USER+44,Joypad[index].Left_Right,0);
 	//NEWTODO
-	SendDlgItemMessage(hDlg,IDC_Right_UP,WM_USER+44,Joypad[index].Right_Up,0);
-	SendDlgItemMessage(hDlg,IDC_Right_LEFT,WM_USER+44,Joypad[index].Right_Left,0);
-	SendDlgItemMessage(hDlg,IDC_Right_DOWN,WM_USER+44,Joypad[index].Right_Down,0);
-	SendDlgItemMessage(hDlg,IDC_Right_RIGHT,WM_USER+44,Joypad[index].Right_Right,0);
+	SendDlgItemMessage(hDlg,IDC_UPLEFT,WM_USER+44,Joypad[index].Right_Up,0);
+	SendDlgItemMessage(hDlg,IDC_UPRIGHT,WM_USER+44,Joypad[index].Right_Left,0);
+	SendDlgItemMessage(hDlg,IDC_DWNLEFT,WM_USER+44,Joypad[index].Right_Down,0);
+	SendDlgItemMessage(hDlg,IDC_DWNRIGHT,WM_USER+44,Joypad[index].Right_Right,0);
 
 	SendDlgItemMessage(hDlg,IDC_I,WM_USER+44,Joypad[index].A,0);
 	SendDlgItemMessage(hDlg,IDC_II,WM_USER+44,Joypad[index].B,0);
@@ -1371,13 +1394,13 @@ void EnableDisableKeyFields (int index, HWND hDlg)
 	if(index < 5)
 	{
 		SetDlgItemText(hDlg,IDC_LABEL_RIGHT,INPUTCONFIG_LABEL_RIGHT);
-//		SetDlgItemText(hDlg,IDC_LABEL_UPLEFT,INPUTCONFIG_LABEL_UPLEFT);
-//		SetDlgItemText(hDlg,IDC_LABEL_UPRIGHT,INPUTCONFIG_LABEL_UPRIGHT);
-//		SetDlgItemText(hDlg,IDC_LABEL_DOWNRIGHT,INPUTCONFIG_LABEL_DOWNRIGHT);
+		SetDlgItemText(hDlg,IDC_LABEL_UPLEFT,INPUTCONFIG_LABEL_UPLEFT);
+		SetDlgItemText(hDlg,IDC_LABEL_UPRIGHT,INPUTCONFIG_LABEL_UPRIGHT);
+		SetDlgItemText(hDlg,IDC_LABEL_DOWNRIGHT,INPUTCONFIG_LABEL_DOWNRIGHT);
 		SetDlgItemText(hDlg,IDC_LABEL_UP,INPUTCONFIG_LABEL_UP);
 		SetDlgItemText(hDlg,IDC_LABEL_LEFT,INPUTCONFIG_LABEL_LEFT);
 		SetDlgItemText(hDlg,IDC_LABEL_DOWN,INPUTCONFIG_LABEL_DOWN);
-//		SetDlgItemText(hDlg,IDC_LABEL_DOWNLEFT,INPUTCONFIG_LABEL_DOWNLEFT);
+		SetDlgItemText(hDlg,IDC_LABEL_DOWNLEFT,INPUTCONFIG_LABEL_DOWNLEFT);
 		enableUnTurboable = true;
 	}
 	else
@@ -1399,12 +1422,12 @@ void EnableDisableKeyFields (int index, HWND hDlg)
 
 	EnableWindow(GetDlgItem(hDlg,IDC_X), false);
 	EnableWindow(GetDlgItem(hDlg,IDC_Y), false);
-	EnableWindow(GetDlgItem(hDlg,IDC_L), false);
-	EnableWindow(GetDlgItem(hDlg,IDC_R), false);
-	EnableWindow(GetDlgItem(hDlg,IDC_UPLEFT), false);
-	EnableWindow(GetDlgItem(hDlg,IDC_UPRIGHT), false);
-	EnableWindow(GetDlgItem(hDlg,IDC_DWNRIGHT), false);
-	EnableWindow(GetDlgItem(hDlg,IDC_DWNLEFT), false);
+	EnableWindow(GetDlgItem(hDlg,IDC_L), true);
+	EnableWindow(GetDlgItem(hDlg,IDC_R), true);
+	EnableWindow(GetDlgItem(hDlg,IDC_UPLEFT), true);
+	EnableWindow(GetDlgItem(hDlg,IDC_UPRIGHT), true);
+	EnableWindow(GetDlgItem(hDlg,IDC_DWNRIGHT), true);
+	EnableWindow(GetDlgItem(hDlg,IDC_DWNLEFT), true);
 	EnableWindow(GetDlgItem(hDlg,IDC_DEBUG), false);
 	EnableWindow(GetDlgItem(hDlg,IDC_LID), false);
 }
@@ -1573,21 +1596,21 @@ switch(msg)
 			Joypad[index].Start = wParam;
 
 			break;
+			
 		case IDC_UPLEFT:
-			Joypad[index].Left_Up = wParam;
-
-			break;
-		case IDC_UPRIGHT:
 			Joypad[index].Right_Up = wParam;
 
 			break;
+		case IDC_UPRIGHT:
+			Joypad[index].Right_Left = wParam;
+
+			break;
 		case IDC_DWNLEFT:
-			Joypad[index].Left_Down = wParam;
+			Joypad[index].Right_Down = wParam;
 
 			break;
 		case IDC_DWNRIGHT:
-			Joypad[index].Right_Down = wParam;
-
+			Joypad[index].Right_Right = wParam;
 			break;
 
 		}
@@ -1760,6 +1783,13 @@ void S9xWinScanJoypads ()
 //				PadState ^= (!S9xGetState(Joypad[J].Left_Down)) ?  LEFT_MASK + DOWN_MASK : 0;
 				PadState ^= (!S9xGetState(Joypad[J].Left_Down))   ?   LEFT_DOWN_MASK : 0;
 				PadState ^= (!S9xGetState(Joypad[J].Left_Up))     ?   LEFT_UP_MASK : 0;
+
+				PadState ^= (!S9xGetState(Joypad[J].Right_Right))  ?   RIGHT_RIGHT_MASK : 0;
+				PadState ^= (!S9xGetState(Joypad[J].Right_Left))   ?   RIGHT_LEFT_MASK : 0;
+				PadState ^= (!S9xGetState(Joypad[J].Right_Down))   ?   RIGHT_DOWN_MASK : 0;
+				PadState ^= (!S9xGetState(Joypad[J].Right_Up))     ?   RIGHT_UP_MASK : 0;
+
+
 				PadState ^= (!S9xGetState(Joypad[J].Start)||!S9xGetState(Joypad[J+5].Start))  ?  START_MASK : 0;
 				PadState ^= (!S9xGetState(Joypad[J].Select)||!S9xGetState(Joypad[J+5].Select)) ?  SELECT_MASK : 0;
 //				PadState ^= (!S9xGetState(Joypad[J].Y)||!S9xGetState(Joypad[J+5].Y))      ?  Y_MASK : 0;
@@ -2199,6 +2229,7 @@ int HandleKeyUp(WPARAM wParam, LPARAM lParam, int modifiers)
 
 int HandleKeyMessage(WPARAM wParam, LPARAM lParam, int modifiers)
 {
+	assert(false);
 	// update toggles
 	for (int J = 0; J < 5; J++)
 	{
@@ -3182,14 +3213,14 @@ void MDFNI_SaveSnapshot(void);
 //	YuiScreenshot(g_hWnd);
 }
 
+extern int MDFNSS_Save(const char *fname, const char *suffix, const MDFN_Surface *surface, const MDFN_Rect *DisplayRect, const MDFN_Rect *LineWidths);
 
 extern int MDFNSS_Load(const char *fname, const char *suffix);
 void HK_StateSaveSlot(int num)
 {
 	CurrentState = num;
 	//NEWTODO
-	extern int MDFNSS_Save(const char *fname, const char *suffix, const MDFN_Surface *surface, const MDFN_Rect *DisplayRect, const MDFN_Rect *LineWidths);
-//	MDFNSS_Save(NULL, NULL, reinterpret_cast<const MDFN_Surface*> (VTBuffer[VTBackBuffer]), NULL, (MDFN_Rect *)VTLineWidths[VTBackBuffer]);
+	//	MDFNSS_Save(NULL, NULL, reinterpret_cast<const MDFN_Surface*> (VTBuffer[VTBackBuffer]), NULL, (MDFN_Rect *)VTLineWidths[VTBackBuffer]);
 	MDFNSS_Save(NULL, NULL, espec.surface, (MDFN_Rect*)&espec.DisplayRect, (MDFN_Rect *)VTLineWidths[VTBackBuffer]);
 //(MDFN_Rect *)&VTDisplayRects[VTBackBuffer]
 }
@@ -3211,12 +3242,14 @@ void HK_StateSetSlot(int num)
 
 void HK_StateQuickSaveSlot(int)
 {
-//NEWTODO	MDFNSS_Save(NULL, NULL, (uint32 *)VTBuffer[VTBackBuffer], (MDFN_Rect *)VTLineWidths[VTBackBuffer]);
+		MDFNSS_Save(NULL, NULL, espec.surface, (MDFN_Rect*)&espec.DisplayRect, (MDFN_Rect *)VTLineWidths[VTBackBuffer]);
+
+//	MDFNSS_Save(NULL, NULL, (uint32 *)VTBuffer[VTBackBuffer], (MDFN_Rect *)VTLineWidths[VTBackBuffer]);
 }
 
 void HK_StateQuickLoadSlot(int)
 {
-//NEWTODO	MDFNSS_Load(NULL, NULL);
+	MDFNSS_Load(NULL, NULL);
 }
 
 void HK_AutoHoldClearKeyDown(int) {
@@ -3297,19 +3330,20 @@ void HK_TurboSelectKeyUp(int) { Turbo.Select = false; }
 void HK_ToggleFullScreen(int) {};// ToggleFullScreenHK(); }
 
 void HK_NextSaveSlot(int) { 
-/*	lastSaveState++; 
-	if(lastSaveState>9) 
-		lastSaveState=0; 
-	SaveStateMessages(lastSaveState,2);*/
+	
+//	lastSaveState++; 
+//	if(lastSaveState>9) 
+//		lastSaveState=0; 
+//	SaveStateMessages(lastSaveState,2);
 }
 
 void HK_PreviousSaveSlot(int) { 
 
-/*	if(lastSaveState==0) 
-		lastSaveState=9; 
-	else
-		lastSaveState--;
-	SaveStateMessages(lastSaveState,2); */
+//	if(lastSaveState==0) 
+//		lastSaveState=9; 
+//	else
+//		lastSaveState--;
+//	SaveStateMessages(lastSaveState,2); 
 }
 
 void FrameAdvance(bool state);
