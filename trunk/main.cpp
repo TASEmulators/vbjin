@@ -362,27 +362,16 @@ void LoadGame(){
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = g_hWnd;
-	ofn.lpstrFilter = "VB Files (*.vb, *.zip)\0*.vb;*.cue;*.toc;*.sgx;*.zip\0All files(*.*)\0*.*\0\0";
-//	ofn.lpstrFilter = "PC Engine Files (*.pce, *.cue, *.toc, *.sgx *.zip)\0*.pce;*.cue;*.toc;*.sgx;*.zip\0All files(*.*)\0*.*\0\0";
+	ofn.lpstrFilter = "VB Files (*.vb, *.zip)\0*.vb;*.zip\0All files(*.*)\0*.*\0\0";
 	ofn.lpstrFile = (LPSTR)szChoice;
 	ofn.lpstrTitle = "Select a file to open";
-	ofn.lpstrDefExt = "pce";
+	ofn.lpstrDefExt = "vb";
 	ofn.nMaxFile = MAX_PATH;
 	ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
 	if(GetOpenFileName(&ofn)) {
 		pcejin.romLoaded = true;
 		pcejin.started = true;
-		if(strlen(szChoice) > 4 && (!strcasecmp(szChoice + strlen(szChoice) - 4, ".cue") || !strcasecmp(szChoice + strlen(szChoice) - 4, ".toc"))) {
-			char ret[MAX_PATH];
-			GetPrivateProfileString("Main", "Bios", "pce.cdbios PATH NOT SET", ret, MAX_PATH, IniName);
-			if(std::string(ret) == "pce.cdbios PATH NOT SET") {
-				pcejin.started = false;
-				pcejin.romLoaded = false;
-				MDFN_DispMessage("specify your PCE CD bios");
-				return;
-			}
-		}
-
+		
 
 		//NEWTODO
 		if(!MDFNI_LoadGame(NULL,szChoice)) {
@@ -508,15 +497,11 @@ void RecordMovie(HWND hWnd){
 	if(GetSaveFileName(&ofn))
 		FCEUI_SaveMovie(szChoice, a, 1);
 
-	//If user did not specify an extension, add .dsm for them
+	//If user did not specify an extension, add .mc2 for them
 	// fname = szChoice;
 	// x = fname.find_last_of(".");
 	// if (x < 0)
 	// fname.append(".mc2");
-
-
-
-	
 
 	// SetDlgItemText(hwndDlg, IDC_EDIT_FILENAME, fname.c_str());
 	//if(GetSaveFileName(&ofn))
@@ -804,13 +789,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 
-		case IDM_BIOS_CONFIG:
-			soundDriver->pause();
-
-			DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_BIOS), hWnd, (DLGPROC) BiosSettingsDlgProc);
-			// DialogBox(g_hInstance, MAKEINTRESOURCE(IDD_KEYCUSTOM), hWnd, BiosSettingsDlgProc);
-			pcejin.tempUnPause();
-			break;
 		case ID_VIEW_FRAMECOUNTER:
 			Hud.FrameCounterDisplay ^= true;
 			WritePrivateProfileBool("Display", "FrameCounter", Hud.FrameCounterDisplay, IniName);
@@ -1179,81 +1157,6 @@ void FrameAdvance(bool state)
 	}
 }
 
-LRESULT CALLBACK BiosSettingsDlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	switch(uMsg)
-	{
-	case WM_INITDIALOG:
-		{
-
-			char ret[MAX_PATH];
-			GetPrivateProfileString("Main", "Bios", "pce.cdbios PATH NOT SET", ret, MAX_PATH, IniName);
-			SetDlgItemText(hDlg, IDC_BIOSTEXT, ret);
-		}
-		return TRUE;
-
-	case WM_COMMAND:
-		{
-			switch(LOWORD(wParam))
-			{
-			case IDOK:
-				{
-					int val = 0;
-
-					HWND cur;
-
-					char bios[MAX_PATH];
-
-					cur = GetDlgItem(hDlg, IDC_BIOSTEXT);
-					GetWindowText(cur, bios, 256);
-
-					WritePrivateProfileString("Main", "Bios", bios, IniName);
-					EndDialog(hDlg, TRUE);
-				}
-				break;
-			case IDCANCEL:
-				EndDialog(hDlg, TRUE);
-				return TRUE;
-
-			case IDC_BIOSBROWSE:
-				{
-					char fileName[256] = "";
-					OPENFILENAME ofn;
-
-					ZeroMemory(&ofn, sizeof(ofn));
-					ofn.lStructSize = sizeof(ofn);
-					ofn.hwndOwner = hDlg;
-					ofn.lpstrFilter = "Any file(*.*)\0*.*\0\0";
-					ofn.nFilterIndex = 1;
-					ofn.lpstrFile = fileName;
-					ofn.nMaxFile = 256;
-					ofn.lpstrDefExt = "bin";
-					ofn.Flags = OFN_NOCHANGEDIR;
-
-					char buffer[MAX_PATH];
-					ZeroMemory(buffer, sizeof(buffer));
-					// path.getpath(path.SOUNDS, buffer);
-					// ofn.lpstrInitialDir = buffer;
-
-					if(GetOpenFileName(&ofn))
-					{
-						HWND cur;
-
-						switch(LOWORD(wParam))
-						{
-						case IDC_BIOSBROWSE: cur = GetDlgItem(hDlg, IDC_BIOSTEXT); break;
-						}
-
-						SetWindowText(cur, fileName);
-					}
-				}
-				return TRUE;
-			}//end switch
-		}
-		return TRUE;
-	}
-	return FALSE;
-}
 
 // Message handler for about box.
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
