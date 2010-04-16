@@ -65,6 +65,10 @@ static uint8 *WRAM = NULL;
 static uint8 *GPRAM = NULL;
 static uint32 GPRAM_Mask;
 
+void clearGPRAM(){
+memset(GPRAM, 0, GPRAM_Mask + 1);
+}
+
 static uint8 *GPROM = NULL;
 static uint32 GPROM_Mask;
 

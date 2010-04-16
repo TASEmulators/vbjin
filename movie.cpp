@@ -454,14 +454,17 @@ void FCEUI_StopMovie()
 	extern void PCE_Power(void);
 
 extern uint8 SaveRAM[2048];
+#include "vb.h"
 
 void ClearPCESRAM(void) {
 //NEWTODO
+	MDFN_IEN_VB::clearGPRAM();
+
 //  memset(SaveRAM, 0x00, 2048);
 //  memcpy(SaveRAM, "HUBM\x00\xa0\x10\x80", 8);  
 
 }
-#include "vb.h"
+
 //begin playing an existing movie
 void FCEUI_LoadMovie(const char *fname, bool _read_only, bool tasedit, int _pauseframe)
 {
