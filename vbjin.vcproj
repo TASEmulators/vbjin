@@ -297,11 +297,11 @@
 			>
 		</File>
 		<File
-			RelativePath=".\mednafen\include\blip\Blip_Buffer.h"
+			RelativePath=".\mednafen\include\blip\old\Blip_Buffer.h"
 			>
 		</File>
 		<File
-			RelativePath=".\mednafen\include\blip\old\Blip_Buffer.h"
+			RelativePath=".\mednafen\include\blip\Blip_Buffer.h"
 			>
 		</File>
 		<File
@@ -478,6 +478,14 @@
 		</File>
 		<File
 			RelativePath=".\pcejin.rc"
+			>
+		</File>
+		<File
+			RelativePath=".\Icons\pcejin1.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\Icons\pcejin1.ico"
 			>
 		</File>
 		<File
