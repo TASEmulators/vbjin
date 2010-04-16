@@ -64,7 +64,7 @@ void MDFNI_SaveSnapshot(const MDFN_Surface *src, const MDFN_Rect *DisplayRect)
   MDFN_DispMessage(_("Error saving screen snapshot."));
  }
 }
-
+#include "GPU_osd.h"
 void MDFN_DispMessage(const char *format, ...)
 {
  va_list ap;
@@ -73,6 +73,8 @@ void MDFN_DispMessage(const char *format, ...)
 
  trio_vasprintf(&msg, format,ap);
  va_end(ap);
+
+ osd->addLine("%s", msg);
 
 // MDFND_DispMessage(msg);//(UTF8*)
 }
