@@ -215,11 +215,11 @@ FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     CONTROL         132,IDC_STATIC,"Static",SS_BITMAP,9,14,21,20
     LTEXT           "version",IDC_TXT_VERSION,14,67,114,8,SS_NOPREFIX
-    LTEXT           "http://code.google.com/p/pcejin/",IDC_STATIC,14,85,114,8
+    LTEXT           "http://code.google.com/p/vbjjin/",IDC_STATIC,14,85,114,8
     DEFPUSHBUTTON   "OK",IDOK,113,108,50,14,WS_GROUP
     LTEXT           "For more information visit:",IDC_STATIC,14,76,85,8
-    LTEXT           "PCEjin",IDC_STATIC,37,14,21,8
-    LTEXT           "A PC Engine / Turbografx 16 emulator",IDC_STATIC,37,23,122,8
+    LTEXT           "VBjin",IDC_STATIC,37,14,16,8
+    LTEXT           "A Virtual Boy emulator",IDC_STATIC,37,23,72,8
     LTEXT           "For Windows",IDC_STATIC,37,32,42,8
     LTEXT           "Written by Paul_t",IDC_STATIC,37,41,57,8
 END
