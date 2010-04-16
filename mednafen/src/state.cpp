@@ -545,103 +545,104 @@ int MDFNSS_StateAction(StateMem *st, int load, int data_only, SFORMAT *sf, const
 
 int MDFNSS_SaveSM(StateMem *st, int wantpreview, int data_only, const MDFN_Surface *surface, const MDFN_Rect *DisplayRect, const MDFN_Rect *LineWidths)
 {
-        static uint8 header[32]="MEDNAFENSVESTATE";
+	static uint8 header[32]="MEDNAFENSVESTATE";
 	int neowidth = 0, neoheight = 0;
 
 	if(wantpreview)
 	{
-	 bool is_multires = FALSE;
+		bool is_multires = FALSE;
 
-	 // We'll want to use the nominal width if the source rectangle is > 25% off on either axis, or the source image has
-	 // multiple horizontal resolutions.
-	 neowidth = MDFNGameInfo->nominal_width;
-	 neoheight = MDFNGameInfo->nominal_height;
+		// We'll want to use the nominal width if the source rectangle is > 25% off on either axis, or the source image has
+		// multiple horizontal resolutions.
+		neowidth = MDFNGameInfo->nominal_width;
+		neoheight = MDFNGameInfo->nominal_height;
 
-	 if(LineWidths[0].w != ~0)
- 	 {
-	  uint32 first_w = LineWidths[DisplayRect->y].w;
+		if(LineWidths[0].w != ~0)
+		{
+			uint32 first_w = LineWidths[DisplayRect->y].w;
 
-	  for(int y = 0; y < DisplayRect->h; y++)
-	   if(LineWidths[DisplayRect->y + y].w != first_w)
-	   {
-	    puts("Multires!");
-	    is_multires = TRUE;
-	   }
-	 }
+			for(int y = 0; y < DisplayRect->h; y++)
+				if(LineWidths[DisplayRect->y + y].w != first_w)
+				{
+					puts("Multires!");
+					is_multires = TRUE;
+				}
+		}
 
-	 if(!is_multires)
-	 {
-	  if(((double)DisplayRect->w / MDFNGameInfo->nominal_width) > 0.75  && ((double)DisplayRect->w / MDFNGameInfo->nominal_width) < 1.25)
-	   neowidth = DisplayRect->w;
+		if(!is_multires)
+		{
+			if(((double)DisplayRect->w / MDFNGameInfo->nominal_width) > 0.75 && ((double)DisplayRect->w / MDFNGameInfo->nominal_width) < 1.25)
+				neowidth = DisplayRect->w;
 
-          if(((double)DisplayRect->h / MDFNGameInfo->nominal_height) > 0.75  && ((double)DisplayRect->h / MDFNGameInfo->nominal_height) < 1.25)
-	   neoheight = DisplayRect->h;
-	 }
+			if(((double)DisplayRect->h / MDFNGameInfo->nominal_height) > 0.75 && ((double)DisplayRect->h / MDFNGameInfo->nominal_height) < 1.25)
+				neoheight = DisplayRect->h;
+		}
 	}
 
 	if(!data_only)
 	{
-         memset(header+16,0,16);
+		memset(header+16,0,16);
 		MDFN_en32lsb(header + 12, currFrameCounter);
 		MDFN_en32lsb(header + 16, pcejin.lagFrameCounter);
-//	 MDFN_en32lsb(header + 16, MEDNAFEN_VERSION_NUMERIC);
-	 MDFN_en32lsb(header + 24, neowidth);
-	 MDFN_en32lsb(header + 28, neoheight);
-	 smem_write(st, header, 32);
+		// MDFN_en32lsb(header + 16, MEDNAFEN_VERSION_NUMERIC);
+		MDFN_en32lsb(header + 24, neowidth);
+		MDFN_en32lsb(header + 28, neoheight);
+		smem_write(st, header, 32);
 	}
 
 	if(wantpreview)
 	{
-         uint8 *previewbuffer = (uint8 *)malloc(4 * neowidth * neoheight);
-	 MDFN_Surface *dest_surface = new MDFN_Surface((uint32 *)previewbuffer, neowidth, neoheight, neowidth, surface->format.colorspace,
-					surface->format.Rshift, surface->format.Gshift, surface->format.Bshift,
-					surface->format.Ashift);
-	 MDFN_Rect dest_rect;
+		/*
+		uint8 *previewbuffer = (uint8 *)malloc(4 * neowidth * neoheight);
+		MDFN_Surface *dest_surface = new MDFN_Surface((uint32 *)previewbuffer, neowidth, neoheight, neowidth, surface->format.colorspace,
+			surface->format.Rshift, surface->format.Gshift, surface->format.Bshift,
+			surface->format.Ashift);
+		MDFN_Rect dest_rect;
 
-	 dest_rect.x = 0;
-	 dest_rect.y = 0;
-	 dest_rect.w = neowidth;
-	 dest_rect.h = neoheight;
+		dest_rect.x = 0;
+		dest_rect.y = 0;
+		dest_rect.w = neowidth;
+		dest_rect.h = neoheight;
 
-//	 MDFN_ResizeSurface(surface, DisplayRect, (LineWidths[0].w != ~0) ? LineWidths : NULL, dest_surface, &dest_rect);
+		// MDFN_ResizeSurface(surface, DisplayRect, (LineWidths[0].w != ~0) ? LineWidths : NULL, dest_surface, &dest_rect);
 
-	 {
-	  uint32 a, b = 0;
-	  for(a = 0; a < neowidth * neoheight * 4; a+=4)
-	  {
-	   uint32 c = *(uint32 *)&previewbuffer[a];
-	   int nr, ng, nb;
+		{
+			uint32 a, b = 0;
+			for(a = 0; a < neowidth * neoheight * 4; a+=4)
+			{
+				uint32 c = *(uint32 *)&previewbuffer[a];
+				int nr, ng, nb;
 
-	   surface->DecodeColor(c, nr, ng, nb);
+				surface->DecodeColor(c, nr, ng, nb);
 
-	   previewbuffer[b + 0] = nr;
-	   previewbuffer[b + 1] = ng;
-           previewbuffer[b + 2] = nb;
-	   b += 3;
-	  }
-	 }
+				previewbuffer[b + 0] = nr;
+				previewbuffer[b + 1] = ng;
+				previewbuffer[b + 2] = nb;
+				b += 3;
+			}
+		}*/
+		//PREVIEWIMAGE
+		smem_write(st, surface->pixels, 4 * neowidth * neoheight);
 
-         smem_write(st, previewbuffer, 3 * neowidth * neoheight);
-
-	 free(previewbuffer);
-	 delete dest_surface;
+//		free(previewbuffer);
+//		delete dest_surface;
 	}
 
-        // State rewinding code path hack, FIXME
-        if(data_only)
-        {
- //        if(!MDFN_RawInputStateAction(st, 0, data_only))
-          return(0);
-        }
+	// State rewinding code path hack, FIXME
+	if(data_only)
+	{
+		// if(!MDFN_RawInputStateAction(st, 0, data_only))
+		return(0);
+	}
 
 	if(!MDFNGameInfo->StateAction(st, 0, data_only))
-	 return(0);
+		return(0);
 
 	if(!data_only)
 	{
-	 uint32 sizy = smem_tell(st);
-	 smem_seek(st, 16 + 4, SEEK_SET);
-	 smem_write32le(st, sizy);
+		uint32 sizy = smem_tell(st);
+		smem_seek(st, 16 + 4, SEEK_SET);
+		smem_write32le(st, sizy);
 	}
 	return(1);
 }
@@ -655,28 +656,28 @@ int MDFNSS_Save(const char *fname, const char *suffix, const MDFN_Surface *surfa
 
 	if(!MDFNGameInfo->StateAction)
 	{
-	 MDFN_DispMessage(_("Module \"%s\" doesn't support save states."), MDFNGameInfo->shortname);
-	 return(0);
+		MDFN_DispMessage(_("Module \"%s\" doesn't support save states."), MDFNGameInfo->shortname);
+		return(0);
 	}
 
 	if(!MDFNSS_SaveSM(&st, 1, 0, surface, DisplayRect, LineWidths))
 	{
-	 if(st.data)
-	  free(st.data);
-	 if(!fname && !suffix)
- 	  MDFN_DispMessage(_("State %d save error."), CurrentState);
-	 return(0);
+		if(st.data)
+			free(st.data);
+		if(!fname && !suffix)
+			MDFN_DispMessage(_("State %d save error."), CurrentState);
+		return(0);
 	}
 
 	if(!MDFN_DumpToFile(fname ? fname : MDFN_MakeFName(MDFNMKF_STATE,CurrentState,suffix).c_str(), 6, st.data, st.len))
 	{
-         SaveStateStatus[CurrentState] = 0;
-	 free(st.data);
+		SaveStateStatus[CurrentState] = 0;
+		free(st.data);
 
-         if(!fname && !suffix)
-          MDFN_DispMessage(_("State %d save error."),CurrentState);
+		if(!fname && !suffix)
+			MDFN_DispMessage(_("State %d save error."),CurrentState);
 
-	 return(0);
+		return(0);
 	}
 
 	std::string bleh = MDFN_MakeFName(MDFNMKF_STATE,CurrentState,suffix);
@@ -688,7 +689,7 @@ int MDFNSS_Save(const char *fname, const char *suffix, const MDFN_Surface *surfa
 	RecentlySavedState = CurrentState;
 
 	if(!fname && !suffix)
-	 MDFN_DispMessage(_("State %d saved."),CurrentState);
+		MDFN_DispMessage(_("State %d saved."),CurrentState);
 
 	return(1);
 }
@@ -733,36 +734,37 @@ int MDFNSS_LoadSM(StateMem *st, int haspreview, int data_only)
 	else
 	{
 		smem_read(st, header, 32);
-		//       if(memcmp(header,"MEDNAFENSVESTATE",16))
-		//      return(0);
+		// if(memcmp(header,"MEDNAFENSVESTATE",16))
+		// return(0);
 
 		stateversion = MDFN_de32lsb(header + 16);
 
 		if(stateversion < 0x0600)
 		{
-	//		printf("State too old: %08x\n", stateversion);
-	//		return(0);
+			// printf("State too old: %08x\n", stateversion);
+			// return(0);
 		}
 	}
 
-	currFrameCounter = MDFN_de32lsb(header + 12);  
+	currFrameCounter = MDFN_de32lsb(header + 12);
 	pcejin.lagFrameCounter = MDFN_de32lsb(header + 16);
 
 	if(haspreview)
-        {
-         uint32 width = MDFN_de32lsb(header + 24);
-         uint32 height = MDFN_de32lsb(header + 28);
-	 uint32 psize;
+	{
+		uint32 width = MDFN_de32lsb(header + 24);
+		uint32 height = MDFN_de32lsb(header + 28);
+		uint32 psize;
 
-	 psize = width * height * 3;
-	 smem_seek(st, psize, SEEK_CUR);	// Skip preview
- 	}
+		//PREVIEWIMAGE
+		psize = width * height * 4;
+		smem_seek(st, psize, SEEK_CUR); // Skip preview
+	}
 
 	// State rewinding code path hack, FIXME
 	if(data_only)
 	{
-//	 if(!MDFN_RawInputStateAction(st, stateversion, data_only))
-	  return(0);
+		// if(!MDFN_RawInputStateAction(st, stateversion, data_only))
+		return(0);
 	}
 
 	return(MDFNGameInfo->StateAction(st, stateversion, data_only));
@@ -802,6 +804,27 @@ int MDFNSS_LoadFP(gzFile fp)
  return(1);
 }
 
+void MDFNI_DisplayState()
+{
+	gzFile fp;
+
+	fp = gzopen(MDFN_MakeFName(MDFNMKF_STATE,CurrentState,NULL).c_str(),"rb");
+	if(fp)
+	{
+		uint8 header[32];
+
+		gzread(fp, header, 32);
+		uint32 width = MDFN_de32lsb(header + 24);
+		uint32 height = MDFN_de32lsb(header + 28);
+
+	//	uint8 *previewbuffer = (uint8*)alloca(3 * width * height);
+
+		gzread(fp, espec.surface->pixels, 4 * width * height);
+
+		gzclose(fp);
+	}
+}  
+
 int MDFNSS_Load(const char *fname, const char *suffix)
 {
 	gzFile st;
@@ -831,6 +854,8 @@ int MDFNSS_Load(const char *fname, const char *suffix)
 
 	if(MDFNSS_LoadFP(st))
 	{
+		MDFNI_DisplayState();
+
 		if(!fname && !suffix)
 		{
 			LoadStateMovie((char*)MDFN_MakeFName(MDFNMKF_STATE,CurrentState,suffix).c_str());
