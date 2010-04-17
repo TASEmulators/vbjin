@@ -1,9 +1,7 @@
 #include <string>
-//#include "utils\svnrev.h"
+#include "utils\svnrev.h"
 #include "main.h"
 
-
-#define SVN_REV_STR "9999"
 class Pcejin
 {
 public:
@@ -14,7 +12,7 @@ public:
 		frameAdvance(false), 
 		width(256), 
 		height(232), 
-		versionName(std::string("PCEjin svn") + std::string(SVN_REV_STR)),
+		versionName(std::string("VBjin svn") + std::string(SVN_REV_STR)),
 		slow(false) {
 	}
 
