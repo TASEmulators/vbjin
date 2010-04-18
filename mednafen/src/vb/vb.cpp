@@ -742,6 +742,10 @@ static void Emulate(EmulateSpecStruct *espec)
 
 }
 
+uint8* getWRAM() {
+	return WRAM;
+}
+
 }
 
 using namespace MDFN_IEN_VB;

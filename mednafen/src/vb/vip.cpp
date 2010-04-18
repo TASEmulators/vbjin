@@ -1318,6 +1318,8 @@ int VIP_StateAction(StateMem *sm, int load, int data_only)
  return(ret);
 }
 
-
+uint8* getDRAM() {
+	return DRAM;
+}
 
 }

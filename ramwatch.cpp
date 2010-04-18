@@ -40,6 +40,7 @@ bool QuickSaveWatches();
 bool ResetWatches();
 
 extern uint8 BaseRAM[32768];
+#include "vb.h"
 
 unsigned int GetCurrentValue(AddressWatcher& watch)
 {
@@ -47,10 +48,12 @@ unsigned int GetCurrentValue(AddressWatcher& watch)
 //	if(watch.Address > 0x1F8000 || watch.Address < 0x1F0000)
 //		return 1 ;
 
+	v810_timestamp_t v;
+	v = 10;
 	switch (watch.Size)
 	{
-	case 0x62: return BaseRAM[watch.Address];
-	case 0x77: return BaseRAM[watch.Address];
+	case 0x62: return MDFN_IEN_VB::MemRead8(v,watch.Address);
+	case 0x77: return MDFN_IEN_VB::MemRead16(v,watch.Address);
 	case 0x64: return BaseRAM[watch.Address];
 	default: return 0;
 	}
