@@ -81,13 +81,16 @@ static BOOL s_prevValuesNeedUpdate = true; // if true, the "prev" values should 
 static unsigned int s_maxItemIndex = 0; // max currently valid item index, the listbox sometimes tries to update things past the end of the list so we need to know this to ignore those attempts
 
 //NEWTODO
-uint8 BaseRAM[32768];
-uint8 *CDRAM; //262144;
-uint8 *ACRAM; //0x200000
-static const MemoryRegion s_prgRegion    = {  0x1F0000, 0x8000, (unsigned char*)BaseRAM,     false};//ARM9Mem.MAIN_MEM//should be 0x01F0000
+#include "vb.h"
 
-static MemoryRegion CDRAMRegion;
-static MemoryRegion ACRAMRegion;
+uint8 BaseRAM[32768];
+//uint8 *CDRAM; //262144;
+//uint8 *ACRAM; //0x200000
+//static const MemoryRegion s_prgRegion    = {  0x1F0000, 0x20000, (unsigned char*)getDRAM(),     false};//ARM9Mem.MAIN_MEM//should be 0x01F0000
+
+//static MemoryRegion CDRAMRegion;
+static MemoryRegion WRAMRegion;
+static MemoryRegion DRAMRegion;
 
 // list of contiguous uneliminated memory regions
 typedef std::list<MemoryRegion> MemoryList;
@@ -106,17 +109,21 @@ void InitRamSearch()
 	{
 		buffers = new Buffers;
 		memset(buffers,0,sizeof(Buffers));
-
+/*
 		CDRAMRegion.byteSwapped=false;
 		CDRAMRegion.hardwareAddress=0xD0000;
 		CDRAMRegion.size=262144;
 		CDRAMRegion.softwareAddress=CDRAM;
+*/
+		WRAMRegion.byteSwapped=false;
+		WRAMRegion.hardwareAddress=0x5000000;
+		WRAMRegion.size=65536;
+		WRAMRegion.softwareAddress=MDFN_IEN_VB::getWRAM();
 
-		ACRAMRegion.byteSwapped=false;
-		ACRAMRegion.hardwareAddress=0x200000;
-		ACRAMRegion.size=0x200000;
-		ACRAMRegion.softwareAddress=ACRAM;
-
+		DRAMRegion.byteSwapped=false;
+		DRAMRegion.hardwareAddress=0x200000;
+		DRAMRegion.size=0x20000;
+		DRAMRegion.softwareAddress=MDFN_IEN_VB::getDRAM();
 	}
 }
 
@@ -126,10 +133,11 @@ void ResetMemoryRegions()
 
 	s_activeMemoryRegions.clear();
 		
-	s_activeMemoryRegions.push_back(s_prgRegion);
+//	s_activeMemoryRegions.push_back(DRAMRegion);
+	s_activeMemoryRegions.push_back(WRAMRegion);
 
-	if(CDRAM)
-		s_activeMemoryRegions.push_back(CDRAMRegion);
+//	if(CDRAM)
+//		s_activeMemoryRegions.push_back(CDRAMRegion);
 
 //	if(ACRAM)
 //		s_activeMemoryRegions.push_back(ACRAMRegion);

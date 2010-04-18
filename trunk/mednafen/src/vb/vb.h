@@ -52,6 +52,9 @@ void VB_Power(void);
 
 void clearGPRAM();
 
+uint8* getDRAM();
+uint8* getWRAM();
+
 }
 
 
