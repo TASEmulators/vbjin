@@ -1054,6 +1054,7 @@ void emulate(){
 	}
 	pcejin.isLagFrame = true;
 
+	S9xUpdateJoypadButtons();
 	pcejin.pads[0] = joypads [0];
 
 //	pcejin.pads[1] = joypads [1];
@@ -1084,7 +1085,7 @@ void emulate(){
 
 	CallRegisteredLuaFunctions(LUACALL_BEFOREEMULATION);
 
-	S9xUpdateJoypadButtons();
+
 	MDFNGameInfo->Emulate(&espec);
 
 	CallRegisteredLuaFunctions(LUACALL_AFTEREMULATION);
