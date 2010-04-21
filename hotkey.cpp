@@ -1355,10 +1355,10 @@ static LRESULT CALLBACK GuitarInputCustomWndProc(HWND hwnd, UINT msg, WPARAM wPa
 }
 
 static bool keyPressLock = false;
-#include "assert.h"
+
 static void set_buttoninfo(int index, HWND hDlg)
 {
-	assert(false);
+
 	SendDlgItemMessage(hDlg,IDC_UP,WM_USER+44,Joypad[index].Left_Up,0);
 	SendDlgItemMessage(hDlg,IDC_LEFT,WM_USER+44,Joypad[index].Left_Left,0);
 	SendDlgItemMessage(hDlg,IDC_DOWN,WM_USER+44,Joypad[index].Left_Down,0);
@@ -2229,7 +2229,7 @@ int HandleKeyUp(WPARAM wParam, LPARAM lParam, int modifiers)
 
 int HandleKeyMessage(WPARAM wParam, LPARAM lParam, int modifiers)
 {
-	assert(false);
+
 	// update toggles
 	for (int J = 0; J < 5; J++)
 	{
