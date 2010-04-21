@@ -601,6 +601,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			//-------------------------------------------------------
 			if (!(fileDropped.find(".mc2") == std::string::npos) && (fileDropped.find(".mc2") == fileDropped.length()-4))
 			{
+				if (!pcejin.romLoaded)	//If no ROM is loaded, prompt for one
+				{
+					soundDriver->pause();
+					LoadGame();
+					pcejin.tempUnPause();
+				}	
 				if (pcejin.romLoaded && !(fileDropped.find(".mc2") == std::string::npos))	
 					FCEUI_LoadMovie(fileDropped.c_str(), 1, false, false);		 
 			}
