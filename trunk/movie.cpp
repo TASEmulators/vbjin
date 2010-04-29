@@ -18,7 +18,7 @@ bool autoMovieBackup = true;
 #define FCEU_PrintError LOG
 
 #define MOVIE_VERSION 1
-#define DESMUME_VERSION_NUMERIC 9
+#define DESMUME_VERSION_NUMERIC 1
 
 //----movie engine main state
 extern bool PCE_IsCD;
@@ -256,10 +256,10 @@ int MovieData::dump(std::ostream *os, bool binary)
 {
 	int start = os->tellp();
 	*os << "version " << version << endl;
+	*os << "emulator " << "VBjin" << endl;
 	*os << "emuVersion " << emuVersion << endl;
 	*os << "rerecordCount " << rerecordCount << endl;
 	*os << "ports " << ports << endl;
-//	*os << "PCECD " << PCE_IsCD << endl;
 /*	*os << "cdGameName " << cdip->gamename << endl;
 	*os << "cdInfo " << cdip->cdinfo << endl;
 	*os << "cdItemNum " << cdip->itemnum << endl;
