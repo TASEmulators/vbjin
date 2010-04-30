@@ -51,11 +51,11 @@ void GetINIPath()
 	while (p >= vPath && *p != '\\') p--;
 	if (++p >= vPath) *p = 0;
 	szPath = vPath;
-	if (strlen(szPath) + strlen("pcejin.ini") < MAX_PATH)
+	if (strlen(szPath) + strlen("vbjin.ini") < MAX_PATH)
 	{
-		sprintf(IniName, "%s\pcejin.ini",szPath);
-	} else if (MAX_PATH> strlen(".\\pcejin.ini")) {
-		sprintf(IniName, ".\\pcejin.ini");
+		sprintf(IniName, "%s\\vbjin.ini",szPath);
+	} else if (MAX_PATH> strlen(".\\vbjin.ini")) {
+		sprintf(IniName, ".\\vbjin.ini");
 	} else
 	{
 		memset(IniName,0,MAX_PATH) ;
