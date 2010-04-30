@@ -3178,6 +3178,8 @@ void HK_Screenshot(int param)
 void MDFNI_SaveSnapshot(void);
 //NEWTODO
 //MDFNI_SaveSnapshot();
+int MDFN_SavePNGSnapshot(const char *fname, const MDFN_Surface *src, const MDFN_Rect *rect);
+MDFN_SavePNGSnapshot("vbjin.png",espec.surface, (MDFN_Rect*)&espec.DisplayRect);
     /*
 	OPENFILENAME ofn;
 	char * ptr;
