@@ -5,12 +5,12 @@
 
 int FastForward=0;
 static u64 tmethod,tfreq;
-static const u64 core_desiredfps =3932160;//60
+static const u64 core_desiredfps =3276800;//50
 static u64 desiredfps = core_desiredfps;
 static u64 desiredFpsScaler = 256;
 
 void isSlow() {
-	if(desiredfps < 3932160)
+	if(desiredfps < core_desiredfps)
 		pcejin.slow = true;
 	else
 		pcejin.slow = false;
@@ -20,8 +20,8 @@ void IncreaseSpeed(void) {
 
 	desiredFpsScaler*=2;
 	desiredfps = core_desiredfps * desiredFpsScaler / 256;
-	if(desiredfps > 3932160) {
-		desiredfps = 3932160;
+	if(desiredfps > core_desiredfps) {
+		desiredfps = core_desiredfps;
 		desiredFpsScaler = 256;
 	}
 	isSlow();
