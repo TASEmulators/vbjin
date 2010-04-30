@@ -614,9 +614,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			//-------------------------------------------------------
 			//Check if Savestate file
 			//-------------------------------------------------------
-			else if (!(fileDropped.find(".nc") == std::string::npos))
+			else if (!(fileDropped.find(".mc") == std::string::npos))	//Note: potential clash, mc2 will be loaded a movie file first
 			{
-				if (fileDropped.find(".nc") == fileDropped.length()-4)
+				if (fileDropped.find(".mc") == fileDropped.length()-4)
 				{
 					if ((fileDropped[fileDropped.length()-1] >= '0' && fileDropped[fileDropped.length()-1] <= '9'))
 					{
