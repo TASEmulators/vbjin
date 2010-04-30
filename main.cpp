@@ -1027,6 +1027,7 @@ void initsound(){
 	MDFNGameInfo->SetSoundRate(44100);
 
 	espec.SoundBuf = EmuModBuffer;
+	espec.SoundBufMaxSize = EmuModBufferSize;
 
 	//	MDFNI_Sound(44100);
 	MDFNI_SetSoundVolume(100);
