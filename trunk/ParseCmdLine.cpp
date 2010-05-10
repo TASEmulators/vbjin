@@ -102,12 +102,10 @@ void ParseCmdLine(LPSTR lpCmdLine, HWND HWnd)
 		//adelikat: This code is currently in LoadGame, Drag&Drop, Recent ROMs, and here, time for a function
 		pcejin.romLoaded = true;
 		pcejin.started = true;
-		//NEWTODO
-	//	if(!MDFNI_LoadGame(RomToLoad.c_str())) 
+		if(!MDFNI_LoadGame(false, FileToLoad.c_str())) 
 		{
 			pcejin.started = false;
 			pcejin.romLoaded = false;
-			
 		}
 	}
 	//{
@@ -129,12 +127,10 @@ void ParseCmdLine(LPSTR lpCmdLine, HWND HWnd)
 		//adelikat: This code is currently in LoadGame, Drag&Drop, Recent ROMs, and here, time for a function
 		pcejin.romLoaded = true;
 		pcejin.started = true;
-		//NEWTODO
-	//	if(!MDFNI_LoadGame(RomToLoad.c_str()))
+		if(!MDFNI_LoadGame(false, RomToLoad.c_str()))
 		{
 			pcejin.started = false;
-			pcejin.romLoaded = false;
-			
+			pcejin.romLoaded = false;		
 		}
 	}
 	
