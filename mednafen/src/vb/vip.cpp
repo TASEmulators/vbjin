@@ -1134,11 +1134,12 @@ v810_timestamp_t MDFN_FASTCALL VIP_Update(const v810_timestamp_t timestamp)
 
     VIP_DrawBlock(DrawingBlock, DrawingBuffers[0] + 8, DrawingBuffers[1] + 8);
 
+	/*
 	for(int zz = 0; zz < 512 * 8; zz++) {
-
-	//	if(DrawingBuffers[0][zz] != 0 || DrawingBuffers[1][zz] != 0)
-	//		printf("wtf");
+		if(DrawingBuffers[0][zz] != 0 || DrawingBuffers[1][zz] != 0)
+			printf("wtf");
 	}
+	*/
 
     for(int lr = 0; lr < 2; lr++)
     {
