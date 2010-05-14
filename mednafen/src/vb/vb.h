@@ -50,7 +50,10 @@ uint16 MDFN_FASTCALL MemRead16(v810_timestamp_t &timestamp, uint32 A);
 void MDFN_FASTCALL MemWrite8(v810_timestamp_t &timestamp, uint32 A, uint8 V);
 void MDFN_FASTCALL MemWrite16(v810_timestamp_t &timestamp, uint32 A, uint16 V);
 
+
 void VB_Power(void);
+
+void SetMixVideoOutput(bool disabled);
 
 void clearGPRAM();
 

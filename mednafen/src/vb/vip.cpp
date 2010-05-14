@@ -65,6 +65,8 @@ static uint32 AnaSlowColorLUT[256][256];
 static bool ParallaxDisabled;
 static uint32 Anaglyph_Colors[2];
 static uint32 Default_Color;
+static bool MixVideoOutputInternal;
+
 
 static void MakeColorLUT(const MDFN_PixelFormat &format)
 {
@@ -228,6 +230,11 @@ void VIP_Set3DMode(uint32 mode)
  Recalc3DModeStuff();
 }
 
+void VIP_SetMixVideoOutput(bool disabled)
+{
+	MixVideoOutputInternal = disabled;
+}
+
 void VIP_SetParallaxDisable(bool disabled)
 {
  ParallaxDisabled = disabled;
@@ -320,6 +327,7 @@ static void CheckIRQ(void)
 bool VIP_Init(void)
 {
  ParallaxDisabled = false;
+ //MixVideoOutputInternal = false; // Force Set Elsewhere
  Anaglyph_Colors[0] = 0xFF0000;
  Anaglyph_Colors[1] = 0x0000FF;
  VB3DMode = VB3DMODE_ANAGLYPH;

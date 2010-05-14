@@ -65,6 +65,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "4/3 Aspect Ratio",            IDC_ASPECT
         MENUITEM SEPARATOR
+        MENUITEM "Mix Left && Right View",      ID_VIEW_MIXLEFTRIGHT
         MENUITEM "Display Frame Counter",       ID_VIEW_FRAMECOUNTER
         MENUITEM "Display Input",               ID_VIEW_DISPLAYINPUT
         MENUITEM "Display Lag Counter",         ID_VIEW_DISPLAYLAG
