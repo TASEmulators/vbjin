@@ -12,6 +12,7 @@
 #include "windows.h"
 #include "pcejin.h"
 #include "debug.h"
+#include "vb.h"
 
 // the emulator must provide these so that we can implement
 // the various functions the user can call from their lua script
@@ -19,6 +20,8 @@
 // adapted from gens-rr, nitsuja + upthorn
 extern int (*Update_Frame)();
 extern int (*Update_Frame_Fast)();
+
+v810_timestamp_t dummytimestamp = 10;
 
 extern "C" {
 	#include "lua.h"
@@ -1646,34 +1649,36 @@ DEFINE_LUA_FUNCTION(gens_redraw, "")
 //NEWTODO all this
 DEFINE_LUA_FUNCTION(memory_readbyte, "address")
 {
-	//int address = luaL_checkinteger(L,1);
-	//unsigned char value = (unsigned char)(PCEDBG_MemPeek(address, 1, true, false) & 0xFF);
-	//lua_settop(L,0);
-	//lua_pushinteger(L, value);
+	// v810_timestamp_t = int32
+	int address = luaL_checkinteger(L,1);
+
+	unsigned char value = (unsigned char)(MDFN_IEN_VB::MemRead8(dummytimestamp,address) & 0xFF);
+	lua_settop(L,0);
+	lua_pushinteger(L, value);
 	return 1; // we return the number of return values
 }
 DEFINE_LUA_FUNCTION(memory_readbytesigned, "address")
 {
-	//int address = luaL_checkinteger(L,1);
-	//signed char value = (signed char)(PCEDBG_MemPeek(address, 1, true, false) & 0xFF);
-	//lua_settop(L,0);
-	//lua_pushinteger(L, value);
+	int address = luaL_checkinteger(L,1);
+	signed char value = (signed char)(MDFN_IEN_VB::MemRead8(dummytimestamp,address) & 0xFF);
+	lua_settop(L,0);
+	lua_pushinteger(L, value);
 	return 1;
 }
 DEFINE_LUA_FUNCTION(memory_readword, "address")
 {
-	//int address = luaL_checkinteger(L,1);
-	//unsigned short value = (unsigned short)(PCEDBG_MemPeek(address, 2, true, false) & 0xFFFF);
-	//lua_settop(L,0);
-	//lua_pushinteger(L, value);
+	int address = luaL_checkinteger(L,1);
+	unsigned short value = (unsigned short)(MDFN_IEN_VB::MemRead16(dummytimestamp,address) & 0xFFFF);
+	lua_settop(L,0);
+	lua_pushinteger(L, value);
 	return 1;
 }
 DEFINE_LUA_FUNCTION(memory_readwordsigned, "address")
 {
-	//int address = luaL_checkinteger(L,1);
-	//signed short value = (signed short)(PCEDBG_MemPeek(address, 2, true, false) & 0xFFFF);
-	//lua_settop(L,0);
-	//lua_pushinteger(L, value);
+	int address = luaL_checkinteger(L,1);
+	signed short value = (signed short)(MDFN_IEN_VB::MemRead16(dummytimestamp,address) & 0xFFFF);
+	lua_settop(L,0);
+	lua_pushinteger(L, value);
 	return 1;
 }
 DEFINE_LUA_FUNCTION(memory_readdword, "address")
@@ -1713,14 +1718,16 @@ void memWrite(int Address, int Length, unsigned char* Buffer) {
 
 DEFINE_LUA_FUNCTION(memory_writebyte, "address,value")
 {
-	int Address = luaL_checkinteger(L,1);
+	int address = luaL_checkinteger(L,1);
 	unsigned char value = (unsigned char)(luaL_checkinteger(L,2) & 0xFF);
 
-	unsigned char* Buffer = &value;
+	//unsigned char* Buffer = &value;
 
-	int Length=1;
+	//int Length=1;
 
-	memWrite(Address, Length, Buffer);
+	//memWrite(Address, Length, Buffer);
+
+	MDFN_IEN_VB::MemWrite8(dummytimestamp,address,value);
 
 	return 0;
 }
@@ -1728,7 +1735,8 @@ DEFINE_LUA_FUNCTION(memory_writeword, "address,value")
 {
 	int address = luaL_checkinteger(L,1);
 	unsigned short value = (unsigned short)(luaL_checkinteger(L,2) & 0xFFFF);
-//	_MMU_write16<ARMCPU_ARM9>(address, value);
+
+	MDFN_IEN_VB::MemWrite16(dummytimestamp,address,value);
 	return 0;
 }
 DEFINE_LUA_FUNCTION(memory_writedword, "address,value")
@@ -3721,12 +3729,12 @@ static const struct luaL_reg memorylib [] =
 	{"readbytesigned", memory_readbytesigned},
 	{"readword", memory_readword},
 	{"readwordsigned", memory_readwordsigned},
-	{"readdword", memory_readdword},
-	{"readdwordsigned", memory_readdwordsigned},
-	{"readbyterange", memory_readbyterange},
+	//{"readdword", memory_readdword},
+	//{"readdwordsigned", memory_readdwordsigned},
+	//{"readbyterange", memory_readbyterange},
 	{"writebyte", memory_writebyte},
 	{"writeword", memory_writeword},
-	{"writedword", memory_writedword},
+	//{"writedword", memory_writedword},
 //	{"isvalid", memory_isvalid},
 	{"getregister", memory_getregister},
 	{"setregister", memory_setregister},
