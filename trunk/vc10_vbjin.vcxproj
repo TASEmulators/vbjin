@@ -73,7 +73,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>vfw32.lib;directx\dxerr8.lib;directx\dsound.lib;directx\dinput8.lib;directx\ddraw.lib;directx\dxguid.lib;Winmm.lib;zlib-2008-x32.lib;agg-2.5.lib;lua-5.1.4-x86.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName)_debug.exe</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)_debug$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>zlib;agg;lua;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -250,6 +250,7 @@
     <ClInclude Include="mednafen\include\trio\triop.h" />
     <ClInclude Include="mednafen\include\trio\triostr.h" />
     <ClInclude Include="mednafen\src\types.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="types.h" />
     <ClInclude Include="mednafen\src\compress\unzip.h" />
     <ClInclude Include="mednafen\src\hw_cpu\v810\v810_cpu.h" />

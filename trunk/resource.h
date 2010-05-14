@@ -133,6 +133,7 @@
 #define IDC_JPCOMBO                     509
 #define IDC_JPTOGGLE                    510
 #define IDM_MUTE                        511
+#define ID_VIEW_MIXLEFTRIGHT            512
 #define IDC_MLENGTH                     600
 #define IDC_MFRAMES                     601
 #define PM_FILENAME                     602

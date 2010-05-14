@@ -423,6 +423,10 @@ void VB_Power(void)
  ForceEventUpdates(VB_V810->v810_timestamp);
 }
 
+void SetMixVideoOutput(bool disabled) {
+	VIP_SetMixVideoOutput(disabled);
+}
+
 
 static bool TestMagic(const char *name, MDFNFILE *fp)
 {
@@ -584,7 +588,7 @@ static int Load(const char *name, MDFNFILE *fp)
 
  VIP_Set3DMode(VB3DMode);
  VIP_SetParallaxDisable(MDFN_GetSettingB("vb.disable_parallax"));
-
+ 
  {
   uint32 lcolor = MDFN_GetSettingUI("vb.anaglyph.lcolor"), rcolor = MDFN_GetSettingUI("vb.anaglyph.rcolor");
   int preset = MDFN_GetSettingI("vb.anaglyph.preset");

@@ -39,11 +39,13 @@
 
 #include "recentroms.h"
 #include "ParseCmdLine.h"
-
+#include "vb.h"
 
 volatile MDFN_Surface *VTBuffer[2] = { NULL, NULL };
 MDFN_Rect *VTLineWidths[2] = { NULL, NULL };
 volatile int VTBackBuffer = 0;
+
+bool MixVideoOutput = false;
 
 //uint16 PadData;//NEWTODO this sucks
 
@@ -428,6 +430,8 @@ DWORD checkMenu(UINT idd, bool check)
 }
 
 void LoadIniSettings(){
+	MixVideoOutput = GetPrivateProfileBool("Display","MixLeftRight", false, IniName);
+	MDFN_IEN_VB::SetMixVideoOutput(MixVideoOutput);
 	Hud.FrameCounterDisplay = GetPrivateProfileBool("Display","FrameCounter", false, IniName);
 	Hud.ShowInputDisplay = GetPrivateProfileBool("Display","Display Input", false, IniName);
 	Hud.ShowLagFrameCounter = GetPrivateProfileBool("Display","Display Lag Counter", false, IniName);
@@ -696,6 +700,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		checkMenu(IDC_WINDOW3X, ((pcejin.windowSize==3)));
 		checkMenu(IDC_WINDOW4X, ((pcejin.windowSize==4)));
 		checkMenu(IDC_ASPECT, ((pcejin.aspectRatio)));
+		checkMenu(ID_VIEW_MIXLEFTRIGHT,MixVideoOutput);
 		checkMenu(ID_VIEW_FRAMECOUNTER,Hud.FrameCounterDisplay);
 		checkMenu(ID_VIEW_DISPLAYINPUT,Hud.ShowInputDisplay);
 		checkMenu(ID_VIEW_DISPLAYSTATESLOTS,Hud.DisplayStateSlots);
@@ -723,7 +728,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		if(wParam >= baseid && wParam <= baseid + MAX_RECENT_ROMS - 1)
 			{
 				int x = wParam - baseid;
-				OpenRecentROM(x);					
+				soundDriver->resume();
+				OpenRecentROM(x);
+
 			}
 			else if(wParam == clearid)
 			{
@@ -793,6 +800,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 			}
 			break;
+
+		case ID_VIEW_MIXLEFTRIGHT:
+			MixVideoOutput ^= true;
+			MDFN_IEN_VB::SetMixVideoOutput(MixVideoOutput);
+			WritePrivateProfileBool("Display", "MixLeftRight", MixVideoOutput, IniName);
+			return 0;
 
 		case ID_VIEW_FRAMECOUNTER:
 			Hud.FrameCounterDisplay ^= true;
