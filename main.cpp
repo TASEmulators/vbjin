@@ -23,6 +23,7 @@
 #include "Mmsystem.h"
 #include "sound.h"
 #include "aviout.h"
+#include "waveout.h"
 #include "video.h"
 #include "recentroms.h"
 
@@ -424,6 +425,37 @@ void StopAvi()
 	DRV_AviEnd();
 }
 
+/// Shows a Open File dialog and starts logging sound.
+/// @return Flag that indicates failure (0) or success (1).
+bool CreateSoundSave()
+{
+	const char filter[]="MS WAVE (*.wav)\0*.wav\0All Files (*.*)\0*.*\0\0";
+	char nameo[2048];
+	OPENFILENAME ofn;
+
+	DRV_EndWaveRecord();
+
+	memset(&ofn,0,sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = g_hWnd;
+	ofn.lpstrTitle = "Log Sound As...";
+	ofn.lpstrFilter = filter;
+	ofn.lpstrFile = nameo;
+	ofn.lpstrDefExt = "wav";
+	ofn.nMaxFile = 256;
+	ofn.Flags = OFN_EXPLORER|OFN_FILEMUSTEXIST|OFN_HIDEREADONLY;
+
+	if(GetSaveFileName(&ofn))
+		return DRV_BeginWaveRecord(nameo);
+
+	return false;
+}
+
+void CloseWave()
+{
+	DRV_EndWaveRecord();
+}
+
 DWORD checkMenu(UINT idd, bool check)
 {
 	return CheckMenuItem(GetMenu(g_hWnd), idd, MF_BYCOMMAND | (check?MF_CHECKED:MF_UNCHECKED));
@@ -693,7 +725,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		EnableMenuItem(GetMenu(hWnd), IDM_STOPMOVIE, MF_BYCOMMAND | (movieMode != MOVIEMODE_INACTIVE) ? MF_ENABLED : MF_GRAYED);
 		EnableMenuItem(GetMenu(hWnd), IDM_FILE_STOPAVI, MF_BYCOMMAND | (DRV_AviIsRecording()) ? MF_ENABLED : MF_GRAYED);
 		EnableMenuItem(GetMenu(hWnd), IDM_FILE_RECORDAVI, MF_BYCOMMAND | (!DRV_AviIsRecording()) ? MF_ENABLED : MF_GRAYED);
-		
+		EnableMenuItem(GetMenu(hWnd), IDM_FILE_STOPWAV, MF_BYCOMMAND | (DRV_WaveRecordActive()) ? MF_ENABLED : MF_GRAYED);
+		EnableMenuItem(GetMenu(hWnd), IDM_FILE_RECORDWAV, MF_BYCOMMAND | (!DRV_WaveRecordActive()) ? MF_ENABLED : MF_GRAYED);
+
 		//Window Size
 		checkMenu(IDC_WINDOW1X, ((pcejin.windowSize==1)));
 		checkMenu(IDC_WINDOW2X, ((pcejin.windowSize==2)));
@@ -879,6 +913,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			break;
 		case IDM_FILE_STOPAVI:
 			StopAvi();
+			break;
+		case IDM_FILE_RECORDWAV:
+			soundDriver->pause();
+			CreateSoundSave();
+			pcejin.tempUnPause();
+			break;
+		case IDM_FILE_STOPWAV:
+			DRV_EndWaveRecord();
 			break;
 		}
 		break;
@@ -1124,6 +1166,10 @@ void emulate(){
 
 	DRV_AviSoundUpdate((u16*)espec.SoundBuf, espec.SoundBufSize);
 	DRV_AviVideoUpdate((uint16*)espec.surface->pixels, &espec);
+
+	// espec.SoundBufSize is a count of the 16 bit channel pairs.
+	// Casting to uint32* cycles through all the data accurately.
+	DRV_WriteWaveData((uint32*)espec.SoundBuf, espec.SoundBufSize);
 
 	if (pcejin.frameAdvance)
 	{

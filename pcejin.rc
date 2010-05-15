@@ -45,6 +45,8 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Record &AVI...",              IDM_FILE_RECORDAVI
         MENUITEM "Stop AVI",                    IDM_FILE_STOPAVI
+        MENUITEM "Record WAV...",               IDM_FILE_RECORDWAV
+        MENUITEM "Stop WAV",                    IDM_FILE_STOPWAV
         MENUITEM SEPARATOR
         MENUITEM "Lua...",                      IDC_NEW_LUA_SCRIPT
         MENUITEM SEPARATOR
