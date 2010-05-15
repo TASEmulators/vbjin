@@ -18,6 +18,7 @@
     <ProjectGuid>{68D67AC4-A96C-46CD-B5E1-D454CEAE76C8}</ProjectGuid>
     <RootNamespace>pcejin</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <ProjectName>vc10_vbjin</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseFastBuild|Win32'" Label="Configuration">
@@ -53,6 +54,9 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseFastBuild|Win32'">$(SolutionDir)\__bins\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseFastBuild|Win32'">ReleaseFastBuild\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ReleaseFastBuild|Win32'" />
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">vbjin</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">vbjin_debug</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseFastBuild|Win32'">vbjin_releaseFastBuild</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
@@ -73,7 +77,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>vfw32.lib;directx\dxerr8.lib;directx\dsound.lib;directx\dinput8.lib;directx\ddraw.lib;directx\dxguid.lib;Winmm.lib;zlib-2008-x32.lib;agg-2.5.lib;lua-5.1.4-x86.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(TargetName)_debug$(TargetExt)</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>zlib;agg;lua;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -141,7 +145,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>vfw32.lib;directx\dxerr8.lib;directx\dsound.lib;directx\dinput8.lib;directx\ddraw.lib;directx\dxguid.lib;Winmm.lib;zlib-2008-x32.lib;agg-2.5.lib;lua-5.1.4-x86.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)$(ProjectName)_releaseFastBuild.exe</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalLibraryDirectories>zlib;agg;lua;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
