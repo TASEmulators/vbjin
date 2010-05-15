@@ -74,6 +74,8 @@
 #define IDM_FILE_RECORDAVI              262
 #define IDM_FILE_STOPAVI                263
 #define IDM_OPEN_ROM                    264
+#define IDM_FILE_RECORDWAV              265
+#define IDM_FILE_STOPWAV                266
 #define IDC_UP                          400
 #define IDC_LEFT                        401
 #define IDC_DOWN                        402

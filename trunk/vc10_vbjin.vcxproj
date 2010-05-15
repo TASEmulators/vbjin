@@ -209,6 +209,7 @@
     <ClCompile Include="mednafen\src\vb\vip.cpp" />
     <ClCompile Include="mednafen\src\vb\vsu.cpp" />
     <ClCompile Include="utils\xstring.cpp" />
+    <ClCompile Include="waveout.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mednafen\include\blargg_common.h" />
@@ -266,7 +267,7 @@
     <ClInclude Include="mednafen\src\video.h" />
     <ClInclude Include="mednafen\src\vb\vip.h" />
     <ClInclude Include="mednafen\src\vb\vsu.h" />
-    <ClInclude Include="mednafen\src\sound\wave.h" />
+    <ClInclude Include="waveout.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mednafen\src\compress\Makefile.am.inc" />
