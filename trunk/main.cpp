@@ -47,6 +47,7 @@ MDFN_Rect *VTLineWidths[2] = { NULL, NULL };
 volatile int VTBackBuffer = 0;
 
 bool MixVideoOutput = false;
+int DisplayLeftRightOutput = 0;
 
 //uint16 PadData;//NEWTODO this sucks
 
@@ -464,6 +465,10 @@ DWORD checkMenu(UINT idd, bool check)
 void LoadIniSettings(){
 	MixVideoOutput = GetPrivateProfileBool("Display","MixLeftRight", false, IniName);
 	MDFN_IEN_VB::SetMixVideoOutput(MixVideoOutput);
+	DisplayLeftRightOutput = GetPrivateProfileInt("Display","ViewDisplay", 0, IniName);
+	if (DisplayLeftRightOutput > 3)
+		DisplayLeftRightOutput = 3;
+	MDFN_IEN_VB::SetViewDisp(DisplayLeftRightOutput);
 	Hud.FrameCounterDisplay = GetPrivateProfileBool("Display","FrameCounter", false, IniName);
 	Hud.ShowInputDisplay = GetPrivateProfileBool("Display","Display Input", false, IniName);
 	Hud.ShowLagFrameCounter = GetPrivateProfileBool("Display","Display Lag Counter", false, IniName);
@@ -735,6 +740,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		checkMenu(IDC_WINDOW4X, ((pcejin.windowSize==4)));
 		checkMenu(IDC_ASPECT, ((pcejin.aspectRatio)));
 		checkMenu(ID_VIEW_MIXLEFTRIGHT,MixVideoOutput);
+		checkMenu(ID_VIEW_DISP_BOTH, ((DisplayLeftRightOutput==0)));
+		checkMenu(ID_VIEW_DISP_LEFT, ((DisplayLeftRightOutput==1)));
+		checkMenu(ID_VIEW_DISP_RIGHT, ((DisplayLeftRightOutput==2)));
+		checkMenu(ID_VIEW_DISP_DISABLE, ((DisplayLeftRightOutput==3)));
 		checkMenu(ID_VIEW_FRAMECOUNTER,Hud.FrameCounterDisplay);
 		checkMenu(ID_VIEW_DISPLAYINPUT,Hud.ShowInputDisplay);
 		checkMenu(ID_VIEW_DISPLAYSTATESLOTS,Hud.DisplayStateSlots);
@@ -839,6 +848,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			MixVideoOutput ^= true;
 			MDFN_IEN_VB::SetMixVideoOutput(MixVideoOutput);
 			WritePrivateProfileBool("Display", "MixLeftRight", MixVideoOutput, IniName);
+			return 0;
+
+		case ID_VIEW_DISP_BOTH:
+			DisplayLeftRightOutput = 0;
+			MDFN_IEN_VB::SetViewDisp(DisplayLeftRightOutput);
+			WritePrivateProfileInt("Display", "ViewDisplay", DisplayLeftRightOutput, IniName);
+			return 0;
+
+		case ID_VIEW_DISP_LEFT:
+			DisplayLeftRightOutput = 1;
+			MDFN_IEN_VB::SetViewDisp(DisplayLeftRightOutput);
+			WritePrivateProfileInt("Display", "ViewDisplay", DisplayLeftRightOutput, IniName);
+			return 0;
+
+		case ID_VIEW_DISP_RIGHT:
+			DisplayLeftRightOutput = 2;
+			MDFN_IEN_VB::SetViewDisp(DisplayLeftRightOutput);
+			WritePrivateProfileInt("Display", "ViewDisplay", DisplayLeftRightOutput, IniName);
+			return 0;
+
+		case ID_VIEW_DISP_DISABLE:
+			DisplayLeftRightOutput = 3;
+			MDFN_IEN_VB::SetViewDisp(DisplayLeftRightOutput);
+			// We're not saving this. Too many people would set it and forget it, then compain.
+			// Someone can still set it manually in the ini file though.
 			return 0;
 
 		case ID_VIEW_FRAMECOUNTER:

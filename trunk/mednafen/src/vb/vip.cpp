@@ -66,7 +66,7 @@ static bool ParallaxDisabled;
 static uint32 Anaglyph_Colors[2];
 static uint32 Default_Color;
 static bool MixVideoOutputInternal;
-
+static int DisplayLeftRightOutputInternal;
 
 static void MakeColorLUT(const MDFN_PixelFormat &format)
 {
@@ -235,6 +235,11 @@ void VIP_SetMixVideoOutput(bool disabled)
 	MixVideoOutputInternal = disabled;
 }
 
+void VIP_SetViewDisp(int display)
+{
+	DisplayLeftRightOutputInternal = display;
+}
+
 void VIP_SetParallaxDisable(bool disabled)
 {
  ParallaxDisabled = disabled;
@@ -328,6 +333,7 @@ bool VIP_Init(void)
 {
  ParallaxDisabled = false;
  //MixVideoOutputInternal = false; // Force Set Elsewhere
+ //DisplayLeftRightOutputInternal = 0 // Force Set Elsewhere
  Anaglyph_Colors[0] = 0xFF0000;
  Anaglyph_Colors[1] = 0x0000FF;
  VB3DMode = VB3DMODE_ANAGLYPH;
@@ -1118,6 +1124,11 @@ v810_timestamp_t MDFN_FASTCALL VIP_Update(const v810_timestamp_t timestamp)
  {
   int32 chunk_clocks = clocks;
 
+  if (DisplayLeftRightOutputInternal == 3) {
+	DrawingCounter = 0;
+	skip=true;
+  }
+
   if(DrawingCounter > 0 && chunk_clocks > DrawingCounter)
    chunk_clocks = DrawingCounter;
   if(chunk_clocks > ColumnCounter)
@@ -1125,7 +1136,7 @@ v810_timestamp_t MDFN_FASTCALL VIP_Update(const v810_timestamp_t timestamp)
 
   running_timestamp += chunk_clocks;
 
-  if(DrawingCounter > 0)
+ if(DrawingCounter > 0)
   {
    DrawingCounter -= chunk_clocks;
    if(DrawingCounter <= 0)
@@ -1140,22 +1151,30 @@ v810_timestamp_t MDFN_FASTCALL VIP_Update(const v810_timestamp_t timestamp)
 			printf("wtf");
 	}
 	*/
+    int lrtemp;
 
     for(int lr = 0; lr < 2; lr++)
     {
      uint8 *FB_Target = FB[DrawingFB][lr] + DrawingBlock * 2;
 
+	 if (DisplayLeftRightOutputInternal == 1)
+	  lrtemp = 0;
+	 else if (DisplayLeftRightOutputInternal == 2)
+	  lrtemp = 1;
+	 else
+	  lrtemp = lr;
+
      for(int x = 0; x < 384; x++)
      {
-      FB_Target[64 * x + 0] = (DrawingBuffers[lr][8 + x + 512 * 0] << 0)
-				  | (DrawingBuffers[lr][8 + x + 512 * 1] << 2)
-				  | (DrawingBuffers[lr][8 + x + 512 * 2] << 4)
-				  | (DrawingBuffers[lr][8 + x + 512 * 3] << 6);
+      FB_Target[64 * x + 0] = (DrawingBuffers[lrtemp][8 + x + 512 * 0] << 0)
+				  | (DrawingBuffers[lrtemp][8 + x + 512 * 1] << 2)
+				  | (DrawingBuffers[lrtemp][8 + x + 512 * 2] << 4)
+				  | (DrawingBuffers[lrtemp][8 + x + 512 * 3] << 6);
 
-      FB_Target[64 * x + 1] = (DrawingBuffers[lr][8 + x + 512 * 4] << 0) 
-                                  | (DrawingBuffers[lr][8 + x + 512 * 5] << 2)
-                                  | (DrawingBuffers[lr][8 + x + 512 * 6] << 4) 
-                                  | (DrawingBuffers[lr][8 + x + 512 * 7] << 6);
+      FB_Target[64 * x + 1] = (DrawingBuffers[lrtemp][8 + x + 512 * 4] << 0) 
+                                  | (DrawingBuffers[lrtemp][8 + x + 512 * 5] << 2)
+                                  | (DrawingBuffers[lrtemp][8 + x + 512 * 6] << 4) 
+                                  | (DrawingBuffers[lrtemp][8 + x + 512 * 7] << 6);
 
 //	  if(FB_Target[64 * x + 0] != 0 || FB_Target[64 * x + 1] != 0)
 //		  printf("wtf");

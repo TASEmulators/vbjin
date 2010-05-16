@@ -13,7 +13,9 @@
 --2 Teleroboxer (From reset, any time after)
 --2 VB Wario Land (From reset, any time after)
 --5 Vertical Force (From reset, any time after)
---
+
+local GameNum = 2;
+
 --Not Done:
 --3D Tetris
 --Golf
@@ -22,7 +24,6 @@
 --Nester's Funky Bowling (Broken)
 --Virtual League Baseball (Broken)
 
-local GameNum = 5;
 
 local InsertKeyMusSelect = 37;
 
@@ -40,9 +41,11 @@ else
    MusWriteAddr = MusReadAddr;
    StripBit80 = 1;
   else
+   if (GameNum == 5) then
    MusReadAddr = tonumber("05007DBD", 16);
    MusWriteAddr = MusReadAddr;
    StripBit80 = 1;
+   end;
  end;
 end;
 
