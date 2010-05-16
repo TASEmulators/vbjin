@@ -427,6 +427,9 @@ void SetMixVideoOutput(bool disabled) {
 	VIP_SetMixVideoOutput(disabled);
 }
 
+void SetViewDisp(int display) {
+	VIP_SetViewDisp(display);
+}
 
 static bool TestMagic(const char *name, MDFNFILE *fp)
 {

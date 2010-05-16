@@ -76,6 +76,10 @@
 #define IDM_OPEN_ROM                    264
 #define IDM_FILE_RECORDWAV              265
 #define IDM_FILE_STOPWAV                266
+#define ID_VIEW_DISP_BOTH               267
+#define ID_VIEW_DISP_LEFT               268
+#define ID_VIEW_DISP_RIGHT              269
+#define ID_VIEW_DISP_DISABLE            270
 #define IDC_UP                          400
 #define IDC_LEFT                        401
 #define IDC_DOWN                        402

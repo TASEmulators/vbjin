@@ -68,7 +68,14 @@ BEGIN
         MENUITEM "4/3 Aspect Ratio",            IDC_ASPECT
         MENUITEM SEPARATOR
         MENUITEM "Mix Left && Right View",      ID_VIEW_MIXLEFTRIGHT
-        MENUITEM "Display Frame Counter",       ID_VIEW_FRAMECOUNTER
+        POPUP "Video Display"
+        BEGIN
+            MENUITEM "Both",                    ID_VIEW_DISP_BOTH
+            MENUITEM "Left Only",               ID_VIEW_DISP_LEFT
+            MENUITEM "Right Only",              ID_VIEW_DISP_RIGHT
+            MENUITEM "Disabled",                ID_VIEW_DISP_DISABLE
+        END
+		MENUITEM "Display Frame Counter",       ID_VIEW_FRAMECOUNTER
         MENUITEM "Display Input",               ID_VIEW_DISPLAYINPUT
         MENUITEM "Display Lag Counter",         ID_VIEW_DISPLAYLAG
         MENUITEM "Display State Slots",         ID_VIEW_DISPLAYSTATESLOTS
