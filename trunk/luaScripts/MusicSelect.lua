@@ -4,16 +4,43 @@
 --This is confirmed to work in the following games:
 --
 --Game Num List():
---1 (Basic Testing)(VB Wario Land can use either, so it uses 2 for user convenience)
---2 VB Wario Land (From reset, any time after)
+--1 (Basic Driver)(Some can use this or 2, so they use 2 for user convenience)
+--2 Galactic Pinball(From reset, any time after)
+--2 Mario Clash (From reset, any time after)
+--4 Panic Bomber (From reset, any time after)
+--3 Red Alarm (From reset, any time after)
 --2 Teleroboxer (From reset, any time after)
+--2 VB Wario Land (From reset, any time after)
+--
+--Not Done:
+--3D Tetris
+--Golf
+--Jack Bros
+--Mario's Tennis (Broken)
+--Nester's Funky Bowling (Broken)
+--Vertical Force
+--Virtual League Baseball (Broken)
 
-local GameNum = 2;
+local GameNum = 4;
 
-local InsertKeyMusSelect = 23;
+local InsertKeyMusSelect = 37;
 
 local MusReadAddr = tonumber("050000F6", 16);
 local MusWriteAddr = tonumber("050000F4", 16);
+
+local StripBit80 = 0;
+
+if (GameNum == 3) then
+MusReadAddr = tonumber("05000045", 16);
+MusWriteAddr = MusReadAddr;
+else
+ if (GameNum == 4) then
+  MusReadAddr = tonumber("0500E0C9", 16);
+  MusWriteAddr = MusReadAddr;
+  StripBit80 = 1;
+ end;
+end;
+
 local ButtonWasPressed;
 
 function MusicSelect()
@@ -44,6 +71,16 @@ if (not ButtonWasPressed) then
  if (ButtonWasPressed) then
   if (GameNum == 2) then
    memory.writebyte(tonumber("050000D0", 16),tonumber(MusicValue)); 
+  end;
+  
+  if (GameNum == 3) then
+   memory.writebyte(tonumber("05000044", 16),1);
+  end;
+
+  if (StripBit80 == 1) then
+   if (tonumber(MusicValue) > 127) then
+    MusicValue = (tonumber(MusicValue) - 128)
+   end;
   end;
   memory.writebyte(MusWriteAddr,tonumber(MusicValue));
  end;
