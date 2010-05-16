@@ -340,13 +340,14 @@ EmulateSpecStruct vbjinEmulate() {
 
 	static double average_time = 0;
 
+	/*
 	int color =5555555;
 	int h = 224;
 
 	for(uint32 i = 0; i < 320 * h; i++)
 	{
 		//	VTBuffer[VTBackBuffer]->pixels[i] = color;
-	}
+	} */
 
 //frames++;
 
