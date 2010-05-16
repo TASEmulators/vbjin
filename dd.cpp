@@ -307,7 +307,7 @@ void render() {
 	pcejin.width = espec.DisplayRect.w;
 	pcejin.height = espec.DisplayRect.h;
 //#endif
-	uint32 *src = (uint32*)convert_buffer;
+	//uint32 *src = (uint32*)convert_buffer;
 
 	SetInputDisplayCharacters(pcejin.pads);
 
@@ -353,7 +353,7 @@ void render() {
 
 	aggDraw.hud->attach(convert_buffer, pcejin.width, pcejin.height, 4*pcejin.width);
 
-	uint32 *dst = (uint32*)ddsd.lpSurface;
+	//uint32 *dst = (uint32*)ddsd.lpSurface;
 
 	switch(ddsd.ddpfPixelFormat.dwRGBBitCount)
 	{
