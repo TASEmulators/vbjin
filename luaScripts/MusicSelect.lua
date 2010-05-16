@@ -1,16 +1,18 @@
 --Music Selection LUA Script
---Page Up to increase, Page Down to decrease
+--Page Up to increase, Page Down to decrease.
+--This can crash your game, so you should be careful.
 --
 --This is confirmed to work in the following games:
 --
 --Game Num List():
 --1 (Basic Driver)(Some can use this or 2, so they use 2 for user convenience)
---2 Galactic Pinball(From reset, any time after)
+--2 Galactic Pinball (From reset, any time after)
 --2 Mario Clash (From reset, any time after)
 --4 Panic Bomber (From reset, any time after)
 --3 Red Alarm (From reset, any time after)
 --2 Teleroboxer (From reset, any time after)
 --2 VB Wario Land (From reset, any time after)
+--5 Vertical Force (From reset, any time after)
 --
 --Not Done:
 --3D Tetris
@@ -18,10 +20,9 @@
 --Jack Bros
 --Mario's Tennis (Broken)
 --Nester's Funky Bowling (Broken)
---Vertical Force
 --Virtual League Baseball (Broken)
 
-local GameNum = 4;
+local GameNum = 5;
 
 local InsertKeyMusSelect = 37;
 
@@ -35,9 +36,13 @@ MusReadAddr = tonumber("05000045", 16);
 MusWriteAddr = MusReadAddr;
 else
  if (GameNum == 4) then
-  MusReadAddr = tonumber("0500E0C9", 16);
-  MusWriteAddr = MusReadAddr;
-  StripBit80 = 1;
+   MusReadAddr = tonumber("0500E0C9", 16);
+   MusWriteAddr = MusReadAddr;
+   StripBit80 = 1;
+  else
+   MusReadAddr = tonumber("05007DBD", 16);
+   MusWriteAddr = MusReadAddr;
+   StripBit80 = 1;
  end;
 end;
 
