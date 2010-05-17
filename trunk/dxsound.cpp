@@ -126,7 +126,10 @@ bool DirectSound::init(long sampleRate)
 	freq = sampleRate;
 	// calculate the number of samples per frame first
 	// then multiply it with the size of a sample frame (16 bit * stereo)
-	soundBufferLen = 3628-120;//( freq / 60 ) * 4;
+	// soundBufferLen previous value: 3628-120.
+	// Recalc: ((freq / (20000000 / (259 * 384 * 4))) * 4) & 0xFFFFFC = 3508.
+	// & FFFFFC ~= (3508.8 -%= 4) = 3508. 3509 won't work, modulus by 4.
+	soundBufferLen = 3508;//( freq / 60 ) * 4;
 	soundBufferTotalLen = soundBufferLen * 10;
 	soundNextPosition = 0;
 
