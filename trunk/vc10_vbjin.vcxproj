@@ -212,6 +212,7 @@
     <ClCompile Include="waveout.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dxsound.h" />
     <ClInclude Include="mednafen\include\blargg_common.h" />
     <ClInclude Include="mednafen\include\blargg_config.h" />
     <ClInclude Include="mednafen\include\blargg_endian.h" />
