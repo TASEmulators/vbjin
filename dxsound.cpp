@@ -10,7 +10,7 @@
 // DirectSound8
 #include <dsound.h>
 
-bool soundBufferLow;
+//bool soundBufferLow;
 
 class DirectSound : public SoundDriver
 {
@@ -249,23 +249,24 @@ void DirectSound::write(u16 * finalWave, int length)
 		if( status & DSBSTATUS_PLAYING ) {
 			if( !soundPaused ) {
 				while( true ) {
-					dsbSecondary->GetCurrentPosition(&play, NULL);
-					  int BufferLeft = ((soundNextPosition <= play) ?
-					  play - soundNextPosition :
-					  soundBufferTotalLen - soundNextPosition + play);
+				  dsbSecondary->GetCurrentPosition(&play, NULL);
+				  int BufferLeft = ((soundNextPosition <= play) ?
+				  play - soundNextPosition :
+				  soundBufferTotalLen - soundNextPosition + play);
 
-		          if(BufferLeft > soundBufferLen)
+				  //If this was threaded, it likely wouldn't cause any trouble to make it
+				  //wait a little bit longer than 10 milliseconds
+				  //This coding causes the game to skip a little, depending on the
+				  //soundBufferTotalLen and WaitForSingleObject time.
+				  if((BufferLeft < soundBufferLen * 9) || soundDriver->userMute)
 				  {
-					if (BufferLeft > soundBufferTotalLen - (soundBufferLen * 3))
-						soundBufferLow = true;
 					break;
+				  } else {
+				   if(dsbEvent) {
+				    WaitForSingleObject(dsbEvent, 10);
 				   }
-				   soundBufferLow = false;
-
-		          if(dsbEvent) {
-		            WaitForSingleObject(dsbEvent, 50);
-		          }
-		        }
+				  }
+				}
 			}
 		}/* else {
 		 // TODO: remove?
