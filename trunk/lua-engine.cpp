@@ -1650,7 +1650,7 @@ DEFINE_LUA_FUNCTION(gens_redraw, "")
 DEFINE_LUA_FUNCTION(memory_readbyte, "address")
 {
 	// v810_timestamp_t = int32
-	int address = luaL_checkinteger(L,1);
+	int address = lua_tointeger(L,1);
 
 	unsigned char value = (unsigned char)(MDFN_IEN_VB::MemRead8(dummytimestamp,address) & 0xFF);
 	lua_settop(L,0);
@@ -1659,7 +1659,7 @@ DEFINE_LUA_FUNCTION(memory_readbyte, "address")
 }
 DEFINE_LUA_FUNCTION(memory_readbytesigned, "address")
 {
-	int address = luaL_checkinteger(L,1);
+	int address = lua_tointeger(L,1);
 	signed char value = (signed char)(MDFN_IEN_VB::MemRead8(dummytimestamp,address) & 0xFF);
 	lua_settop(L,0);
 	lua_pushinteger(L, value);
@@ -1667,7 +1667,7 @@ DEFINE_LUA_FUNCTION(memory_readbytesigned, "address")
 }
 DEFINE_LUA_FUNCTION(memory_readword, "address")
 {
-	int address = luaL_checkinteger(L,1);
+	int address = lua_tointeger(L,1);
 	unsigned short value = (unsigned short)(MDFN_IEN_VB::MemRead16(dummytimestamp,address) & 0xFFFF);
 	lua_settop(L,0);
 	lua_pushinteger(L, value);
@@ -1675,7 +1675,7 @@ DEFINE_LUA_FUNCTION(memory_readword, "address")
 }
 DEFINE_LUA_FUNCTION(memory_readwordsigned, "address")
 {
-	int address = luaL_checkinteger(L,1);
+	int address = lua_tointeger(L,1);
 	signed short value = (signed short)(MDFN_IEN_VB::MemRead16(dummytimestamp,address) & 0xFFFF);
 	lua_settop(L,0);
 	lua_pushinteger(L, value);
@@ -1718,8 +1718,8 @@ void memWrite(int Address, int Length, unsigned char* Buffer) {
 
 DEFINE_LUA_FUNCTION(memory_writebyte, "address,value")
 {
-	int address = luaL_checkinteger(L,1);
-	unsigned char value = (unsigned char)(luaL_checkinteger(L,2) & 0xFF);
+	int address = lua_tointeger(L,1);
+	unsigned char value = (unsigned char)(lua_tointeger(L,2) & 0xFF);
 
 	//unsigned char* Buffer = &value;
 
@@ -1733,8 +1733,8 @@ DEFINE_LUA_FUNCTION(memory_writebyte, "address,value")
 }
 DEFINE_LUA_FUNCTION(memory_writeword, "address,value")
 {
-	int address = luaL_checkinteger(L,1);
-	unsigned short value = (unsigned short)(luaL_checkinteger(L,2) & 0xFFFF);
+	int address = lua_tointeger(L,1);
+	unsigned short value = (unsigned short)(lua_tointeger(L,2) & 0xFFFF);
 
 	MDFN_IEN_VB::MemWrite16(dummytimestamp,address,value);
 	return 0;
@@ -3749,7 +3749,7 @@ static const struct luaL_reg memorylib [] =
 	{"readlongunsigned", memory_readdword},
 	{"readlongsigned", memory_readdwordsigned},
 	{"writeshort", memory_writeword},
-	{"writelong", memory_writedword},
+//	{"writelong", memory_writedword},
 
 	// memory hooks
 //	{"registerwrite", memory_registerwrite},

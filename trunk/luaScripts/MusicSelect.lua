@@ -4,7 +4,7 @@
 --
 --This is confirmed to work in the following games:
 --
---Game Num List:
+--GameNum List:
 --1 (Basic Driver)(Some can use this or 2, so they use 2 for user convenience)
 --6 3D Tetris (From reset, any time after)
 --2 Galactic Pinball (From reset, any time after)
@@ -16,14 +16,21 @@
 --2 VB Wario Land (From reset, any time after)
 --5 Vertical Force (From reset, any time after)
 
-local GameNum = 2;
-local InsertKeyMusSelect = 37;
+--User Control:
+ --Use with GameNum List to select game.
+ local GameNum = 2;
+
+ --Lets you jump directly to a song. Good for starting from silence to record.
+ local InsertKeyMusSelect = 37;
+
+ --Lets you prevent songs from rolling below 0. 1 = on, 0 = off.
+ local MakeSongZeroMinimum = 1;
 
 --Not Done:
 --Jack Bros
---Mario's Tennis (Broken)
---Nester's Funky Bowling (Broken)
---Virtual League Baseball (Broken)
+--Mario's Tennis (Attempted, but failed)
+--Nester's Funky Bowling
+--Virtual League Baseball
 
 --Incompatible with LUA methods:
 --Innsmouth Mansion (J):
@@ -40,31 +47,38 @@ local InsertKeyMusSelect = 37;
 --setting ECD73 to 18B30E07,
 --and ripping from the point of going into the password screen.
 
-local MusReadAddr = tonumber("050000F6", 16);
-local MusWriteAddr = tonumber("050000F4", 16);
+--Declarations:
+--Most prevalent music change addresses used by default
+local MusReadAddr = 0x050000F6;
+local MusWriteAddr = 0x050000F4;
 
+--Hudson games use this to distinguish if a song is being asked to init, while keeping the number.
 local StripBit80 = 0;
 
+--Used to prevent button press events from registering every frame.
+--Only 3 used, so no need to save a full array of all buttons to compare every frame.
+local ButtonWasPressed;
+
 if (GameNum == 3) then
-MusReadAddr = tonumber("05000045", 16);
-MusWriteAddr = MusReadAddr;
+ MusReadAddr = 0x05000045;
+ MusWriteAddr = MusReadAddr;
 else
  if (GameNum == 4) then
-   MusReadAddr = tonumber("0500E0C9", 16);
+   MusReadAddr = 0x0500E0C9;
    MusWriteAddr = MusReadAddr;
    StripBit80 = 1;
   else
    if (GameNum == 5) then
-    MusReadAddr = tonumber("05007DBD", 16);
+    MusReadAddr = 0x05007DBD;
     MusWriteAddr = MusReadAddr;
     StripBit80 = 1;
    else
     if (GameNum == 6) then
-     MusReadAddr = tonumber("05007631", 16);
+     MusReadAddr = 0x05007631;
      MusWriteAddr = MusReadAddr;
     else
      if (GameNum == 7) then
-      MusReadAddr = tonumber("05004B41", 16);
+      MusReadAddr = 0x05004B41;
       MusWriteAddr = MusReadAddr;
      end;
     end;
@@ -72,24 +86,27 @@ else
  end;
 end;
 
-local ButtonWasPressed;
 
 function MusicSelect()
+--Basically a music select driver.
+--May be updated with a music number display when VBJin's Lua can do it.
 
 local kbinput = input.get();
 
 if (not ButtonWasPressed) then
 
+--Increase Music Value
  if (kbinput.pageup) then
   ButtonWasPressed = 1;
   MusicValue = memory.readbyte(MusReadAddr);
-  MusicValue = tonumber(MusicValue) + 1;
+  MusicValue = MusicValue + 1;
  end;
- 
+
+--Decrease Music Value
  if (kbinput.pagedown) then
   ButtonWasPressed = 1;
   MusicValue = memory.readbyte(MusReadAddr);
-  MusicValue = tonumber(MusicValue) - 1;
+  MusicValue = MusicValue - 1;
  end;
 
 -- An easily customized music selection key,
@@ -99,34 +116,39 @@ if (not ButtonWasPressed) then
   MusicValue=InsertKeyMusSelect;
  end;
 
+--Instead of duplicating the music write code multiple times,
+--it checks to see if any music change tests were run.
  if (ButtonWasPressed) then
   if (GameNum == 2) then
-    memory.writebyte(tonumber("050000D0", 16),tonumber(MusicValue)); 
+    memory.writebyte(0x050000D0,MusicValue); 
+  else
+   if (GameNum == 3) then
+    memory.writebyte(0x05000044,1);
    else
-    if (GameNum == 3) then
-     memory.writebyte(tonumber("05000044", 16),1);
+    if (GameNum == 6) then
+     memory.writebyte(0x05007630,1);
     else
-     if (GameNum == 6) then
-      memory.writebyte(tonumber("05007630", 16),1);
-     else
-      if (GameNum == 7) then
-       memory.writebyte(tonumber("05004B40", 16),1);
-      end;
+     if (GameNum == 7) then
+      memory.writebyte(0x05004B40,1);
      end;
     end;
-  end;
- 
-  if (StripBit80 == 1) then
-   if (tonumber(MusicValue) > 127) then
-    MusicValue = (tonumber(MusicValue) - 128)
    end;
   end;
-  memory.writebyte(MusWriteAddr,tonumber(MusicValue));
+  
+  if (StripBit80 == 1) then
+   if (MusicValue > 127) then
+    MusicValue = (MusicValue - 128)
+   end;
+  end;
+  memory.writebyte(MusWriteAddr,MusicValue);
  end;
 
 end;
 
--- Allows one to disable the boolean pretty easily
+-- Allows one to prevent button presses from registering every frame.
+-- Tests all used buttons that affect ButtonWasPressed on every frame to 0 it out when nothing is pressed.
+-- A more robust solution is to save a full input array between frames,
+-- and compare them for differences with the input array to be used.
 ButtonWasPressed = (kbinput.pageup or kbinput.pagedown or kbinput.insert);
 
 end;
