@@ -5,7 +5,7 @@
 
 int FastForward=0;
 static u64 tmethod,tfreq;
-static const u64 core_desiredfps =3276800;//50
+static const u64 core_desiredfps =3294723;//~50.2  Calc: ((20000000 / (259 * 384 * 4)) * 65536) //Old: 3276800
 static u64 desiredfps = core_desiredfps;
 static u64 desiredFpsScaler = 256;
 
