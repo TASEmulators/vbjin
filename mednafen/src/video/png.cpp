@@ -64,7 +64,7 @@ int MDFN_SavePNGSnapshot(const char *fname, const MDFN_Surface *src, const MDFN_
  uint8 *compmem = NULL;
  uLongf compmemsize = (uLongf)( (rect->h * (rect->w + 1) * 3 * 1.001 + 1) + 12 );
 
- if(!(compmem=(uint8 *)MDFN_malloc(compmemsize, _("PNG compression buffer"))))
+ if(!(compmem=(uint8 *)MDFN_malloc(compmemsize, "PNG compression buffer")))
   return 0;
 
  if(!(pp=fopen(fname, "wb")))

@@ -35,7 +35,9 @@ typedef uint32_t uint32;
 #define lseek _lseek
 #define read _read
 
-#define _ 
+//WTF? Just who in the FUCK would do this?
+//Prevents VC2008 from compiling VBJin. Fix involved stripping _() tags from several items.
+//#define _ 
 
 #define MDFN_printf printf
 

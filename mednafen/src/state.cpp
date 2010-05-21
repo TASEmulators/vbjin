@@ -656,7 +656,7 @@ int MDFNSS_Save(const char *fname, const char *suffix, const MDFN_Surface *surfa
 
 	if(!MDFNGameInfo->StateAction)
 	{
-		MDFN_DispMessage(_("Module \"%s\" doesn't support save states."), MDFNGameInfo->shortname);
+		MDFN_DispMessage("Module \"%s\" doesn't support save states.", MDFNGameInfo->shortname);
 		return(0);
 	}
 
@@ -665,7 +665,7 @@ int MDFNSS_Save(const char *fname, const char *suffix, const MDFN_Surface *surfa
 		if(st.data)
 			free(st.data);
 		if(!fname && !suffix)
-			MDFN_DispMessage(_("State %d save error."), CurrentState);
+			MDFN_DispMessage("State %d save error.", CurrentState);
 		return(0);
 	}
 
@@ -675,7 +675,7 @@ int MDFNSS_Save(const char *fname, const char *suffix, const MDFN_Surface *surfa
 		free(st.data);
 
 		if(!fname && !suffix)
-			MDFN_DispMessage(_("State %d save error."),CurrentState);
+			MDFN_DispMessage("State %d save error.",CurrentState);
 
 		return(0);
 	}
@@ -689,7 +689,7 @@ int MDFNSS_Save(const char *fname, const char *suffix, const MDFN_Surface *surfa
 	RecentlySavedState = CurrentState;
 
 	if(!fname && !suffix)
-		MDFN_DispMessage(_("State %d saved."),CurrentState);
+		MDFN_DispMessage("State %d saved.",CurrentState);
 
 	return(1);
 }
@@ -831,7 +831,7 @@ int MDFNSS_Load(const char *fname, const char *suffix)
 
 	if(!MDFNGameInfo->StateAction)
 	{
-		MDFN_DispMessage(_("Module \"%s\" doesn't support save states."), MDFNGameInfo->shortname);
+		MDFN_DispMessage("Module \"%s\" doesn't support save states.", MDFNGameInfo->shortname);
 		return(0);
 	}
 
@@ -846,7 +846,7 @@ int MDFNSS_Load(const char *fname, const char *suffix)
 	{
 		if(!fname && !suffix)
 		{
-			MDFN_DispMessage(_("State %d load error."),CurrentState);
+			MDFN_DispMessage("State %d load error.",CurrentState);
 			SaveStateStatus[CurrentState]=0;
 		}
 		return(0);
@@ -860,7 +860,7 @@ int MDFNSS_Load(const char *fname, const char *suffix)
 		{
 			LoadStateMovie((char*)MDFN_MakeFName(MDFNMKF_STATE,CurrentState,suffix).c_str());
 			SaveStateStatus[CurrentState]=1;
-			MDFN_DispMessage(_("State %d loaded."),CurrentState);
+			MDFN_DispMessage("State %d loaded.",CurrentState);
 			SaveStateStatus[CurrentState]=1;
 		}
 		gzclose(st);
@@ -869,7 +869,7 @@ int MDFNSS_Load(const char *fname, const char *suffix)
 	else
 	{
 		SaveStateStatus[CurrentState]=1;
-		MDFN_DispMessage(_("State %d read error!"),CurrentState);
+		MDFN_DispMessage("State %d read error!",CurrentState);
 		gzclose(st);
 		return(0);
 	}
@@ -923,7 +923,7 @@ void MDFNSS_GetStateInfo(const char *filename, StateStatusStruct *status)
   if(width > 1024) width = 1024;
   if(height > 1024) height = 1024;
 
-  if(!(previewbuffer = (uint8 *)MDFN_malloc(3 * width * height, _("Save state preview buffer"))))
+  if(!(previewbuffer = (uint8 *)MDFN_malloc(3 * width * height, "Save state preview buffer")))
   {
    StateShowPBWidth = 0;
    StateShowPBHeight = 0;
@@ -970,7 +970,7 @@ void MDFNI_SelectState(int w)
 
 // MDFN_ResetMessages();
 
- StateStatusStruct *status = (StateStatusStruct*)MDFN_calloc(1, sizeof(StateStatusStruct), _("Save state status"));
+ StateStatusStruct *status = (StateStatusStruct*)MDFN_calloc(1, sizeof(StateStatusStruct), "Save state status");
  
  memcpy(status->status, SaveStateStatus, 10 * sizeof(int));
 
