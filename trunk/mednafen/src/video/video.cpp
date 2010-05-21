@@ -57,11 +57,11 @@ void MDFNI_SaveSnapshot(const MDFN_Surface *src, const MDFN_Rect *DisplayRect)
   if(!MDFN_SavePNGSnapshot(fn.c_str(), src, DisplayRect))
    throw(0);
 
-  MDFN_DispMessage(_("Screen snapshot %d saved."), u);
+  MDFN_DispMessage("Screen snapshot %d saved.", u);
  }
  catch(int x)
  {
-  MDFN_DispMessage(_("Error saving screen snapshot."));
+  MDFN_DispMessage("Error saving screen snapshot.");
  }
 }
 #include "GPU_osd.h"

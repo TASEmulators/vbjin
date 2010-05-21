@@ -137,7 +137,7 @@ static bool ValidateSetting(const char *value, const MDFNSetting *setting)
 
   if(!TranslateSettingValueUI(value, ullvalue))
   {
-   MDFN_PrintError(_("Setting \"%s\", value \"%s\", is not set to a valid unsigned integer."), setting->name, value);
+   MDFN_PrintError("Setting \"%s\", value \"%s\", is not set to a valid unsigned integer.", setting->name, value);
    return(0);
   }
   if(setting->minimum)
@@ -147,7 +147,7 @@ static bool ValidateSetting(const char *value, const MDFNSetting *setting)
    TranslateSettingValueUI(setting->minimum, minimum);
    if(ullvalue < minimum)
    {
-    MDFN_PrintError(_("Setting \"%s\" is set too small(\"%s\"); the minimum acceptable value is \"%s\"."), setting->name, value, setting->minimum);
+    MDFN_PrintError("Setting \"%s\" is set too small(\"%s\"); the minimum acceptable value is \"%s\".", setting->name, value, setting->minimum);
     return(0);
    }
   }
@@ -158,7 +158,7 @@ static bool ValidateSetting(const char *value, const MDFNSetting *setting)
    TranslateSettingValueUI(setting->maximum, maximum);
    if(ullvalue > maximum)
    {
-    MDFN_PrintError(_("Setting \"%s\" is set too large(\"%s\"); the maximum acceptable value is \"%s\"."), setting->name, value, setting->maximum);
+    MDFN_PrintError("Setting \"%s\" is set too large(\"%s\"); the maximum acceptable value is \"%s\".", setting->name, value, setting->maximum);
     return(0);
    }
   }
@@ -169,7 +169,7 @@ static bool ValidateSetting(const char *value, const MDFNSetting *setting)
 
   if(!TranslateSettingValueI(value, llvalue))
   {
-   MDFN_PrintError(_("Setting \"%s\", value \"%s\", is not set to a valid signed integer."), setting->name, value);
+   MDFN_PrintError("Setting \"%s\", value \"%s\", is not set to a valid signed integer.", setting->name, value);
    return(0);
   }
   if(setting->minimum)
@@ -179,7 +179,7 @@ static bool ValidateSetting(const char *value, const MDFNSetting *setting)
    TranslateSettingValueI(setting->minimum, minimum);
    if(llvalue < minimum)
    {
-    MDFN_PrintError(_("Setting \"%s\" is set too small(\"%s\"); the minimum acceptable value is \"%s\"."), setting->name, value, setting->minimum);
+    MDFN_PrintError("Setting \"%s\" is set too small(\"%s\"); the minimum acceptable value is \"%s\".", setting->name, value, setting->minimum);
     return(0);
    }
   }
@@ -190,7 +190,7 @@ static bool ValidateSetting(const char *value, const MDFNSetting *setting)
    TranslateSettingValueI(setting->maximum, maximum);
    if(llvalue > maximum)
    {
-    MDFN_PrintError(_("Setting \"%s\" is set too large(\"%s\"); the maximum acceptable value is \"%s\"."), setting->name, value, setting->maximum);
+    MDFN_PrintError("Setting \"%s\" is set too large(\"%s\"); the maximum acceptable value is \"%s\".", setting->name, value, setting->maximum);
     return(0);
    }
   }
@@ -204,7 +204,7 @@ static bool ValidateSetting(const char *value, const MDFNSetting *setting)
 
   if(!endptr || *endptr != 0)
   {
-   MDFN_PrintError(_("Setting \"%s\", value \"%s\", is not set to a floating-point(real) number."), setting->name, value);
+   MDFN_PrintError("Setting \"%s\", value \"%s\", is not set to a floating-point(real) number.", setting->name, value);
    return(0);
   }
   if(setting->minimum)
@@ -214,7 +214,7 @@ static bool ValidateSetting(const char *value, const MDFNSetting *setting)
 //   minimum = world_strtod(setting->minimum, NULL);
    if(dvalue < minimum)
    {
-    MDFN_PrintError(_("Setting \"%s\" is set too small(\"%s\"); the minimum acceptable value is \"%s\"."), setting->name, value, setting->minimum);
+    MDFN_PrintError("Setting \"%s\" is set too small(\"%s\"); the minimum acceptable value is \"%s\".", setting->name, value, setting->minimum);
     return(0);
    }
   }
@@ -225,7 +225,7 @@ static bool ValidateSetting(const char *value, const MDFNSetting *setting)
 //   maximum = world_strtod(setting->maximum, NULL);
    if(dvalue > maximum)
    {
-    MDFN_PrintError(_("Setting \"%s\" is set too large(\"%s\"); the maximum acceptable value is \"%s\"."), setting->name, value, setting->maximum);
+    MDFN_PrintError("Setting \"%s\" is set too large(\"%s\"); the maximum acceptable value is \"%s\".", setting->name, value, setting->maximum);
     return(0);
    }
   }
@@ -234,7 +234,7 @@ static bool ValidateSetting(const char *value, const MDFNSetting *setting)
  {
   if(strlen(value) != 1 || (value[0] != '0' && value[0] != '1'))
   {
-   MDFN_PrintError(_("Setting \"%s\", value \"%s\",  is not a valid boolean value."), setting->name, value);
+   MDFN_PrintError("Setting \"%s\", value \"%s\",  is not a valid boolean value.", setting->name, value);
    return(0);
   }
  }
@@ -257,7 +257,7 @@ static bool ValidateSetting(const char *value, const MDFNSetting *setting)
   } while((++enum_list)->string);
   if(!found)
   {
-   MDFN_PrintError(_("Setting \"%s\", value \"%s\", is not a recognized string.  Recognized strings: %s"), setting->name, value, valid_string_list.c_str());
+   MDFN_PrintError("Setting \"%s\", value \"%s\", is not a recognized string.  Recognized strings: %s", setting->name, value, valid_string_list.c_str());
    return(0);
   }
  }
@@ -266,9 +266,9 @@ static bool ValidateSetting(const char *value, const MDFNSetting *setting)
  if(setting->validate_func && !setting->validate_func(setting->name, value))
  {
   if(base_type == MDFNST_STRING)
-   MDFN_PrintError(_("Setting \"%s\" is not set to a valid string: \"%s\""), setting->name, value);
+   MDFN_PrintError("Setting \"%s\" is not set to a valid string: \"%s\"", setting->name, value);
   else
-   MDFN_PrintError(_("Setting \"%s\" is not set to a valid unsigned integer: \"%s\""), setting->name, value);
+   MDFN_PrintError("Setting \"%s\" is not set to a valid unsigned integer: \"%s\"", setting->name, value);
   return(0);
  }
 
@@ -292,14 +292,14 @@ bool MFDN_LoadSettings(const char *basedir)
 // fname += PSS;
  fname += "mednafen-09x.cfg";
 
- MDFN_printf(_("Loading settings from \"%s\"..."), fname.c_str());
+ MDFN_printf("Loading settings from \"%s\"...", fname.c_str());
 
  //printf("%s\n", fname.c_str());
  if(!(fp = fopen(fname.c_str(), "rb")))
  {
 ////  ErrnoHolder ene(errno);
 
-//  MDFN_printf(_("Failed: %s\n"), ene.StrError());
+//  MDFN_printf("Failed: %s\n", ene.StrError());
 
 //  if(ene.Errno() == ENOENT) // Don't return failure if the file simply doesn't exist.
    return(1);
@@ -432,8 +432,8 @@ bool MDFN_SaveSettings(void)
 
 // trio_fprintf(fp, ";VERSION %s\n", MEDNAFEN_VERSION);
 
- trio_fprintf(fp, _(";Edit this file at your own risk!\n"));
- trio_fprintf(fp, _(";File format: <key><single space><value><LF or CR+LF>\n\n"));
+ trio_fprintf(fp, ";Edit this file at your own risk!\n");
+ trio_fprintf(fp, ";File format: <key><single space><value><LF or CR+LF>\n\n");
 
  for(sit = CurrentSettings.begin(); sit != CurrentSettings.end(); sit++)
  {
@@ -447,7 +447,7 @@ bool MDFN_SaveSettings(void)
 
  for(lit = SortedList.begin(); lit != SortedList.end(); lit++)
  {
-  trio_fprintf(fp, ";%s\n%s %s\n\n", _((*lit)->desc->description), (*lit)->name, (*lit)->value);
+  trio_fprintf(fp, ";%s\n%s %s\n\n", (*lit)->desc->description, (*lit)->name, (*lit)->value);
   free((*lit)->name);
   free((*lit)->value);
  }
@@ -682,7 +682,7 @@ bool MDFNI_SetSetting(const char *name, const char *value, bool NetplayOverride)
   }
  }
 
- MDFN_PrintError(_("Unknown setting \"%s\""), name);
+ MDFN_PrintError("Unknown setting \"%s\"", name);
 
  return(0);
 }

@@ -493,17 +493,17 @@ static int Load(const char *name, MDFNFILE *fp)
  else*/
   game_title[0] = 0;
 
- MDFN_printf(_("Title:     %s\n"), game_title);
- MDFN_printf(_("Game ID Code: %u\n"), MDFN_de32lsb(fp->data + (0xFFFFFDFB & (fp->size - 1))));
- MDFN_printf(_("Manufacturer Code: %d\n"), MDFN_de16lsb(fp->data + (0xFFFFFDF9 & (fp->size - 1))));
- MDFN_printf(_("Version:   %u\n"), fp->data[0xFFFFFDFF & (fp->size - 1)]);
+ MDFN_printf("Title:     %s\n", game_title);
+ MDFN_printf("Game ID Code: %u\n", MDFN_de32lsb(fp->data + (0xFFFFFDFB & (fp->size - 1))));
+ MDFN_printf("Manufacturer Code: %d\n", MDFN_de16lsb(fp->data + (0xFFFFFDF9 & (fp->size - 1))));
+ MDFN_printf("Version:   %u\n", fp->data[0xFFFFFDFF & (fp->size - 1)]);
 
- MDFN_printf(_("ROM:       %dKiB\n"), (int)(fp->size / 1024));
- MDFN_printf(_("ROM MD5:   0x%s\n"), md5_context::asciistr(MDFNGameInfo->MD5, 0).c_str());
+ MDFN_printf("ROM:       %dKiB\n", (int)(fp->size / 1024));
+ MDFN_printf("ROM MD5:   0x%s\n", md5_context::asciistr(MDFNGameInfo->MD5, 0).c_str());
  
  MDFN_printf("\n");
 
- MDFN_printf(_("V810 Emulation Mode: %s\n"), (cpu_mode == V810_EMU_MODE_ACCURATE) ? _("Accurate") : _("Fast"));
+ MDFN_printf("V810 Emulation Mode: %s\n", (cpu_mode == V810_EMU_MODE_ACCURATE) ? "Accurate" : "Fast");
 
  VB_V810 = new V810();
  VB_V810->Init(cpu_mode, true);

@@ -29,7 +29,7 @@ MDFNGI *MDFNI_LoadGame(const char *force_module, const char *name)
 
 	MDFNGameInfo = NULL;
 
-	MDFN_printf(_("Loading %s...\n"),name);
+	MDFN_printf("Loading %s...\n",name);
 
 //MDFN_indent(1);
 
@@ -62,7 +62,7 @@ MDFNGI *MDFNI_LoadGame(const char *force_module, const char *name)
 	 valid_iae.push_back(tmpext);
 	}
 #endif
-	if(!GameFile.Open(name, NULL, _("game")))//&valid_iae[0]
+	if(!GameFile.Open(name, NULL, "game"))//&valid_iae[0]
         {
 	 MDFNGameInfo = NULL;
 	 return 0;
@@ -118,13 +118,13 @@ extern MDFNGI EmulatedVB;
 	{
 		GameFile.Close();
 
-		MDFN_PrintError(_("Unrecognized file format.  Sorry."));
+		MDFN_PrintError("Unrecognized file format.  Sorry.");
 		//        MDFN_indent(-1);
 		MDFNGameInfo = NULL;
 		return 0;
 	}
 
-	MDFN_printf(_("Using module: %s(%s)\n\n"), MDFNGameInfo->shortname, MDFNGameInfo->fullname);
+	MDFN_printf("Using module: %s(%s)\n\n", MDFNGameInfo->shortname, MDFNGameInfo->fullname);
 	//MDFN_indent(1);
 
 	assert(MDFNGameInfo->soundchan != 0);
