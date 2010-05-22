@@ -10,7 +10,7 @@ void MDFN_PrintError(const char *format, ...)
 MDFNGI *MDFNI_LoadGame(const char *force_module, const char *name)
 {
         MDFNFILE GameFile;
-	struct stat stat_buf;
+	//struct stat stat_buf;
 	std::vector<FileExtensionSpecStruct> valid_iae;
 
 	if(strlen(name) > 4 && (!strcasecmp(name + strlen(name) - 4, ".cue") || !strcasecmp(name + strlen(name) - 4, ".toc")))
@@ -147,7 +147,7 @@ extern MDFNGI EmulatedVB;
 		// MDFNMP_InstallReadPatches();
 	}
 
-	SkipNormalLoad: ;
+	//SkipNormalLoad: ;
 
 	#ifdef WANT_DEBUGGER
 	MDFNDBG_PostGameLoad();

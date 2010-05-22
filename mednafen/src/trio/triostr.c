@@ -100,7 +100,11 @@
 
 #if defined(TRIO_PLATFORM_WIN32)
 # define USE_STRCASECMP
+#ifdef WIN32
+# define strcasecmp(x,y) _strcmpi(x,y)
+#else
 # define strcasecmp(x,y) strcmpi(x,y)
+#endif
 #endif
 
 #if !(defined(TRIO_PLATFORM_SUNOS))

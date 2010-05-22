@@ -86,7 +86,7 @@ uint8 TIMER_Read(const v810_timestamp_t &timestamp, uint32 A)
 
  switch(A & 0xFF)
  {
-  case 0x18: ret = TimerCounter;
+  case 0x18: ret = (uint8)TimerCounter&0xFF;
 	     break;
 
   case 0x1C: ret = TimerCounter >> 8;

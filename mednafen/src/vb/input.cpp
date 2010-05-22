@@ -79,7 +79,7 @@ uint8 VBINPUT_Read(v810_timestamp_t &timestamp, uint32 A)
  switch(A & 0xFF)
  {
   case 0x10: if(InstantReadHack)
-	      ret = PadData;
+	      ret = (uint8)PadData&0xFF;
 	     else
 	      ret = SDR & 0xFF;
 	     break;

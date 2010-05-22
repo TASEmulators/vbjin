@@ -42,6 +42,7 @@
 #include "general.h"
 
 #ifndef __GNUC__
+ #undef strcasecmp
  #define strcasecmp strcmp
 #endif
 
@@ -241,11 +242,11 @@ bool MDFNFILE::MakeMemWrap(void *tz, int type)
   else
   {
   #endif
-   if(!(f_data = (uint8*)MDFN_malloc(size, "file read buffer")))
+   if(!(f_data = (uint8*)MDFN_malloc((uint32)size, "file read buffer")))
    {
     goto doret;
    }
-   if((int64)::fread(f_data, 1, size, (FILE *)tz) != size)
+   if((int64)::fread(f_data, 1, (size_t)size, (FILE *)tz) != size)
    {
     free(f_data);
     goto doret;
@@ -543,7 +544,7 @@ uint64 MDFNFILE::fread(void *ptr, size_t element_size, size_t nmemb)
  {
   int64 ak = f_size - location;
 
-  memcpy((uint8*)ptr, f_data + location, ak);
+  memcpy((uint8*)ptr, f_data + location, (size_t)ak);
 
   location = f_size;
 
@@ -653,7 +654,7 @@ static INLINE bool MDFN_DumpToFileReal(const char *filename, int compress, const
    const void *data = pearpairs[i].GetData();
    const int64 length = pearpairs[i].GetLength();
 
-   if(gzwrite(gp, data, length) != length)
+   if(gzwrite(gp, data, (unsigned int)length) != length)
    {
     int errnum;
 
@@ -685,7 +686,7 @@ static INLINE bool MDFN_DumpToFileReal(const char *filename, int compress, const
    const void *data = pearpairs[i].GetData();
    const uint64 length = pearpairs[i].GetLength();
 
-   if(fwrite(data, 1, length, fp) != length)
+   if(fwrite(data, 1, (size_t)length, fp) != length)
    {
     ErrnoHolder ene(errno);
 

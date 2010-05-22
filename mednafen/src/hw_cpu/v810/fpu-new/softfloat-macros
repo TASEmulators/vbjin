@@ -39,6 +39,7 @@ these four paragraphs for those parts of this code that are retained.
 | The result is stored in the location pointed to by `zPtr'.
 *----------------------------------------------------------------------------*/
 
+#undef INLINE
 #define INLINE __forceinline
 
 INLINE void shift32RightJamming( bits32 a, int16 count, bits32 *zPtr )
@@ -306,7 +307,7 @@ INLINE void
     carry0 = ( z1 < a1 );
     z0 = a0 + b0;
     z1 += carry1;
-    z0 += ( z1 < carry1 );
+    z0 += ( z1 < (bits32)carry1 );
     z0 += carry0;
     *z2Ptr = z2;
     *z1Ptr = z1;
@@ -361,7 +362,7 @@ INLINE void
     z1 = a1 - b1;
     borrow0 = ( a1 < b1 );
     z0 = a0 - b0;
-    z0 -= ( z1 < borrow1 );
+    z0 -= ( z1 < (bits32)borrow1 );
     z1 -= borrow1;
     z0 -= borrow0;
     *z2Ptr = z2;

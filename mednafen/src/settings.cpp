@@ -39,7 +39,7 @@ char IniName[MAX_PATH];
 
 void GetINIPath()
 {
-	char vPath[MAX_PATH], *szPath, currDir[MAX_PATH];
+	char vPath[MAX_PATH], *szPath; //, currDir[MAX_PATH];
 	/*if (*vPath)
 	szPath = vPath;
 	else

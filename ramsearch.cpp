@@ -899,7 +899,7 @@ unsigned int ReadValueAtHardwareAddress(unsigned int address, unsigned int size)
 		address &= 0xFFFFFF;
 
 
-	char buf[4];
+	//char buf[4];
 /*	MMU_DumpMemBlock(0, address, 4, (u8*)buf);
 
 	u32 val_u32 = *(u32*)buf;

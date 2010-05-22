@@ -135,11 +135,11 @@ void ParseCmdLine(LPSTR lpCmdLine, HWND HWnd)
 	}
 	
 	//Read+Write
-	int readwrite = 1;
-	if (ReadWrite[0]) readwrite = 0;
+	bool readwrite = true;
+	if (ReadWrite[0]) readwrite = false;
 
 	//Movie
-	if (MovieToLoad[0]) 
+	if (MovieToLoad[0])
 	{
 		if (pcejin.romLoaded)	
 			FCEUI_LoadMovie(MovieToLoad.c_str(), readwrite, false, false);	
