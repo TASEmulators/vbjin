@@ -57,13 +57,13 @@ void FlipByteOrder(uint8 *src, uint32 count);
 
 static INLINE void MDFN_en16lsb(uint8 *buf, uint16 morp)
 {
- buf[0]=morp;
+ buf[0]=(uint8)(morp&0xFF);
  buf[1]=morp>>8;
 }
 
 static INLINE void MDFN_en24lsb(uint8 *buf, uint32 morp)
 {
- buf[0]=morp;
+ buf[0]=(uint8)morp&0xFF;
  buf[1]=morp>>8;
  buf[2]=morp>>16;
 }
@@ -71,7 +71,7 @@ static INLINE void MDFN_en24lsb(uint8 *buf, uint32 morp)
 
 static INLINE void MDFN_en32lsb(uint8 *buf, uint32 morp)
 {
- buf[0]=morp;
+ buf[0]=(uint8)morp&0xFF;
  buf[1]=morp>>8;
  buf[2]=morp>>16;
  buf[3]=morp>>24;
@@ -79,13 +79,13 @@ static INLINE void MDFN_en32lsb(uint8 *buf, uint32 morp)
 
 static INLINE void MDFN_en64lsb(uint8 *buf, uint64 morp)
 {
- buf[0]=morp >> 0;
- buf[1]=morp >> 8;
- buf[2]=morp >> 16;
- buf[3]=morp >> 24;
- buf[4]=morp >> 32;
- buf[5]=morp >> 40;
- buf[6]=morp >> 48;
+ buf[0]=(uint8)(morp >> 0);
+ buf[1]=(uint8)(morp >> 8);
+ buf[2]=(uint8)(morp >> 16);
+ buf[3]=(uint8)(morp >> 24);
+ buf[4]=(uint8)(morp >> 32);
+ buf[5]=(uint8)(morp >> 40);
+ buf[6]=(uint8)(morp >> 48);
  buf[7]=morp >> 56;
 }
 

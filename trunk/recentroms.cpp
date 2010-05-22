@@ -205,7 +205,8 @@ void SaveRecentRoms()
 	{
 		temp.str("");
 		temp << "Recent Rom " << (x+1);
-		if (x < RecentRoms.size())	//If it exists in the array, save it
+		// This was likely causing recent ROM loss issues
+		if (x < (int)RecentRoms.size())	//If it exists in the array, save it
 			WritePrivateProfileString("General",temp.str().c_str(),RecentRoms[x].c_str(),IniName);
 		else						//Else, make it empty
 			WritePrivateProfileString("General",temp.str().c_str(), "",IniName);

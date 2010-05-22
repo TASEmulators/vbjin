@@ -112,5 +112,5 @@ bool DRV_BeginWaveRecord(const char *fn)
 
 bool DRV_WaveRecordActive()
 {
-	return (soundlog);
+	return (bool)(soundlog);
 }

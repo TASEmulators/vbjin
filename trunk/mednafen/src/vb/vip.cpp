@@ -617,7 +617,7 @@ uint8 VIP_Read8(int32 &timestamp, uint32 A)
 
   case 0x4:
   case 0x5: if(A >= 0x5E000)
-	     ret = ReadRegister(timestamp, A);
+	     ret = (uint8)(ReadRegister(timestamp, A)&0xFF);
 	    else
 	     VIP_DBGMSG("Unknown VIP Read: %08x", A);
             break;
@@ -833,7 +833,7 @@ void VIP_StartFrame(EmulateSpecStruct *espec)
  }
 
  surface = espec->surface;
- skip = espec->skip;
+ skip = (bool)(espec->skip);
 }
 
 void VIP_ResetTS(void)
@@ -849,6 +849,13 @@ static int32 CalcNextEvent(void)
 }
 
 #include "vip_draw.inc"
+
+//For debugging purposes, you can paste the contents of vip_draw.inc into the below space,
+//comment out the include temporarily, and use the IDE to work on it. After you finish,
+//you can cut it out and overwrite the original file contents.
+//#include "vip_draw.inc" //begin
+
+//#include "vip_draw.inc" //end
 
 static INLINE void CopyFBColumnToTarget_Anaglyph_BASE(const bool DisplayActive_arg, const int lr)
 {
@@ -1242,7 +1249,7 @@ v810_timestamp_t MDFN_FASTCALL VIP_Update(const v810_timestamp_t timestamp)
 
     if(DisplayRegion == 0)	// New frame start
     {
-     DisplayActive = DPCTRL & 0x2;
+     DisplayActive = (bool)(DPCTRL & 0x2);
 
      if(DisplayActive)
      {
@@ -1351,3 +1358,4 @@ uint8* getDRAM() {
 }
 
 }
+

@@ -1436,7 +1436,7 @@ INT_PTR CALLBACK DlgInputConfig(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lPara
 {
 	static HBITMAP hBmp;
 	char temp[256];
-	short C;
+	//short C;
 	int i, which;
 	static int index=0;
 	
@@ -3487,7 +3487,7 @@ void InitCustomKeys (SCustomKeys *keys)
 	keys->ToggleReadOnly.code = "ToggleReadOnly";
 	keys->ToggleReadOnly.name = L"Toggle Read Only";
 	keys->ToggleReadOnly.page = HOTKEY_PAGE_MOVIE;
-	keys->ToggleReadOnly.key = 'NULL';
+	keys->ToggleReadOnly.key = (WORD)'NULL';
 
 	keys->PlayMovie.handleKeyDown = HK_PlayMovie;
 	keys->PlayMovie.code = "PlayMovie";
@@ -3505,7 +3505,7 @@ void InitCustomKeys (SCustomKeys *keys)
 	keys->RecordMovie.code = "RecordMovie";
 	keys->RecordMovie.name = L"Record Movie";
 	keys->RecordMovie.page = HOTKEY_PAGE_MOVIE;
-	keys->RecordMovie.key = 'NULL';
+	keys->RecordMovie.key = (WORD)'NULL';
 	keys->RecordMovie.modifiers = CUSTKEY_SHIFT_MASK;
 
 	keys->StopMovie.handleKeyDown = HK_StopMovie;

@@ -86,7 +86,7 @@ int32 smem_tell(StateMem *st)
  return(st->loc);
 }
 
-int32 smem_seek(StateMem *st, uint32 offset, int whence)
+int32 smem_seek(StateMem *st, s32 offset, int whence)
 {
  switch(whence)
  {
@@ -419,7 +419,7 @@ static int ReadStateChunk(StateMem *st, SFORMAT *sf, int size, int data_only)
      // Converting downwards is necessary for the case of sizeof(bool) > 1
      for(int32 bool_monster = bytesize - 1; bool_monster >= 0; bool_monster--)
      {
-      ((bool *)tmp->v)[bool_monster] = ((uint8 *)tmp->v)[bool_monster];
+      ((bool *)tmp->v)[bool_monster] = (bool)((uint8 *)tmp->v)[bool_monster];
      }
     }
     if(tmp->flags & MDFNSTATE_RLSB64)
@@ -510,7 +510,7 @@ int MDFNSS_StateAction(StateMem *st, int load, int data_only, std::vector <SSDes
       }
      }
     }
-    if(smem_seek(st, -total, SEEK_CUR) < 0)
+    if(smem_seek(st, -(s32)total, SEEK_CUR) < 0)
     {
      puts("Reverse seek error");
      return(0);
@@ -1041,7 +1041,7 @@ void MDFN_StateEvilBegin(void)
  if(!EvilEnabled)
   return;
 
- SRW_NUM = MDFN_GetSettingUI("srwframes");
+ SRW_NUM = (int)MDFN_GetSettingUI("srwframes");
 
  SRWCompressor = SRW_COMPRESSOR_MINILZO;
  srwcompstring = MDFN_GetSettingS("srwcompressor");
@@ -1067,7 +1067,7 @@ void MDFN_StateEvilBegin(void)
 
 bool MDFN_StateEvilIsRunning(void)
 {
- return(EvilEnabled);
+ return((bool)EvilEnabled);
 }
 
 void MDFN_StateEvilEnd(void)

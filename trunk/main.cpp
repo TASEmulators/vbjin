@@ -126,7 +126,7 @@ int WINAPI WinMain( HINSTANCE hInstance,
 
 	GetINIPath();
 
-	pcejin.aspectRatio = GetPrivateProfileInt("Video", "aspectratio", 0, IniName);
+	pcejin.aspectRatio = GetPrivateProfileBool("Video", "aspectratio", false, IniName);
 	pcejin.windowSize = GetPrivateProfileInt("Video", "pcejin.windowSize", 1, IniName);
 	
 	WndX = GetPrivateProfileInt("Main", "WndX", 0, IniName);
@@ -140,7 +140,7 @@ int WINAPI WinMain( HINSTANCE hInstance,
 	if( g_hWnd == NULL )
 		return E_FAIL;
 
-	ScaleScreen(pcejin.windowSize);
+	ScaleScreen((float)pcejin.windowSize);
 
 	soundInit();
 
@@ -230,7 +230,7 @@ int WINAPI WinMain( HINSTANCE hInstance,
 HANDLE hConsole;
 void OpenConsole()
 {
-	CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
+	//CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
 
 	if (hConsole) return;
 	AllocConsole();
@@ -293,7 +293,7 @@ void vbjinInit() {
 	//	extern void VBINPUT_SetInput(int port, const char *type, void *ptr);
 
 	const char * typez;
-	const char * padData;
+	//const char * padData;
 //	padData = malloc(8);
 	typez = (const char*)malloc(16);
 	MDFNGameInfo->SetInput(1,typez,&pcejin.pads[0]);
@@ -405,7 +405,7 @@ void RecordAvi()
 
 	char szChoice[MAX_PATH]={0};
 	std::string fname;
-	int x;
+	//int x;
 	std::wstring la = L"";
 	OPENFILENAME ofn;
 
@@ -789,23 +789,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		{
 		case IDC_WINDOW1X:
 			pcejin.windowSize=1;
-			ScaleScreen(pcejin.windowSize);
+			ScaleScreen((float)pcejin.windowSize);
 			break;
 		case IDC_WINDOW2X:
 			pcejin.windowSize=2;
-			ScaleScreen(pcejin.windowSize);
+			ScaleScreen((float)pcejin.windowSize);
 			break;
 		case IDC_WINDOW3X:
 			pcejin.windowSize=3;
-			ScaleScreen(pcejin.windowSize);
+			ScaleScreen((float)pcejin.windowSize);
 			break;
 		case IDC_WINDOW4X:
 			pcejin.windowSize=4;
-			ScaleScreen(pcejin.windowSize);
+			ScaleScreen((float)pcejin.windowSize);
 			break;
 		case IDC_ASPECT:
 			pcejin.aspectRatio ^= 1;
-			ScaleScreen(pcejin.windowSize);
+			ScaleScreen((float)pcejin.windowSize);
 			break;
 		case IDM_EXIT:
 			SaveIniSettings();
@@ -1114,6 +1114,7 @@ bool soundInit()
 		return false;
 
 	soundDriver->resume();
+	return true;
 }
 
 void initsound(){

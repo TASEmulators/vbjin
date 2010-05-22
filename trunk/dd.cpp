@@ -301,7 +301,7 @@ void render() {
 		pcejin.height = espec.DisplayRect.h;
 		CreateDDrawBuffers();
 		if(!pcejin.maximized)
-			ScaleScreen(pcejin.windowSize);
+			ScaleScreen((float)pcejin.windowSize);
 	}
 
 	pcejin.width = espec.DisplayRect.w;

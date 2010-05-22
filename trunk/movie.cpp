@@ -254,7 +254,7 @@ char* RemovePath(char * input) {
 
 int MovieData::dump(std::ostream *os, bool binary)
 {
-	int start = os->tellp();
+	int start = (int)os->tellp();
 	*os << "version " << version << endl;
 	*os << "emulator " << "VBjin" << endl;
 	*os << "emuVersion " << emuVersion << endl;
@@ -305,7 +305,7 @@ int MovieData::dump(std::ostream *os, bool binary)
 		for(int i=0;i<(int)records.size();i++)
 			records[i].dump(this,os,i);
 
-	int end = os->tellp();
+	int end = (int)os->tellp();
 	return end-start;
 }
 
@@ -363,9 +363,9 @@ bool LoadFM2(MovieData& movieData, std::istream* fp, int size, bool stopAfterHea
 				if (stopAfterHeader) return true;
 				int currcount = movieData.records.size();
 				movieData.records.resize(currcount+1);
-				int preparse = fp->tellg();
+				int preparse = (int)fp->tellg();
 				movieData.records[currcount].parse(&movieData, fp);
-				int postparse = fp->tellg();
+				int postparse = (int)fp->tellg();
 				size -= (postparse-preparse);
 				state = NEWLINE;
 				break;
@@ -720,7 +720,7 @@ void FCEUMOV_AddInputState()
 
 		 strcpy(MovieStatusM, "Recording");
 
-		 int II, I, n, s, u, r, d, l;
+		 //int II, I, n, s, u, r, d, l;
 
 	//	 for (int i = 0; i < currMovieData.ports; i++) {
 
@@ -1073,9 +1073,9 @@ void LoadFM2_binarychunk(MovieData& movieData, std::istream* fp, int size)
 	assert(size%3==0);
 
 	//find out how much remains in the file
-	int curr = fp->tellg();
+	int curr = (int)fp->tellg();
 	fp->seekg(0,std::ios::end);
-	int end = fp->tellg();
+	int end = (int)fp->tellg();
 	int flen = end-curr;
 	fp->seekg(curr,std::ios::beg);
 

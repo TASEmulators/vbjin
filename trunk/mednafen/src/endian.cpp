@@ -203,7 +203,7 @@ void Endian_V_NE_to_LE(void *src, uint32 bytesize)
 int write16le(uint16 b, FILE *fp)
 {
  uint8 s[2];
- s[0]=b;
+ s[0]=(uint8)b&0xFF;
  s[1]=b>>8;
  return((fwrite(s,1,2,fp)<2)?0:2);
 }

@@ -59,9 +59,10 @@ void MDFNI_SaveSnapshot(const MDFN_Surface *src, const MDFN_Rect *DisplayRect)
 
   MDFN_DispMessage("Screen snapshot %d saved.", u);
  }
+ // Compiler says this is unreferenced.
  catch(int x)
  {
-  MDFN_DispMessage("Error saving screen snapshot.");
+  MDFN_DispMessage("Error saving screen snapshot.", x);
  }
 }
 #include "GPU_osd.h"
@@ -195,7 +196,7 @@ void MDFN_Surface::Fill(uint8 r, uint8 g, uint8 b, uint8 a)
 
  assert(pixels);
 
- for(uint32 i = 0; i < pitch32 * h; i++)
+ for(uint32 i = 0; i < (uint32)pitch32 * h; i++)
  {
   pixels[i] = color;
  }

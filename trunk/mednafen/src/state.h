@@ -30,7 +30,7 @@ int32 smem_read(StateMem *st, void *buffer, uint32 len);
 int32 smem_write(StateMem *st, void *buffer, uint32 len);
 int32 smem_putc(StateMem *st, int value);
 int32 smem_tell(StateMem *st);
-int32 smem_seek(StateMem *st, uint32 offset, int whence);
+int32 smem_seek(StateMem *st, s32 offset, int whence);
 int smem_write32le(StateMem *st, uint32 b);
 int smem_read32le(StateMem *st, uint32 *b);
 

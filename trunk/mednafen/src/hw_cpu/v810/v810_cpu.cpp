@@ -425,7 +425,7 @@ INLINE void V810::SetFlag(uint32 n, bool condition)
 INLINE void V810::SetSZ(uint32 value)
 {
  SetFlag(PSW_Z, !value);
- SetFlag(PSW_S, value & 0x80000000);
+ SetFlag(PSW_S, (bool)(value & 0x80000000));
 }
 
 #ifdef WANT_DEBUGGER
@@ -897,7 +897,7 @@ void V810::Run_Accurate(int32 MDFN_FASTCALL (*event_handler)(const v810_timestam
              ADDCLOCK(1);
              uint32 temp = P_REG[arg2] + P_REG[arg1];
 
-             SetFlag(PSW_OV, ((P_REG[arg2]^(~P_REG[arg1]))&(P_REG[arg2]^temp))&0x80000000);
+             SetFlag(PSW_OV, (bool)(((P_REG[arg2]^(~P_REG[arg1]))&(P_REG[arg2]^temp))&0x80000000));
              SetFlag(PSW_CY, temp < P_REG[arg2]);
 
              SetPREG(arg2, temp);
@@ -909,7 +909,7 @@ void V810::Run_Accurate(int32 MDFN_FASTCALL (*event_handler)(const v810_timestam
              ADDCLOCK(1);
 	     uint32 temp = P_REG[arg2] - P_REG[arg1];
 
-             SetFlag(PSW_OV, ((P_REG[arg2]^P_REG[arg1])&(P_REG[arg2]^temp))&0x80000000);
+             SetFlag(PSW_OV, (bool)(((P_REG[arg2]^P_REG[arg1])&(P_REG[arg2]^temp))&0x80000000));
              SetFlag(PSW_CY, temp > P_REG[arg2]);
 
 	     SetPREG(arg2, temp);
@@ -922,7 +922,7 @@ void V810::Run_Accurate(int32 MDFN_FASTCALL (*event_handler)(const v810_timestam
  	     uint32 temp = P_REG[arg2] - P_REG[arg1];
 
 	     SetSZ(temp);
-             SetFlag(PSW_OV, ((P_REG[arg2]^P_REG[arg1])&(P_REG[arg2]^temp))&0x80000000);
+             SetFlag(PSW_OV, (bool)(((P_REG[arg2]^P_REG[arg1])&(P_REG[arg2]^temp))&0x80000000));
 	     SetFlag(PSW_CY, temp > P_REG[arg2]);
 	END_OP();
 
@@ -1011,7 +1011,7 @@ void V810::Run_Accurate(int32 MDFN_FASTCALL (*event_handler)(const v810_timestam
              ADDCLOCK(1);
              uint32 temp = P_REG[arg2] + sign_5(arg1);
 
-             SetFlag(PSW_OV, ((P_REG[arg2]^(~sign_5(arg1)))&(P_REG[arg2]^temp))&0x80000000);
+             SetFlag(PSW_OV, (bool)(((P_REG[arg2]^(~sign_5(arg1)))&(P_REG[arg2]^temp))&0x80000000));
 	     SetFlag(PSW_CY, (uint32)temp < P_REG[arg2]);
 
              SetPREG(arg2, (uint32)temp);
@@ -1086,7 +1086,7 @@ void V810::Run_Accurate(int32 MDFN_FASTCALL (*event_handler)(const v810_timestam
 	     uint32 temp = P_REG[arg2] - sign_5(arg1);
 
 	     SetSZ(temp);
-             SetFlag(PSW_OV, ((P_REG[arg2]^(sign_5(arg1)))&(P_REG[arg2]^temp))&0x80000000);
+             SetFlag(PSW_OV, (bool)(((P_REG[arg2]^(sign_5(arg1)))&(P_REG[arg2]^temp))&0x80000000));
 	     SetFlag(PSW_CY, temp > P_REG[arg2]);
 	END_OP();
 
@@ -1281,7 +1281,7 @@ void V810::Run_Accurate(int32 MDFN_FASTCALL (*event_handler)(const v810_timestam
              ADDCLOCK(1);
              uint32 temp = P_REG[arg2] + sign_16(arg1);
 
-             SetFlag(PSW_OV, ((P_REG[arg2]^(~sign_16(arg1)))&(P_REG[arg2]^temp))&0x80000000);
+             SetFlag(PSW_OV, (bool)(((P_REG[arg2]^(~sign_16(arg1)))&(P_REG[arg2]^temp))&0x80000000));
 	     SetFlag(PSW_CY, (uint32)temp < P_REG[arg2]);
 
              SetPREG(arg3, (uint32)temp);
@@ -1572,7 +1572,7 @@ void V810::Run_Accurate(int32 MDFN_FASTCALL (*event_handler)(const v810_timestam
              uint64 temp = (int64)(int32)P_REG[arg1] * (int32)P_REG[arg2];
 
              SetPREG(30, (uint32)(temp >> 32));
-             SetPREG(arg2, temp);
+             SetPREG(arg2, (uint32)temp);
 	     SetSZ(P_REG[arg2]);
 	     SetFlag(PSW_OV, temp != (uint32)temp);
 	     lastop = -1;
@@ -1716,7 +1716,7 @@ void V810::Run_Accurate(int32 MDFN_FASTCALL (*event_handler)(const v810_timestam
              compare_temp = P_REG[arg3] - tmp;
 
              SetSZ(compare_temp);
-             SetFlag(PSW_OV, ((P_REG[arg3]^tmp)&(P_REG[arg3]^compare_temp))&0x80000000);
+             SetFlag(PSW_OV, (bool)(((P_REG[arg3]^tmp)&(P_REG[arg3]^compare_temp))&0x80000000));
              SetFlag(PSW_CY, compare_temp > P_REG[arg3]);
 
 	     if(!compare_temp) // If they're equal...
@@ -2046,7 +2046,7 @@ INLINE bool V810::Do_BSTR_Search(v810_timestamp_t &timestamp, const int inc_mul,
         if(found)               // Bit found, so don't continue the search.
          return(false);
 
-        return((bool)len);      // Continue the search if any bits are left to search.
+        return((bool)(len));      // Continue the search if any bits are left to search.
 }
 
 bool V810::bstr_subop(v810_timestamp_t &timestamp, int sub_op, int arg1)
@@ -2096,7 +2096,7 @@ bool V810::bstr_subop(v810_timestamp_t &timestamp, int sub_op, int arg1)
         P_REG[29] = dst;
         P_REG[30] = src;
 
-	return((bool)P_REG[28]);
+	return((bool)(P_REG[28]));
  }
  else
  {
@@ -2122,8 +2122,8 @@ INLINE void V810::SetFPUOPNonFPUFlags(uint32 result)
                  else
 		 {
                   SetFlag(PSW_Z, 0);
-                  SetFlag(PSW_S, result & 0x80000000);
-                  SetFlag(PSW_CY, result & 0x80000000);
+                  SetFlag(PSW_S, (bool)(result & 0x80000000));
+                  SetFlag(PSW_CY, (bool)(result & 0x80000000));
 		 }
                  //printf("MEOW: %08x\n", S_REG[PSW] & (PSW_S | PSW_CY));
 }
@@ -2584,7 +2584,8 @@ int V810::StateAction(StateMem *sm, int load, int data_only)
    if(cache_tag_temp)
     free(cache_tag_temp);
 
-   if(cache_data_temp);
+   // I don't think this IF was supposed to be terminated with a ;
+   if(cache_data_temp)
     free(cache_data_temp);
 
    if(cache_data_valid_temp)

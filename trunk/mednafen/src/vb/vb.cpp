@@ -295,10 +295,10 @@ void MDFN_FASTCALL MemWrite16(v810_timestamp_t &timestamp, uint32 A, uint16 V)
   case 0: VIP_Write16(timestamp, A, V);
           break;
 
-  case 1: VB_VSU->Write((timestamp + VSU_CycleFix) >> 2, A, V);
+  case 1: VB_VSU->Write((timestamp + VSU_CycleFix) >> 2, A, (uint8)(V&0xFF));
           break;
 
-  case 2: HWCTRL_Write(timestamp, A, V);
+  case 2: HWCTRL_Write(timestamp, A, (uint8)(V&0xFF));
           break;
 
   case 3: break;
@@ -447,7 +447,7 @@ static int Load(const char *name, MDFNFILE *fp)
 
  cpu_mode = (V810_Emu_Mode)MDFN_GetSettingI("vb.cpu_emulation");
 
- if(fp->size != round_up_pow2(fp->size))
+ if(fp->size != round_up_pow2((uint32)fp->size))
  {
   puts("VB ROM image size is not a power of 2???");
   return(0);
@@ -466,7 +466,7 @@ static int Load(const char *name, MDFNFILE *fp)
  }
 
  md5.starts();
- md5.update(fp->data, fp->size);
+ md5.update(fp->data, (uint32)fp->size);
  md5.finish(MDFNGameInfo->MD5);
 
 // iconv_t sjis_ict = iconv_open("UTF-8", "shift_jis");
@@ -526,7 +526,7 @@ static int Load(const char *name, MDFNFILE *fp)
  {
   for(uint64 sub_A = 5 << 24; sub_A < (6 << 24); sub_A += 65536)
   {
-   Map_Addresses.push_back(A + sub_A);
+   Map_Addresses.push_back((uint32)(A + sub_A));
   }
  }
 
@@ -535,13 +535,13 @@ static int Load(const char *name, MDFNFILE *fp)
 
 
  // Round up the ROM size to 65536(we mirror it a little later)
- GPROM_Mask = (fp->size < 65536) ? (65536 - 1) : (fp->size - 1);
+ GPROM_Mask = (uint32)((fp->size < 65536) ? (65536 - 1) : (fp->size - 1));
 
  for(uint64 A = 0; A < 1ULL << 32; A += (1 << 27))
  {
   for(uint64 sub_A = 7 << 24; sub_A < (8 << 24); sub_A += GPROM_Mask + 1)
   {
-   Map_Addresses.push_back(A + sub_A);
+   Map_Addresses.push_back((uint32)(A + sub_A));
    //printf("%08x\n", (uint32)(A + sub_A));
   }
  }
@@ -553,7 +553,7 @@ static int Load(const char *name, MDFNFILE *fp)
  // Mirror ROM images < 64KiB to 64KiB
  for(uint64 i = 0; i < 65536; i += fp->size)
  {
-  memcpy(GPROM + i, fp->data, fp->size);
+  memcpy(GPROM + i, fp->data, (size_t)fp->size);
  }
 
  GPRAM_Mask = 0xFFFF;
@@ -563,7 +563,7 @@ static int Load(const char *name, MDFNFILE *fp)
   for(uint64 sub_A = 6 << 24; sub_A < (7 << 24); sub_A += GPRAM_Mask + 1)
   {
    //printf("GPRAM: %08x\n", A + sub_A);
-   Map_Addresses.push_back(A + sub_A);
+   Map_Addresses.push_back((uint32)(A + sub_A));
   }
  }
 
@@ -584,7 +584,7 @@ static int Load(const char *name, MDFNFILE *fp)
   }
  }
 
- VB3DMode = MDFN_GetSettingUI("vb.3dmode");
+ VB3DMode = (uint32)MDFN_GetSettingUI("vb.3dmode");
 
 
  VIP_Init();
@@ -593,8 +593,8 @@ static int Load(const char *name, MDFNFILE *fp)
  VIP_SetParallaxDisable(MDFN_GetSettingB("vb.disable_parallax"));
  
  {
-  uint32 lcolor = MDFN_GetSettingUI("vb.anaglyph.lcolor"), rcolor = MDFN_GetSettingUI("vb.anaglyph.rcolor");
-  int preset = MDFN_GetSettingI("vb.anaglyph.preset");
+  uint32 lcolor = (uint32)MDFN_GetSettingUI("vb.anaglyph.lcolor"), rcolor = (uint32)MDFN_GetSettingUI("vb.anaglyph.rcolor");
+  int preset = (int)MDFN_GetSettingI("vb.anaglyph.preset");
 
   if(preset != ANAGLYPH_PRESET_DISABLED)
   {
@@ -603,7 +603,7 @@ static int Load(const char *name, MDFNFILE *fp)
   }
   VIP_SetAnaglyphColors(lcolor, rcolor);
  }
- VIP_SetDefaultColor(MDFN_GetSettingUI("vb.default_color"));
+ VIP_SetDefaultColor((uint32)MDFN_GetSettingUI("vb.default_color"));
 
 
  VB_VSU = new VSU(&sbuf[0], &sbuf[1]);
@@ -972,7 +972,7 @@ MDFNGI EmulatedVB =
  SetSoundRate,
  DoSimpleCommand,
  VBSettings,
- MDFN_MASTERCLOCK_FIXED(VB_MASTER_CLOCK),
+ MDFN_MASTERCLOCK_FIXED((int64)VB_MASTER_CLOCK),
  0,
  false, // Multires possible?
  384,   // Nominal width
