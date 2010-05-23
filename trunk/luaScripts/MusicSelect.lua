@@ -50,6 +50,12 @@
 --setting ECD73 to 18B30E07,
 --and ripping from the point of going into the password screen.
 
+--Script Info:
+emu.print("Gamenum is currently " .. GameNum .. ".");
+emu.print("To be able to use this script with some games, you will have to Edit the script and change the Gamenum to what will work for the game you'd like.");
+emu.print("");
+
+
 --Declarations:
 --Most prevalent music change addresses used by default
 local MusReadAddr = 0x050000F6;
@@ -90,7 +96,13 @@ else
 end;
 
 function DisplayMusicVal()
- gui.text(358,5,memory.readbyte(MusReadAddr));
+ MusicValue = memory.readbyte(MusReadAddr);
+ if (StripBit80 == 1) then
+  if (MusicValue > 127) then
+   MusicValue = (MusicValue - 128);
+  end;
+ end;
+ gui.text(358,5,MusicValue);
 end;
 
 function MusicSelect()
@@ -143,7 +155,7 @@ if (not ButtonWasPressed) then
   
   if (StripBit80 == 1) then
    if (MusicValue > 127) then
-    MusicValue = (MusicValue - 128)
+    MusicValue = (MusicValue - 128);
    end;
   end;
   memory.writebyte(MusWriteAddr,MusicValue);

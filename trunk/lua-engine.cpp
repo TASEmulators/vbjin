@@ -1681,7 +1681,7 @@ DEFINE_LUA_FUNCTION(memory_readwordsigned, "address")
 	lua_pushinteger(L, value);
 	return 1;
 }
-DEFINE_LUA_FUNCTION(memory_readdword, "address")
+/*DEFINE_LUA_FUNCTION(memory_readdword, "address")
 {
 	//int address = luaL_checkinteger(L,1);
 	//unsigned long value = (unsigned long)(PCEDBG_MemPeek(address, 2, true, false));
@@ -1696,7 +1696,7 @@ DEFINE_LUA_FUNCTION(memory_readdwordsigned, "address")
 	//lua_settop(L,0);
 	//lua_pushinteger(L, value);
 	return 1;
-}
+}*/
 
 //extern uint8 BaseRAM[32768];
 //extern writefunc PCEWrite[0x100];
@@ -3633,7 +3633,7 @@ static int gui_text(lua_State *L) {
 	return 0;
 }
 
-static int stylus_read(lua_State *L){
+/*static int stylus_read(lua_State *L){
 	/*
 	lua_newtable(L);
 
@@ -3643,15 +3643,15 @@ static int stylus_read(lua_State *L){
 	lua_setfield(L, -2, "y");
 	lua_pushinteger(L, nds.isTouch);
 	lua_setfield(L, -2, "touch");	
-*/
+*
 	return 1;
-}
+}*/
 
-static const struct luaL_reg styluslib [] =
+/*static const struct luaL_reg styluslib [] =
 {
 	{"read", stylus_read},
 	{NULL, NULL}
-};
+};*/
 
 static const struct luaL_reg emulib [] =
 {
@@ -3741,13 +3741,13 @@ static const struct luaL_reg memorylib [] =
 	// alternate naming scheme for word and double-word and unsigned
 	{"readbyteunsigned", memory_readbyte},
 	{"readwordunsigned", memory_readword},
-	{"readdwordunsigned", memory_readdword},
+//	{"readdwordunsigned", memory_readdword},
 	{"readshort", memory_readword},
 	{"readshortunsigned", memory_readword},
 	{"readshortsigned", memory_readwordsigned},
-	{"readlong", memory_readdword},
-	{"readlongunsigned", memory_readdword},
-	{"readlongsigned", memory_readdwordsigned},
+//	{"readlong", memory_readdword},
+//	{"readlongunsigned", memory_readdword},
+//	{"readlongsigned", memory_readdwordsigned},
 	{"writeshort", memory_writeword},
 //	{"writelong", memory_writedword},
 
@@ -3972,7 +3972,7 @@ void registerLibs(lua_State* L)
 
 	luaL_register(L, "emu", emulib);
 	luaL_register(L, "gui", guilib);
-	luaL_register(L, "stylus", styluslib);
+	//luaL_register(L, "stylus", styluslib);
 	luaL_register(L, "savestate", statelib);
 	luaL_register(L, "memory", memorylib);
 	luaL_register(L, "joypad", joylib); // for game input
