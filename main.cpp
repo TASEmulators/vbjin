@@ -359,6 +359,14 @@ EmulateSpecStruct vbjinEmulate() {
 	return espec;
 }
 
+void UpdateTitleWithFilename(std::string filename)
+{
+	std::string temp = pcejin.versionName;
+	temp.append(" ");
+	temp.append(RemovePath(filename));
+
+	SetWindowText(g_hWnd, temp.c_str());
+}
 
 void LoadGame(){
 
@@ -391,12 +399,13 @@ void LoadGame(){
 		FCEUI_StopMovie();
 		UpdateRecentRoms(szChoice);
 
-		std::string romname = RemovePath(szChoice);
+		UpdateTitleWithFilename(szChoice);
+		/*std::string romname = RemovePath(szChoice);
 		std::string temp = pcejin.versionName;
 		temp.append(" ");
 		temp.append(romname);
 		
-		SetWindowText(g_hWnd, temp.c_str());
+		SetWindowText(g_hWnd, temp.c_str());*/
 	}
 }
 

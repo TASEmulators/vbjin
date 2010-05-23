@@ -245,5 +245,9 @@ void OpenRecentROM(int listNum)
 		{
 			RemoveRecentRom(RecentRoms[listNum]);
 		}	
+	} else {
+		UpdateRecentRoms(filename);
+		UpdateTitleWithFilename(filename);
 	}
+
 }
