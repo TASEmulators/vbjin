@@ -23,6 +23,9 @@
  --Lets you jump directly to a song. Good for starting from silence to record.
  local InsertKeyMusSelect = 37;
 
+ --Displays the song number. May not detect tracks going to silence. 1 = on, 0 = off.
+ local DisplaySongNumber = 1;
+
  --Lets you prevent songs from rolling below 0. 1 = on, 0 = off.
  local MakeSongZeroMinimum = 1;
 
@@ -86,6 +89,9 @@ else
  end;
 end;
 
+function DisplayMusicVal()
+ gui.text(358,5,memory.readbyte(MusReadAddr));
+end;
 
 function MusicSelect()
 --Basically a music select driver.
@@ -156,3 +162,9 @@ end;
 -- Sets the routine to run with the emulation.
 -- Likely to make a good base script for doing cheat codes.
 emu.registerafter(MusicSelect);
+
+-- This was not easy to deduce a need for in code.
+-- gui.* stuff used for printing messages won't work unless the it's in a function that's gui.register()ed
+if (DisplaySongNumber == 1) then
+ gui.register(DisplayMusicVal);
+end;
