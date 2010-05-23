@@ -813,6 +813,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			break;
 		case IDM_RESET:
 //NEWTODO			PCE_Power();
+			OpenRecentROM(0);
 			break;
 		case IDM_OPEN_ROM:
 			soundDriver->pause();

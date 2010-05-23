@@ -223,6 +223,11 @@ void OpenRecentROM(int listNum)
 {
 	if (listNum > MAX_RECENT_ROMS) return; //Just in case
 	char filename[MAX_PATH];
+
+	// Sanity check for reset, in case the list is cleared
+	if (!RecentRoms.size())
+		return;
+
 	strcpy(filename, RecentRoms[listNum].c_str());
 	
 	pcejin.romLoaded = true;
