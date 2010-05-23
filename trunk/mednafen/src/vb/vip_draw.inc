@@ -1,5 +1,7 @@
 #include "vb.h"
 
+//See line #include "vip_draw.inc" in vip.cpp for options on debugging this code in the IDE.
+
 #define BGM_AFFINE	0x2
 #define BGM_OBJ		0x3
 
@@ -147,7 +149,7 @@ static void DrawAffine(uint8 *target, uint16 RealY, bool lr, uint32 ParamBase, u
  const uint32 SourceX_Size = 512 * BGMap_XCount;
  const uint32 SourceY_Size = 512 * BGMap_YCount;
 
- // It's probably this line that's being optimized in a way that kills it.
+ // This line was simply hard to move to another function in pieces, so it got rewritten in a way that's easier to deal with.
  //const uint16 *param_ptr = &((const uint16 *)MDFN_IEN_VB::DRAM)[(ParamBase + 8 * (RealY - DestY)) & 0xFFFF];
  int16 mx = BGMap[((ParamBase + 8 * (RealY - DestY))) & 0xFFFF], mp = (MDFN_IEN_VB::ParallaxDisabled || MDFN_IEN_VB::MixVideoOutputInternal ? 0 : BGMap[((ParamBase + 8 * (RealY - DestY)) + 1) & 0xFFFF]), my = BGMap[((ParamBase + 8 * (RealY - DestY)) + 2) & 0xFFFF], dx = BGMap[((ParamBase + 8 * (RealY - DestY)) + 3) & 0xFFFF], dy = BGMap[((ParamBase + 8 * (RealY - DestY)) + 4) & 0xFFFF];
 
@@ -282,7 +284,6 @@ else
   SourceY += dy;
  }
 }
-#pragma optimize("", on)
 
 static int obj_search_which;
 
