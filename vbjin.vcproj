@@ -633,10 +633,6 @@
 			>
 		</File>
 		<File
-			RelativePath=".\mednafen\src\types.h"
-			>
-		</File>
-		<File
 			RelativePath=".\mednafen\src\compress\unzip.c"
 			>
 		</File>
