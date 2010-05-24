@@ -68,6 +68,13 @@ BEGIN
         MENUITEM "4/3 Aspect Ratio",            IDC_ASPECT
         MENUITEM SEPARATOR
         MENUITEM "Mix Left && Right View",      ID_VIEW_MIXLEFTRIGHT
+        POPUP "Splitting Mode"
+        BEGIN
+            MENUITEM "Anaglyph",                ID_SPLIT_MODE_ANAGLYPH
+//            MENUITEM "CScope",                  ID_SPLIT_MODE_CSCOPE
+            MENUITEM "Side By Side",            ID_SPLIT_MODE_SIDEBYSIDE
+            MENUITEM "PBarrier",                ID_SPLIT_MODE_PBARRIER
+        END
         POPUP "Video Display"
         BEGIN
             MENUITEM "Both",                    ID_VIEW_DISP_BOTH

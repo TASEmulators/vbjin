@@ -20,6 +20,7 @@ extern ushort *lpscreen;
 extern LPDIRECTDRAWCLIPPER		lpDDClipPrimary;
 extern LPDIRECTDRAW7			lpdd7;
 
+void ClearDDrawBuffers();
 int CreateDDrawBuffers();
 
 void ScaleScreen(float factor);

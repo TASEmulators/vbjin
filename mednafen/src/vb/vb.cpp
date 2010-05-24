@@ -431,6 +431,14 @@ void SetViewDisp(int display) {
 	VIP_SetViewDisp(display);
 }
 
+uint32 GetSplitMode() {
+	return VIP_Get3DMode();
+}
+
+void SetSplitMode(uint32 mode) {
+	VIP_Set3DMode(mode);
+}
+
 static bool TestMagic(const char *name, MDFNFILE *fp)
 {
  if(!strcasecmp(fp->ext, "vb") || !strcasecmp(fp->ext, "bin")) // TODO: fixme
@@ -584,7 +592,7 @@ static int Load(const char *name, MDFNFILE *fp)
   }
  }
 
- VB3DMode = (uint32)MDFN_GetSettingUI("vb.3dmode");
+ //VB3DMode = (uint32)MDFN_GetSettingUI("vb.3dmode");
 
 
  VIP_Init();
@@ -621,10 +629,11 @@ static int Load(const char *name, MDFNFILE *fp)
  VBDBG_Init();
  #endif
 
-
+//See MDFNGI EmulatedVB declaration for pitch size.
+//Use declared pitch for all to stop convert32 errors
  MDFNGameInfo->nominal_width = 384;
  MDFNGameInfo->nominal_height = 224;
- MDFNGameInfo->pitch = 512 * sizeof(uint32);
+ MDFNGameInfo->pitch = 784 * sizeof(uint32);
  MDFNGameInfo->fb_height = 256;
 
  switch(VB3DMode)
@@ -634,14 +643,14 @@ static int Load(const char *name, MDFNFILE *fp)
   case VB3DMODE_PBARRIER:
         MDFNGameInfo->nominal_width = 768; //384;	// Which makes more sense to the user?
         MDFNGameInfo->nominal_height = 224;
-        MDFNGameInfo->pitch = 768 * sizeof(uint32);
+        MDFNGameInfo->pitch = 784 * sizeof(uint32);
         MDFNGameInfo->fb_height = 512;
         break;
 
   case VB3DMODE_CSCOPE:
 	MDFNGameInfo->nominal_width = 512;
 	MDFNGameInfo->nominal_height = 384;
-	MDFNGameInfo->pitch = 512 * sizeof(uint32);
+	MDFNGameInfo->pitch = 784 * sizeof(uint32);
 	MDFNGameInfo->fb_height = 512;
 	break;
 
@@ -977,7 +986,7 @@ MDFNGI EmulatedVB =
  false, // Multires possible?
  384,   // Nominal width
  224,    // Nominal height
- 512 * sizeof(uint32), // Framebuffer pitch
+ 784 * sizeof(uint32), // Framebuffer pitch
  256,                  // Framebuffer height
 
  2,     // Number of output sound channels

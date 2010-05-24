@@ -474,7 +474,7 @@ bool MDFN_SaveSettings(void)
 static const MDFNCS *FindSetting(const char *name)
 {
 
-	assert(false);
+ assert(false);
  const MDFNCS *ret = NULL;
  uint32 name_hash;
 
@@ -555,8 +555,8 @@ static MDFNSetting VBSettings[] =
 uint64 MDFN_GetSettingUI(const char *name)
 {
 
-	if(!strcmp("vb.3dmode",name))
-		return 0;//VB3DMODE_ANAGLYPH
+	//if(!strcmp("vb.3dmode",name))
+	//	return 4;//VB3DMODE_ANAGLYPH
 	if(!strcmp("vb.anaglyph.lcolor",name))
 		return 0xffba00;
 	if(!strcmp("vb.anaglyph.rcolor",name))

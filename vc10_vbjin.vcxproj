@@ -213,6 +213,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aviout.h" />
+    <ClInclude Include="dd.h" />
     <ClInclude Include="dxsound.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="mednafen\include\blargg_common.h" />

@@ -223,6 +223,10 @@ static void Recalc3DModeStuff(bool non_rgb_output = false)
  RecalcBrightnessCache();
 }
 
+uint32 VIP_Get3DMode() {
+	return VB3DMode;
+}
+
 void VIP_Set3DMode(uint32 mode)
 {
  VB3DMode = mode;
