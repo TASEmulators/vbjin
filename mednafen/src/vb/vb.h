@@ -54,6 +54,7 @@ void MDFN_FASTCALL MemWrite16(v810_timestamp_t &timestamp, uint32 A, uint16 V);
 void VB_Power(void);
 
 void SetMixVideoOutput(bool disabled);
+void SetSideBySidePixels(int pixels);
 void SetViewDisp(int display);
 uint32 GetSplitMode();
 void SetSplitMode(uint32 mode);

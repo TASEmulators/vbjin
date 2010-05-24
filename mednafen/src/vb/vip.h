@@ -14,6 +14,8 @@ uint32 VIP_GetColorMode();
 void VIP_SetColorMode(uint32 mode);
 void VIP_SetParallaxDisable(bool disabled);
 void VIP_SetMixVideoOutput(bool disabled);
+int VIP_GetSideBySidePixels();
+void VIP_SetSideBySidePixels(int pixels);
 void VIP_SetViewDisp(int display);
 void VIP_SetDefaultColor(uint32 default_color);
 void VIP_SetAnaglyphColors(uint32 lcolor, uint32 rcolor);	// R << 16, G << 8, B << 0

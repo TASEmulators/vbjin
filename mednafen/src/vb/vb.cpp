@@ -427,6 +427,10 @@ void SetMixVideoOutput(bool disabled) {
 	VIP_SetMixVideoOutput(disabled);
 }
 
+void SetSideBySidePixels(int pixels) {
+	VIP_SetSideBySidePixels(pixels);
+}
+
 void SetViewDisp(int display) {
 	VIP_SetViewDisp(display);
 }
@@ -642,7 +646,7 @@ static int Load(const char *name, MDFNFILE *fp)
 //Use declared pitch for all to stop convert32 errors
  MDFNGameInfo->nominal_width = 384;
  MDFNGameInfo->nominal_height = 224;
- MDFNGameInfo->pitch = 784 * sizeof(uint32);
+ MDFNGameInfo->pitch = 864 * sizeof(uint32);
  MDFNGameInfo->fb_height = 256;
 
  switch(VB3DMode)
@@ -652,21 +656,21 @@ static int Load(const char *name, MDFNFILE *fp)
   case VB3DMODE_PBARRIER:
         MDFNGameInfo->nominal_width = 768; //384;	// Which makes more sense to the user?
         MDFNGameInfo->nominal_height = 224;
-        MDFNGameInfo->pitch = 784 * sizeof(uint32);
+        MDFNGameInfo->pitch = 864 * sizeof(uint32);
         MDFNGameInfo->fb_height = 512;
         break;
 
   case VB3DMODE_CSCOPE:
 	MDFNGameInfo->nominal_width = 512;
 	MDFNGameInfo->nominal_height = 384;
-	MDFNGameInfo->pitch = 784 * sizeof(uint32);
+	MDFNGameInfo->pitch = 864 * sizeof(uint32);
 	MDFNGameInfo->fb_height = 512;
 	break;
 
   case VB3DMODE_SIDEBYSIDE:
-	MDFNGameInfo->nominal_width = 784;	//768;
+	MDFNGameInfo->nominal_width = 768 + MDFN_IEN_VB::VIP_GetSideBySidePixels();	//768;
   	MDFNGameInfo->nominal_height = 224;
-  	MDFNGameInfo->pitch = 784 * sizeof(uint32);	//768 * sizeof(uint32);
+  	MDFNGameInfo->pitch = 864 * sizeof(uint32);	//768 * sizeof(uint32);
  	MDFNGameInfo->fb_height = 256;
 	break;
  }
@@ -995,7 +999,7 @@ MDFNGI EmulatedVB =
  false, // Multires possible?
  384,   // Nominal width
  224,    // Nominal height
- 784 * sizeof(uint32), // Framebuffer pitch
+ 864 * sizeof(uint32), // Framebuffer pitch
  256,                  // Framebuffer height
 
  2,     // Number of output sound channels

@@ -86,6 +86,12 @@
 #define ID_SPLIT_MODE_PBARRIER          274
 #define ID_COLOR_MODE_REDBLUE           275
 #define ID_COLOR_MODE_GREYSCALE         276
+#define ID_PIXEL_SEP_16                 277
+#define ID_PIXEL_SEP_32                 278
+#define ID_PIXEL_SEP_48                 279
+#define ID_PIXEL_SEP_64                 280
+#define ID_PIXEL_SEP_80                 281
+#define ID_PIXEL_SEP_96                 282
 #define IDC_UP                          400
 #define IDC_LEFT                        401
 #define IDC_DOWN                        402

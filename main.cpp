@@ -48,6 +48,7 @@ volatile int VTBackBuffer = 0;
 
 bool MixVideoOutput = false;
 int DisplayLeftRightOutput = 0;
+int SideBySidePixels = 16;
 
 //uint16 PadData;//NEWTODO this sucks
 
@@ -476,6 +477,10 @@ void LoadIniSettings(){
 	MixVideoOutput = GetPrivateProfileBool("Display","MixLeftRight", false, IniName);
 	MDFN_IEN_VB::SetSplitMode(GetPrivateProfileInt("Display","SplitMode", 0, IniName));
 	MDFN_IEN_VB::SetColorMode(GetPrivateProfileInt("Display","ColorMode", 0, IniName));
+	SideBySidePixels = GetPrivateProfileInt("Display","SideBySidePixels", 16, IniName);
+	if (abs(SideBySidePixels) > 96)
+		SideBySidePixels = 96;
+	MDFN_IEN_VB::SetSideBySidePixels(abs(SideBySidePixels));
 	MDFN_IEN_VB::SetMixVideoOutput(MixVideoOutput);
 	DisplayLeftRightOutput = GetPrivateProfileInt("Display","ViewDisplay", 0, IniName);
 	if (DisplayLeftRightOutput > 3)
@@ -887,6 +892,42 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		case ID_SPLIT_MODE_PBARRIER:
 			MDFN_IEN_VB::SetSplitMode(MDFN_IEN_VB::VB3DMODE_PBARRIER);
 			WritePrivateProfileInt("Display", "SplitMode", MDFN_IEN_VB::VB3DMODE_PBARRIER, IniName);
+			break;
+		case ID_PIXEL_SEP_16:
+			SideBySidePixels = 16;
+			MDFN_IEN_VB::SetSideBySidePixels(SideBySidePixels);
+			ClearDirectDrawOutput();
+			WritePrivateProfileInt("Display", "SideBySidePixels", SideBySidePixels, IniName);
+			break;
+		case ID_PIXEL_SEP_32:
+			SideBySidePixels = 32;
+			MDFN_IEN_VB::SetSideBySidePixels(SideBySidePixels);
+			ClearDirectDrawOutput();
+			WritePrivateProfileInt("Display", "SideBySidePixels", SideBySidePixels, IniName);
+			break;
+		case ID_PIXEL_SEP_48:
+			SideBySidePixels = 48;
+			MDFN_IEN_VB::SetSideBySidePixels(SideBySidePixels);
+			ClearDirectDrawOutput();
+			WritePrivateProfileInt("Display", "SideBySidePixels", SideBySidePixels, IniName);
+			break;
+		case ID_PIXEL_SEP_64:
+			SideBySidePixels = 64;
+			MDFN_IEN_VB::SetSideBySidePixels(SideBySidePixels);
+			ClearDirectDrawOutput();
+			WritePrivateProfileInt("Display", "SideBySidePixels", SideBySidePixels, IniName);
+			break;
+		case ID_PIXEL_SEP_80:
+			SideBySidePixels = 80;
+			MDFN_IEN_VB::SetSideBySidePixels(SideBySidePixels);
+			ClearDirectDrawOutput();
+			WritePrivateProfileInt("Display", "SideBySidePixels", SideBySidePixels, IniName);
+			break;
+		case ID_PIXEL_SEP_96:
+			SideBySidePixels = 96;
+			MDFN_IEN_VB::SetSideBySidePixels(SideBySidePixels);
+			ClearDirectDrawOutput();
+			WritePrivateProfileInt("Display", "SideBySidePixels", SideBySidePixels, IniName);
 			break;
 		case ID_COLOR_MODE_REDBLUE:
 			MDFN_IEN_VB::SetColorMode(0);
