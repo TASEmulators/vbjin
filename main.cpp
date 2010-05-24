@@ -788,7 +788,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			else if(wParam == clearid)
 			{
 				/* Clear all the recent ROMs */
-				if(IDOK == MessageBox(g_hWnd, "OK to clear recent ROMs list?","DeSmuME",MB_OKCANCEL))
+				if(IDOK == MessageBox(g_hWnd, "OK to clear recent ROMs list?","VBJin",MB_OKCANCEL))
 					ClearRecentRoms();
 			}
 		wmId = LOWORD(wParam);
