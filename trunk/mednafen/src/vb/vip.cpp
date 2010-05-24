@@ -47,12 +47,12 @@ static uint16 InterruptEnable;
 static uint8 BRTA, BRTB, BRTC, REST;
 static uint8 Repeat;
 
-static void CopyFBColumnToTarget_Anaglyph(void) ;//__attribute__((noinline));
-static void CopyFBColumnToTarget_AnaglyphSlow(void);// __attribute__((noinline));
-static void CopyFBColumnToTarget_CScope(void) ;//__attribute__((noinline));
-static void CopyFBColumnToTarget_SideBySide(void) ;//__attribute__((noinline));
-static void CopyFBColumnToTarget_PBarrier(void) ;//__attribute__((noinline));
-static void (*CopyFBColumnToTarget)(void) = NULL;
+static void CopyFBColumnToTarget_Anaglyph(int SideBySideSep) ;//__attribute__((noinline));
+static void CopyFBColumnToTarget_AnaglyphSlow(int SideBySideSep);// __attribute__((noinline));
+static void CopyFBColumnToTarget_CScope(int SideBySideSep) ;//__attribute__((noinline));
+static void CopyFBColumnToTarget_SideBySide(int SideBySideSep) ;//__attribute__((noinline));
+static void CopyFBColumnToTarget_PBarrier(int SideBySideSep) ;//__attribute__((noinline));
+static void (*CopyFBColumnToTarget)(int SideBySideSep) = NULL;
 static uint32 VB3DMode;
 static uint32 VBColorMode;
 static uint32 ColorLUT[2][256];
@@ -68,6 +68,7 @@ static uint32 Anaglyph_Colors[2];
 static uint32 Default_Color;
 static bool MixVideoOutputInternal;
 static int DisplayLeftRightOutputInternal;
+static int SideBySideSep;
 
 static void MakeColorLUT(const MDFN_PixelFormat &format)
 {
@@ -241,6 +242,16 @@ void VIP_SetViewDisp(int display)
 	DisplayLeftRightOutputInternal = display;
 }
 
+int VIP_GetSideBySidePixels()
+{
+	return SideBySideSep;
+}
+
+void VIP_SetSideBySidePixels(int pixels)
+{
+	SideBySideSep = pixels;
+}
+
 void VIP_SetParallaxDisable(bool disabled)
 {
  ParallaxDisabled = disabled;
@@ -251,7 +262,6 @@ void VIP_SetDefaultColor(uint32 default_color)
  Default_Color = default_color;
  Recalc3DModeStuff();
 }
-
 
 void VIP_SetAnaglyphColors(uint32 lcolor, uint32 rcolor)
 {
@@ -836,7 +846,7 @@ void VIP_StartFrame(EmulateSpecStruct *espec)
 	break;
 
   case VB3DMODE_SIDEBYSIDE:
-	espec->DisplayRect.w = 784;	//768;
+	espec->DisplayRect.w = 768 + SideBySideSep;	//768;
 	espec->DisplayRect.h = 224;
 	break;
  }
@@ -898,7 +908,7 @@ static INLINE void CopyFBColumnToTarget_Anaglyph_BASE(const bool DisplayActive_a
 	}
 }
 
-static void CopyFBColumnToTarget_Anaglyph(void)
+static void CopyFBColumnToTarget_Anaglyph(int SideBySideSep)
 {
  const int lr = (DisplayRegion & 2) >> 1;
 
@@ -973,7 +983,7 @@ static INLINE void CopyFBColumnToTarget_AnaglyphSlow_BASE(const bool DisplayActi
      }
 }
 
-static void CopyFBColumnToTarget_AnaglyphSlow(void)
+static void CopyFBColumnToTarget_AnaglyphSlow(int SideBySideSep)
 {
  const int lr = (DisplayRegion & 2) >> 1;
 
@@ -1021,7 +1031,7 @@ static void CopyFBColumnToTarget_CScope_BASE(const bool DisplayActive_arg, const
      }
 }
 
-static void CopyFBColumnToTarget_CScope(void)
+static void CopyFBColumnToTarget_CScope(int SideBySideSep)
 {
  const int lr = (DisplayRegion & 2) >> 1;
 
@@ -1041,10 +1051,14 @@ static void CopyFBColumnToTarget_CScope(void)
  }
 }
 
-static void CopyFBColumnToTarget_SideBySide_BASE(const bool DisplayActive_arg, const int lr)
+static void CopyFBColumnToTarget_SideBySide_BASE(const bool DisplayActive_arg, const int lr, int SideBySideSep)
 {
      const int fb = DisplayFB;
-     uint32 *target = surface->pixels + Column + (lr ? 400 : 0);
+	 // 400 = 384 + 16
+	 // 480 = 384 + 96
+	 // 864 = (384 * 2) + 96
+
+     uint32 *target = surface->pixels + Column + (lr ? 384 + SideBySideSep : 0);
      const int32 pitch32 = surface->pitch32;
      const uint8 *fb_source = &FB[fb][lr][64 * Column];
 
@@ -1065,23 +1079,23 @@ static void CopyFBColumnToTarget_SideBySide_BASE(const bool DisplayActive_arg, c
      }
 }
 
-static void CopyFBColumnToTarget_SideBySide(void)
+static void CopyFBColumnToTarget_SideBySide(int SideBySideSep)
 {
  const int lr = (DisplayRegion & 2) >> 1;
 
  if(!DisplayActive)
  {
   if(!lr)
-   CopyFBColumnToTarget_SideBySide_BASE(0, 0);
+   CopyFBColumnToTarget_SideBySide_BASE(0, 0, SideBySideSep);
   else
-   CopyFBColumnToTarget_SideBySide_BASE(0, 1);
+   CopyFBColumnToTarget_SideBySide_BASE(0, 1, SideBySideSep);
  }
  else
  {
   if(!lr)
-   CopyFBColumnToTarget_SideBySide_BASE(1, 0);
+   CopyFBColumnToTarget_SideBySide_BASE(1, 0, SideBySideSep);
   else
-   CopyFBColumnToTarget_SideBySide_BASE(1, 1);
+   CopyFBColumnToTarget_SideBySide_BASE(1, 1, SideBySideSep);
  }
 }
 
@@ -1110,7 +1124,7 @@ static INLINE void CopyFBColumnToTarget_PBarrier_BASE(const bool DisplayActive_a
      }
 }
 
-static void CopyFBColumnToTarget_PBarrier(void)
+static void CopyFBColumnToTarget_PBarrier(int SideBySideSep)
 {
  const int lr = (DisplayRegion & 2) >> 1;
 
@@ -1232,7 +1246,7 @@ v810_timestamp_t MDFN_FASTCALL VIP_Update(const v810_timestamp_t timestamp)
      }
     }
     if(!skip)
-     CopyFBColumnToTarget();
+     CopyFBColumnToTarget(SideBySideSep);
    }
 
    ColumnCounter = 259;
