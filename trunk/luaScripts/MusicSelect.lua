@@ -30,8 +30,6 @@
  local MakeSongZeroMinimum = 1;
 
 --Not Done:
---Jack Bros
---Mario's Tennis (Attempted, but failed)
 --Nester's Funky Bowling
 --Virtual League Baseball
 
@@ -42,6 +40,19 @@
 --ECCDF = Title Screen Music
 --ECD73 = menu start sound
 --18B30E07 = Silence
+--
+--Jack Bros:
+--Just listening:
+--Change CE2 from 16 to what you want in the .VB file
+--Reload or reset the game
+--Recording:
+--Change 1B1D8 from 20 to what you want
+--When you get to the Yes/No option, change the selection to start/restart the music
+--
+--Mario's Tennis:
+--Open the .VB file and go to AB22
+--Change A042C740 to C0A0??00, replacing ?? with the music number
+--Load the game to play the music. Record, then Reset to start the music with silence
 --
 --Music Selection:
 --ECCA3 + (# * 4) = Music (# = 0x01 - 0x4F)
