@@ -80,6 +80,10 @@
 #define ID_VIEW_DISP_LEFT               268
 #define ID_VIEW_DISP_RIGHT              269
 #define ID_VIEW_DISP_DISABLE            270
+#define ID_SPLIT_MODE_ANAGLYPH          271
+#define ID_SPLIT_MODE_CSCOPE            272
+#define ID_SPLIT_MODE_SIDEBYSIDE        273
+#define ID_SPLIT_MODE_PBARRIER          274
 #define IDC_UP                          400
 #define IDC_LEFT                        401
 #define IDC_DOWN                        402

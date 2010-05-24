@@ -22,6 +22,12 @@ ushort *lpscreen = NULL;
 
 bool quit = false;
 
+void ClearDDrawBuffers() {
+// Clear the ddsd memory 
+memset(&ddsd, 0, sizeof(DDSURFACEDESC2));
+ddsd.dwSize = sizeof(DDSURFACEDESC2);
+}
+
 int CreateDDrawBuffers()
 {
 	if (lpDDClipPrimary!=NULL) { IDirectDraw7_Release(lpDDClipPrimary); lpDDClipPrimary = NULL; }

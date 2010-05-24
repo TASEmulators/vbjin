@@ -55,6 +55,9 @@ void VB_Power(void);
 
 void SetMixVideoOutput(bool disabled);
 void SetViewDisp(int display);
+uint32 GetSplitMode();
+void SetSplitMode(uint32 mode);
+
 
 void clearGPRAM();
 
