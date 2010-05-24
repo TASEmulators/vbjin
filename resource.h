@@ -84,6 +84,8 @@
 #define ID_SPLIT_MODE_CSCOPE            272
 #define ID_SPLIT_MODE_SIDEBYSIDE        273
 #define ID_SPLIT_MODE_PBARRIER          274
+#define ID_COLOR_MODE_REDBLUE           275
+#define ID_COLOR_MODE_GREYSCALE         276
 #define IDC_UP                          400
 #define IDC_LEFT                        401
 #define IDC_DOWN                        402

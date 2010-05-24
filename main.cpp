@@ -475,6 +475,7 @@ DWORD checkMenu(UINT idd, bool check)
 void LoadIniSettings(){
 	MixVideoOutput = GetPrivateProfileBool("Display","MixLeftRight", false, IniName);
 	MDFN_IEN_VB::SetSplitMode(GetPrivateProfileInt("Display","SplitMode", 0, IniName));
+	MDFN_IEN_VB::SetColorMode(GetPrivateProfileInt("Display","ColorMode", 0, IniName));
 	MDFN_IEN_VB::SetMixVideoOutput(MixVideoOutput);
 	DisplayLeftRightOutput = GetPrivateProfileInt("Display","ViewDisplay", 0, IniName);
 	if (DisplayLeftRightOutput > 3)
@@ -674,8 +675,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 					{
 						extern int MDFNSS_Load(const char *fname, const char *suffix);
 						MDFNSS_Load(filename, NULL);
-						Update_RAM_Watch();			
-						Update_RAM_Search();		
+						ClearDirectDrawOutput();
+						Update_RAM_Watch();
+						Update_RAM_Search();
 					}
 				}
 			}
@@ -751,6 +753,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		checkMenu(IDC_WINDOW4X, ((pcejin.windowSize==4)));
 		checkMenu(IDC_ASPECT, ((pcejin.aspectRatio)));
 		checkMenu(ID_VIEW_MIXLEFTRIGHT,MixVideoOutput);
+		checkMenu(ID_COLOR_MODE_REDBLUE, ((MDFN_IEN_VB::GetColorMode()==0)));
+		checkMenu(ID_COLOR_MODE_GREYSCALE, ((MDFN_IEN_VB::GetColorMode()==1)));
 		checkMenu(ID_SPLIT_MODE_ANAGLYPH, ((MDFN_IEN_VB::GetSplitMode()==MDFN_IEN_VB::VB3DMODE_ANAGLYPH)));
 		checkMenu(ID_SPLIT_MODE_CSCOPE, ((MDFN_IEN_VB::GetSplitMode()==MDFN_IEN_VB::VB3DMODE_CSCOPE)));
 		checkMenu(ID_SPLIT_MODE_SIDEBYSIDE, ((MDFN_IEN_VB::GetSplitMode()==MDFN_IEN_VB::VB3DMODE_SIDEBYSIDE)));
@@ -868,23 +872,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 
 		case ID_SPLIT_MODE_ANAGLYPH:
 			MDFN_IEN_VB::SetSplitMode(MDFN_IEN_VB::VB3DMODE_ANAGLYPH);
-			WritePrivateProfileBool("Display", "SplitMode", MDFN_IEN_VB::VB3DMODE_ANAGLYPH, IniName);
+			WritePrivateProfileInt("Display", "SplitMode", MDFN_IEN_VB::VB3DMODE_ANAGLYPH, IniName);
 			break;
 		case ID_SPLIT_MODE_CSCOPE:
 			MDFN_IEN_VB::SetSplitMode(MDFN_IEN_VB::VB3DMODE_CSCOPE);
-			WritePrivateProfileBool("Display", "SplitMode", MDFN_IEN_VB::VB3DMODE_CSCOPE, IniName);
+			WritePrivateProfileInt("Display", "SplitMode", MDFN_IEN_VB::VB3DMODE_CSCOPE, IniName);
 			break;
 		case ID_SPLIT_MODE_SIDEBYSIDE:
 			MDFN_IEN_VB::SetSplitMode(MDFN_IEN_VB::VB3DMODE_SIDEBYSIDE);
-			WritePrivateProfileBool("Display", "SplitMode", MDFN_IEN_VB::VB3DMODE_SIDEBYSIDE, IniName);
+			WritePrivateProfileInt("Display", "SplitMode", MDFN_IEN_VB::VB3DMODE_SIDEBYSIDE, IniName);
 			//Clear the DirectDraw buffers
-			ClearDDrawBuffers();
+			ClearDirectDrawOutput();
 			break;
 		case ID_SPLIT_MODE_PBARRIER:
 			MDFN_IEN_VB::SetSplitMode(MDFN_IEN_VB::VB3DMODE_PBARRIER);
-			WritePrivateProfileBool("Display", "SplitMode", MDFN_IEN_VB::VB3DMODE_PBARRIER, IniName);
+			WritePrivateProfileInt("Display", "SplitMode", MDFN_IEN_VB::VB3DMODE_PBARRIER, IniName);
 			break;
-
+		case ID_COLOR_MODE_REDBLUE:
+			MDFN_IEN_VB::SetColorMode(0);
+			WritePrivateProfileInt("Display", "ColorMode", 0, IniName);
+			break;
+		case ID_COLOR_MODE_GREYSCALE:
+			MDFN_IEN_VB::SetColorMode(1);
+			WritePrivateProfileInt("Display", "ColorMode", 1, IniName);
+			break;
 		case ID_VIEW_DISP_BOTH:
 			DisplayLeftRightOutput = 0;
 			MDFN_IEN_VB::SetViewDisp(DisplayLeftRightOutput);

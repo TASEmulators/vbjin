@@ -12,6 +12,7 @@
 #include "main.h"
 #include "pcejin.h"
 #include "mednafen.h"
+#include "dd.h"
 
 #include <string>
 
@@ -3232,6 +3233,7 @@ void HK_StateLoadSlot(int num)
 	CurrentState = num;
 	//NEWTODO
 	MDFNSS_Load(NULL, NULL);
+	ClearDirectDrawOutput();
 }
 
 void HK_StateSetSlot(int num)
@@ -3252,6 +3254,7 @@ void HK_StateQuickSaveSlot(int)
 void HK_StateQuickLoadSlot(int)
 {
 	MDFNSS_Load(NULL, NULL);
+	ClearDirectDrawOutput();
 }
 
 void HK_AutoHoldClearKeyDown(int) {

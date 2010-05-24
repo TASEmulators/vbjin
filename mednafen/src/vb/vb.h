@@ -57,7 +57,8 @@ void SetMixVideoOutput(bool disabled);
 void SetViewDisp(int display);
 uint32 GetSplitMode();
 void SetSplitMode(uint32 mode);
-
+uint32 GetColorMode();
+void SetColorMode(uint32 mode);
 
 void clearGPRAM();
 

@@ -432,11 +432,20 @@ void SetViewDisp(int display) {
 }
 
 uint32 GetSplitMode() {
-	return VIP_Get3DMode();
+	return VB3DMode;
 }
 
 void SetSplitMode(uint32 mode) {
+	VB3DMode = mode;
 	VIP_Set3DMode(mode);
+}
+
+uint32 GetColorMode() {
+	return VIP_GetColorMode();
+}
+
+void SetColorMode(uint32 mode) {
+	VIP_SetColorMode(mode);
 }
 
 static bool TestMagic(const char *name, MDFNFILE *fp)
@@ -594,10 +603,10 @@ static int Load(const char *name, MDFNFILE *fp)
 
  //VB3DMode = (uint32)MDFN_GetSettingUI("vb.3dmode");
 
+ VIP_Set3DMode(VB3DMode);
 
  VIP_Init();
 
- VIP_Set3DMode(VB3DMode);
  VIP_SetParallaxDisable(MDFN_GetSettingB("vb.disable_parallax"));
  
  {
