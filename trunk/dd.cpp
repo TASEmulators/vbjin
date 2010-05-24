@@ -123,19 +123,22 @@ void setClientSize(int width, int height)
 
 void ScaleScreen(float factor)
 {
-	if(pcejin.aspectRatio)
-		pcejin.width  = 309;
+	if(pcejin.windowSize == 0) {
+		if(pcejin.aspectRatio)
+			pcejin.width = 309;
 
-	if(pcejin.windowSize == 0)
 		setClientSize(pcejin.width, pcejin.height);
+	}
 	else
 	{
 		if(factor==65535)
 			factor = 1.5f;
 		else if(factor==65534)
 			factor = 2.5f;
-		setClientSize((int)(pcejin.width * factor), (int)(232 * factor));
+
+		setClientSize((int)(pcejin.width * factor * (pcejin.aspectRatio ? ((float)309 / (float)384) : 1)), (int)(232 * factor));
 	}
+
 }
 
 RECT MainScreenRect;
