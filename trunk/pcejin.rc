@@ -68,6 +68,11 @@ BEGIN
         MENUITEM "4/3 Aspect Ratio",            IDC_ASPECT
         MENUITEM SEPARATOR
         MENUITEM "Mix Left && Right View",      ID_VIEW_MIXLEFTRIGHT
+        POPUP "Coloring"
+        BEGIN
+            MENUITEM "Red/Blue",                ID_COLOR_MODE_REDBLUE
+            MENUITEM "Greyscale",               ID_COLOR_MODE_GREYSCALE
+        END
         POPUP "Splitting Mode"
         BEGIN
             MENUITEM "Anaglyph",                ID_SPLIT_MODE_ANAGLYPH

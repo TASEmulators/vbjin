@@ -10,10 +10,11 @@ bool VIP_Init(void);
 void VIP_Power(void);
 
 void VIP_Set3DMode(uint32 mode);
+uint32 VIP_GetColorMode();
+void VIP_SetColorMode(uint32 mode);
 void VIP_SetParallaxDisable(bool disabled);
 void VIP_SetMixVideoOutput(bool disabled);
 void VIP_SetViewDisp(int display);
-uint32 VIP_Get3DMode();
 void VIP_SetDefaultColor(uint32 default_color);
 void VIP_SetAnaglyphColors(uint32 lcolor, uint32 rcolor);	// R << 16, G << 8, B << 0
 

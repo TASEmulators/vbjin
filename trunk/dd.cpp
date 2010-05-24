@@ -22,12 +22,6 @@ ushort *lpscreen = NULL;
 
 bool quit = false;
 
-void ClearDDrawBuffers() {
-// Clear the ddsd memory 
-memset(&ddsd, 0, sizeof(DDSURFACEDESC2));
-ddsd.dwSize = sizeof(DDSURFACEDESC2);
-}
-
 int CreateDDrawBuffers()
 {
 	if (lpDDClipPrimary!=NULL) { IDirectDraw7_Release(lpDDClipPrimary); lpDDClipPrimary = NULL; }
@@ -295,6 +289,19 @@ static void convert16(const uint8* buffer, EmulateSpecStruct *espec){
 	}
 #endif
 }
+
+void ClearDirectDrawOutput() {
+	//Gets rid of the garbage in the middle of the screen
+	//when using Side By Side mode.
+	espec.surface->Fill(0,0,0,255);
+}
+
+/*void ClearDDrawBuffers() {
+// Clear the ddsd memory 
+memset(&ddsd, 0, sizeof(DDSURFACEDESC2));
+ddsd.dwSize = sizeof(DDSURFACEDESC2);
+}*/
+
 
 void render() {
 

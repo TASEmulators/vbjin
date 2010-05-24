@@ -54,6 +54,7 @@ static void CopyFBColumnToTarget_SideBySide(void) ;//__attribute__((noinline));
 static void CopyFBColumnToTarget_PBarrier(void) ;//__attribute__((noinline));
 static void (*CopyFBColumnToTarget)(void) = NULL;
 static uint32 VB3DMode;
+static uint32 VBColorMode;
 static uint32 ColorLUT[2][256];
 static int32 BrightnessCache[4];
 static uint32 BrightCLUT[2][4];
@@ -84,17 +85,17 @@ static void MakeColorLUT(const MDFN_PixelFormat &format)
    g_prime = pow(g, 1.0 / 2.2);
    b_prime = pow(b, 1.0 / 2.2);
 
-   switch(VB3DMode)
+   switch(VBColorMode)
    {
-    case VB3DMODE_ANAGLYPH:
+    case 0: //Previously Anaglyph default
 	r_prime = r_prime * ((Anaglyph_Colors[lr] >> 16) & 0xFF) / 255;
 	g_prime = g_prime * ((Anaglyph_Colors[lr] >> 8) & 0xFF) / 255;
 	b_prime = b_prime * ((Anaglyph_Colors[lr] >> 0) & 0xFF) / 255;
 	break;
-    default:
-        r_prime = r_prime * ((Default_Color >> 16) & 0xFF) / 255;
-        g_prime = g_prime * ((Default_Color >> 8) & 0xFF) / 255;
-        b_prime = b_prime * ((Default_Color >> 0) & 0xFF) / 255;
+    default: //Previously all others default
+    r_prime = r_prime * ((Default_Color >> 16) & 0xFF) / 255;
+    g_prime = g_prime * ((Default_Color >> 8) & 0xFF) / 255;
+    b_prime = b_prime * ((Default_Color >> 0) & 0xFF) / 255;
 	break;
    }
    ColorLUTNoGC[lr][i][0] = pow(r_prime, 2.2 / 1.0);
@@ -223,10 +224,6 @@ static void Recalc3DModeStuff(bool non_rgb_output = false)
  RecalcBrightnessCache();
 }
 
-uint32 VIP_Get3DMode() {
-	return VB3DMode;
-}
-
 void VIP_Set3DMode(uint32 mode)
 {
  VB3DMode = mode;
@@ -340,10 +337,10 @@ bool VIP_Init(void)
  //DisplayLeftRightOutputInternal = 0 // Force Set Elsewhere
  Anaglyph_Colors[0] = 0xFF0000;
  Anaglyph_Colors[1] = 0x0000FF;
- VB3DMode = VB3DMODE_ANAGLYPH;
+ //VB3DMode = VB3DMODE_ANAGLYPH; // Force Set Elsewhere
  Default_Color = 0xFFFFFF;
 
- Recalc3DModeStuff();
+ //Recalc3DModeStuff();
 
  return(true);
 }
@@ -788,18 +785,26 @@ void VIP_Write16(int32 &timestamp, uint32 A, uint16 V)
 
 static MDFN_Surface *surface;
 static bool skip;
+static bool recalculatemode = true;
 
-bool first = true;
+uint32 VIP_GetColorMode() {
+ return VBColorMode;
+}
+
+void VIP_SetColorMode(uint32 mode) {
+ VBColorMode = mode;
+ recalculatemode=true;
+}
 
 void VIP_StartFrame(EmulateSpecStruct *espec)
 {
 // puts("Start frame");
 //	
 
- if(first || espec->VideoFormatChanged)
+ if(recalculatemode || espec->VideoFormatChanged)
  {
-	 if(first)
-		 first = false;
+	 if(recalculatemode)
+		 recalculatemode = false;
   MakeColorLUT(espec->surface->format);
   Recalc3DModeStuff(espec->surface->format.colorspace != MDFN_COLORSPACE_RGB);
  }
