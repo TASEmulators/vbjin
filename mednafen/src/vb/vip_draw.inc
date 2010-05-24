@@ -396,7 +396,7 @@ void VIP_DrawBlock(uint32 block_no, uint8 *fb_l, uint8 *fb_r)
 
  obj_search_which = 3;
 
- for(uint8 world = 31; world >= 0; world--)
+ for(int world = 31; world >= 0; world--)
  {
   const uint16 *world_ptr = (const uint16 *)&MDFN_IEN_VB::DRAM[0x1D800 + world * 0x20];
 
