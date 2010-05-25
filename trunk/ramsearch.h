@@ -26,7 +26,7 @@
 
 extern char rs_type_size;
 extern int ResultCount;
-void InitRamSearch();
+void InitRamSearch(bool soft);
 extern HWND RamSearchHWnd;
 LRESULT CALLBACK RamSearchProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 unsigned int sizeConv(unsigned int index,char size, char *prevSize = &rs_type_size, bool usePrev = false);
