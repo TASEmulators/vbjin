@@ -41,6 +41,13 @@
 --ECD73 = menu start sound
 --18B30E07 = Silence
 --
+--Music Selection:
+--ECCA3 + (# * 4) = Music (# = 0x01 - 0x4F)
+--
+--I'd suggest replacing the password screen music(ECCA7),
+--setting ECD73 to 18B30E07,
+--and ripping from the point of going into the password screen.
+--
 --Jack Bros:
 --Just listening:
 --Change CE2 from 16 to what you want in the .VB file
@@ -54,12 +61,11 @@
 --Change A042C740 to C0A0??00, replacing ?? with the music number
 --Load the game to play the music. Record, then Reset to start the music with silence
 --
---Music Selection:
---ECCA3 + (# * 4) = Music (# = 0x01 - 0x4F)
---
---I'd suggest replacing the password screen music(ECCA7),
---setting ECD73 to 18B30E07,
---and ripping from the point of going into the password screen.
+--Waterworld:
+--Change FF0 from 61 to 60 to disable repearing sound effect on screen 1
+--Change 16CC from 61 to 60 to disable repearing sound effect on screen 2
+--Change 1038 from 43D51800C440 to C440C0A0??00, replace ?? with desired value
+--Restart game, go to next screen to start music
 
 --Script Info:
 emu.print("Gamenum is currently " .. GameNum .. ".");
