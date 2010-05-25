@@ -1004,7 +1004,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			{
 				if (pcejin.romLoaded)
 				{
-					InitRamSearch();
+					InitRamSearch(false);
 					RamSearchHWnd = CreateDialog(winClass.hInstance, MAKEINTRESOURCE(IDD_RAMSEARCH), hWnd, (DLGPROC) RamSearchProc);
 				}
 			}

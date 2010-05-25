@@ -258,6 +258,7 @@
     <ClInclude Include="mednafen\include\trio\trionan.h" />
     <ClInclude Include="mednafen\include\trio\triop.h" />
     <ClInclude Include="mednafen\include\trio\triostr.h" />
+    <ClInclude Include="ramsearch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="types.h" />
     <ClInclude Include="mednafen\src\compress\unzip.h" />

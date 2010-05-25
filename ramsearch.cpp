@@ -103,7 +103,7 @@ static int s_undoType = 0; // 0 means can't undo, 1 means can undo, 2 means can 
 void RamSearchSaveUndoStateIfNotTooBig(HWND hDlg);
 static const int tooManyRegionsForUndo = 10000;
 
-void InitRamSearch()
+void InitRamSearch(bool soft)
 {
 	if(buffers == NULL)
 	{
@@ -125,6 +125,11 @@ void InitRamSearch()
 		DRAMRegion.size=0x20000;
 		DRAMRegion.softwareAddress=MDFN_IEN_VB::getDRAM();
 	}
+
+	if (soft) {
+		WRAMRegion.softwareAddress=MDFN_IEN_VB::getWRAM();
+		DRAMRegion.softwareAddress=MDFN_IEN_VB::getDRAM();
+	}
 }
 
 void ResetMemoryRegions()
@@ -132,7 +137,12 @@ void ResetMemoryRegions()
 //	Clear_Sound_Buffer();
 
 	s_activeMemoryRegions.clear();
-		
+	
+	//Prevents memory from becoming unsearchable.
+	//Should probably be done at other points in the program too,
+	//such as game resets.
+	InitRamSearch(true);
+
 //	s_activeMemoryRegions.push_back(DRAMRegion);
 	s_activeMemoryRegions.push_back(WRAMRegion);
 
