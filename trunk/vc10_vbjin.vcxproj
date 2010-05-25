@@ -212,9 +212,15 @@
     <ClCompile Include="waveout.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="agg2d.h" />
+    <ClInclude Include="aggdraw.h" />
     <ClInclude Include="aviout.h" />
     <ClInclude Include="dd.h" />
     <ClInclude Include="dxsound.h" />
+    <ClInclude Include="GPU_osd.h" />
+    <ClInclude Include="hotkey.h" />
+    <ClInclude Include="inttypes.h" />
+    <ClInclude Include="lua-engine.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="mednafen\include\blargg_common.h" />
     <ClInclude Include="mednafen\include\blargg_config.h" />
@@ -258,8 +264,16 @@
     <ClInclude Include="mednafen\include\trio\trionan.h" />
     <ClInclude Include="mednafen\include\trio\triop.h" />
     <ClInclude Include="mednafen\include\trio\triostr.h" />
+    <ClInclude Include="movie.h" />
+    <ClInclude Include="ParseCmdLine.h" />
+    <ClInclude Include="pcejin.h" />
+    <ClInclude Include="prefix.h" />
     <ClInclude Include="ramsearch.h" />
+    <ClInclude Include="ramwatch.h" />
+    <ClInclude Include="recentroms.h" />
+    <ClInclude Include="replay.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="targetver.h" />
     <ClInclude Include="types.h" />
     <ClInclude Include="mednafen\src\compress\unzip.h" />
     <ClInclude Include="mednafen\src\hw_cpu\v810\v810_cpu.h" />
@@ -271,6 +285,9 @@
     <ClInclude Include="mednafen\src\video.h" />
     <ClInclude Include="mednafen\src\vb\vip.h" />
     <ClInclude Include="mednafen\src\vb\vsu.h" />
+    <ClInclude Include="unixstuff.h" />
+    <ClInclude Include="utils\readwrite.h" />
+    <ClInclude Include="utils\xstring.h" />
     <ClInclude Include="waveout.h" />
   </ItemGroup>
   <ItemGroup>
