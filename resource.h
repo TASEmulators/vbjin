@@ -92,6 +92,11 @@
 #define ID_PIXEL_SEP_64                 280
 #define ID_PIXEL_SEP_80                 281
 #define ID_PIXEL_SEP_96                 282
+#define ID_COLOR_MODE_REDCYAN           283
+#define ID_COLOR_MODE_REDELECTRICCYAN   284
+#define ID_COLOR_MODE_REDGREEN          285
+#define ID_COLOR_MODE_GREENMAGENTA      286
+#define ID_COLOR_MODE_YELLOWBLUE        287
 #define IDC_UP                          400
 #define IDC_LEFT                        401
 #define IDC_DOWN                        402

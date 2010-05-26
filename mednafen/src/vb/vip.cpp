@@ -27,6 +27,17 @@
 namespace MDFN_IEN_VB
 {
 
+static const uint32 AnaglyphPreset_Colors[][2] =
+{
+ { 0xFF0000, 0x0000FF }, // Red Blue
+ { 0xFF0000, 0x00B7EB },
+ { 0xFF0000, 0x00FFFF },
+ { 0xFF0000, 0x00FF00 },
+ { 0x00FF00, 0xFF00FF },
+ { 0xFFFF00, 0x0000FF },
+ { 0xF0F0F0, 0xF0F0F0 }, //Greyscale
+};
+
 static uint8 FB[2][2][0x6000];
 static uint8 CHR_RAM[0x8000];
 static uint8 DRAM[0x20000];
@@ -66,7 +77,6 @@ static uint32 AnaSlowColorLUT[256][256];
 static bool ParallaxDisabled;
 static uint32 Anaglyph_Colors[2];
 static uint32 Default_Color;
-static bool MixVideoOutputInternal;
 static int DisplayLeftRightOutputInternal;
 static int SideBySideSep;
 
@@ -88,15 +98,15 @@ static void MakeColorLUT(const MDFN_PixelFormat &format)
 
    switch(VBColorMode)
    {
-    case 0: //Previously Anaglyph default
-	r_prime = r_prime * ((Anaglyph_Colors[lr] >> 16) & 0xFF) / 255;
-	g_prime = g_prime * ((Anaglyph_Colors[lr] >> 8) & 0xFF) / 255;
-	b_prime = b_prime * ((Anaglyph_Colors[lr] >> 0) & 0xFF) / 255;
-	break;
-    default: //Previously all others default
+    /*case 6: //Greyscale. Previously all others default
     r_prime = r_prime * ((Default_Color >> 16) & 0xFF) / 255;
     g_prime = g_prime * ((Default_Color >> 8) & 0xFF) / 255;
     b_prime = b_prime * ((Default_Color >> 0) & 0xFF) / 255;
+	break;*/
+    default: //Previously Anaglyph default
+	r_prime = r_prime * ((Anaglyph_Colors[lr] >> 16) & 0xFF) / 255;
+	g_prime = g_prime * ((Anaglyph_Colors[lr] >> 8) & 0xFF) / 255;
+	b_prime = b_prime * ((Anaglyph_Colors[lr] >> 0) & 0xFF) / 255;
 	break;
    }
    ColorLUTNoGC[lr][i][0] = pow(r_prime, 2.2 / 1.0);
@@ -210,9 +220,9 @@ static void Recalc3DModeStuff(bool non_rgb_output = false)
             CopyFBColumnToTarget = CopyFBColumnToTarget_Anaglyph;
            break;
 
-  case VB3DMODE_CSCOPE:
+  /*case VB3DMODE_CSCOPE:
            CopyFBColumnToTarget = CopyFBColumnToTarget_CScope;
-           break;
+           break;*/
 
   case VB3DMODE_SIDEBYSIDE:
            CopyFBColumnToTarget = CopyFBColumnToTarget_SideBySide;
@@ -230,11 +240,6 @@ void VIP_Set3DMode(uint32 mode)
  VB3DMode = mode;
 
  Recalc3DModeStuff();
-}
-
-void VIP_SetMixVideoOutput(bool disabled)
-{
-	MixVideoOutputInternal = disabled;
 }
 
 void VIP_SetViewDisp(int display)
@@ -342,8 +347,7 @@ static void CheckIRQ(void)
 
 bool VIP_Init(void)
 {
- ParallaxDisabled = false;
- //MixVideoOutputInternal = false; // Force Set Elsewhere
+ //ParallaxDisabled = false; //Force Set Elsewhere
  //DisplayLeftRightOutputInternal = 0 // Force Set Elsewhere
  Anaglyph_Colors[0] = 0xFF0000;
  Anaglyph_Colors[1] = 0x0000FF;
@@ -802,7 +806,11 @@ uint32 VIP_GetColorMode() {
 }
 
 void VIP_SetColorMode(uint32 mode) {
+
  VBColorMode = mode;
+ 
+ VIP_SetAnaglyphColors(AnaglyphPreset_Colors[VBColorMode][0], AnaglyphPreset_Colors[VBColorMode][1]);
+ 
  recalculatemode=true;
 }
 
@@ -840,10 +848,10 @@ void VIP_StartFrame(EmulateSpecStruct *espec)
 	espec->DisplayRect.h = 224;
 	break;
 
-  case VB3DMODE_CSCOPE:
+  /*case VB3DMODE_CSCOPE:
 	espec->DisplayRect.w = 512;
 	espec->DisplayRect.h = 384;
-	break;
+	break;*/
 
   case VB3DMODE_SIDEBYSIDE:
 	espec->DisplayRect.w = 768 + SideBySideSep;	//768;

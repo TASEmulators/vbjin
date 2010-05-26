@@ -44,18 +44,6 @@ enum
  ANAGLYPH_PRESET_YELLOW_BLUE,
 };
 
-static const uint32 AnaglyphPreset_Colors[][2] =
-{
- { 0, 0 },
- { 0xFF0000, 0x0000FF },
- { 0xFF0000, 0x00B7EB },
- { 0xFF0000, 0x00FFFF },
- { 0xFF0000, 0x00FF00 },
- { 0x00FF00, 0xFF00FF },
- { 0xFFFF00, 0x0000FF },
-};
-
-
 static uint32 VB3DMode;
 
 static Blip_Buffer sbuf[2];
@@ -424,7 +412,7 @@ void VB_Power(void)
 }
 
 void SetMixVideoOutput(bool disabled) {
-	VIP_SetMixVideoOutput(disabled);
+	VIP_SetParallaxDisable(disabled);
 }
 
 void SetSideBySidePixels(int pixels) {
@@ -611,9 +599,9 @@ static int Load(const char *name, MDFNFILE *fp)
 
  VIP_Init();
 
- VIP_SetParallaxDisable(MDFN_GetSettingB("vb.disable_parallax"));
+ //VIP_SetParallaxDisable(MDFN_GetSettingB("vb.disable_parallax"));
  
- {
+ /*{
   uint32 lcolor = (uint32)MDFN_GetSettingUI("vb.anaglyph.lcolor"), rcolor = (uint32)MDFN_GetSettingUI("vb.anaglyph.rcolor");
   int preset = (int)MDFN_GetSettingI("vb.anaglyph.preset");
 
@@ -623,7 +611,7 @@ static int Load(const char *name, MDFNFILE *fp)
    rcolor = AnaglyphPreset_Colors[preset][1];
   }
   VIP_SetAnaglyphColors(lcolor, rcolor);
- }
+ }*/
  VIP_SetDefaultColor((uint32)MDFN_GetSettingUI("vb.default_color"));
 
 
@@ -660,12 +648,12 @@ static int Load(const char *name, MDFNFILE *fp)
         MDFNGameInfo->fb_height = 512;
         break;
 
-  case VB3DMODE_CSCOPE:
+  /*case VB3DMODE_CSCOPE:
 	MDFNGameInfo->nominal_width = 512;
 	MDFNGameInfo->nominal_height = 384;
 	MDFNGameInfo->pitch = 864 * sizeof(uint32);
 	MDFNGameInfo->fb_height = 512;
-	break;
+	break;*/
 
   case VB3DMODE_SIDEBYSIDE:
 	MDFNGameInfo->nominal_width = 768 + MDFN_IEN_VB::VIP_GetSideBySidePixels();	//768;
@@ -876,7 +864,7 @@ static const MDFNSetting_EnumList V810Mode_List[] =
 static const MDFNSetting_EnumList VB3DMode_List[] =
 {
  { "anaglyph", VB3DMODE_ANAGLYPH },
- { "cscope",  VB3DMODE_CSCOPE },
+// { "cscope",  VB3DMODE_CSCOPE },
  { "sidebyside", VB3DMODE_SIDEBYSIDE },
 // { "overunder", VB3DMODE_OVERUNDER },
  { "pbarrier", VB3DMODE_PBARRIER },

@@ -580,7 +580,7 @@ uint64 MDFN_GetSettingUI(const char *name)
 int64 MDFN_GetSettingI(const char *name)
 {
 	if(!strcmp(name,"vb.cpu_emulation"))
-		return 1;
+		return 1; //1=Accuracy
 	if(!strcmp(name,"vb.anaglyph.preset"))
 		return 1;
 
