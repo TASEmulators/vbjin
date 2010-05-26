@@ -34,7 +34,9 @@
 --Nester's Funky Bowling
 --SD Gundam - Dimension War
 --Space Invaders - Virtual Collection
+--Space Squash
 --Virtual Bowling
+--Virtual Fishing
 --Virtual Lab
 --Virtual League Baseball
 

@@ -13,7 +13,6 @@ void VIP_Set3DMode(uint32 mode);
 uint32 VIP_GetColorMode();
 void VIP_SetColorMode(uint32 mode);
 void VIP_SetParallaxDisable(bool disabled);
-void VIP_SetMixVideoOutput(bool disabled);
 int VIP_GetSideBySidePixels();
 void VIP_SetSideBySidePixels(int pixels);
 void VIP_SetViewDisp(int display);

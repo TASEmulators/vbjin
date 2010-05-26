@@ -151,7 +151,7 @@ static void DrawAffine(uint8 *target, uint16 RealY, bool lr, uint32 ParamBase, u
 
  // This line was simply hard to move to another function in pieces, so it got rewritten in a way that's easier to deal with.
  //const uint16 *param_ptr = &((const uint16 *)MDFN_IEN_VB::DRAM)[(ParamBase + 8 * (RealY - DestY)) & 0xFFFF];
- int16 mx = BGMap[((ParamBase + 8 * (RealY - DestY))) & 0xFFFF], mp = (MDFN_IEN_VB::ParallaxDisabled || MDFN_IEN_VB::MixVideoOutputInternal ? 0 : BGMap[((ParamBase + 8 * (RealY - DestY)) + 1) & 0xFFFF]), my = BGMap[((ParamBase + 8 * (RealY - DestY)) + 2) & 0xFFFF], dx = BGMap[((ParamBase + 8 * (RealY - DestY)) + 3) & 0xFFFF], dy = BGMap[((ParamBase + 8 * (RealY - DestY)) + 4) & 0xFFFF];
+ int16 mx = BGMap[((ParamBase + 8 * (RealY - DestY))) & 0xFFFF], mp = (MDFN_IEN_VB::ParallaxDisabled ? 0 : BGMap[((ParamBase + 8 * (RealY - DestY)) + 1) & 0xFFFF]), my = BGMap[((ParamBase + 8 * (RealY - DestY)) + 2) & 0xFFFF], dx = BGMap[((ParamBase + 8 * (RealY - DestY)) + 3) & 0xFFFF], dy = BGMap[((ParamBase + 8 * (RealY - DestY)) + 4) & 0xFFFF];
 
  uint32 SourceX, SourceY;
  uint32 SourceX_Mask, SourceY_Mask;
@@ -311,7 +311,7 @@ static void DrawOBJ(uint8 *fb[2], uint16 Y, bool lron[2])
    continue;
 
   uint32 jx = oam_ptr[0];
-  uint32 jp = MDFN_IEN_VB::ParallaxDisabled || MDFN_IEN_VB::MixVideoOutputInternal ? 0 : (oam_ptr[1] & 0x3FFF);
+  uint32 jp = MDFN_IEN_VB::ParallaxDisabled ? 0 : (oam_ptr[1] & 0x3FFF);
   uint32 palette_selector = oam_ptr[3] >> 14;
   uint32 vflip_xor = (oam_ptr[3] & 0x1000) ? 7 : 0;
   uint32 char_sub_y = vflip_xor ^ tile_y;
@@ -409,10 +409,10 @@ void VIP_DrawBlock(uint32 block_no, uint8 *fb_l, uint8 *fb_r)
   bool lron[2] =  { (bool)(world_ptr[0] & 0x8000), (bool)(world_ptr[0] & 0x4000) };
 
   uint16 gx = sign_11_to_s16(world_ptr[1]);
-  uint16 gp = MDFN_IEN_VB::ParallaxDisabled || MDFN_IEN_VB::MixVideoOutputInternal ? 0 : sign_9_to_s16(world_ptr[2]);
+  uint16 gp = MDFN_IEN_VB::ParallaxDisabled ? 0 : sign_9_to_s16(world_ptr[2]);
   uint16 gy = sign_11_to_s16(world_ptr[3]);
   uint16 mx = world_ptr[4];
-  uint16 mp = MDFN_IEN_VB::ParallaxDisabled || MDFN_IEN_VB::MixVideoOutputInternal ? 0 : sign_9_to_s16(world_ptr[5]);
+  uint16 mp = MDFN_IEN_VB::ParallaxDisabled ? 0 : sign_9_to_s16(world_ptr[5]);
   uint16 my = world_ptr[6];
   uint16 window_width = sign_11_to_s16(world_ptr[7]);
   uint16 window_height = (world_ptr[8] & 0x3FF);
