@@ -1,4 +1,4 @@
---Music Selection LUA Script
+--Music Selection LUA Script by ugetab
 --Page Up to increase, Page Down to decrease.
 --This can crash your game, so you should be careful.
 --
@@ -14,6 +14,7 @@
 --3 Red Alarm (From reset, any time after)
 --2 Teleroboxer (From reset, any time after)
 --2 VB Wario Land (From reset, any time after)
+--8 V-Tetris (From reset, any time after)
 --5 Vertical Force (From reset, any time after)
 
 --User Control:
@@ -31,6 +32,10 @@
 
 --Not Done:
 --Nester's Funky Bowling
+--SD Gundam - Dimension War
+--Space Invaders - Virtual Collection
+--Virtual Bowling
+--Virtual Lab
 --Virtual League Baseball
 
 --Incompatible with LUA methods:
@@ -69,8 +74,39 @@
 
 --Script Info:
 emu.print("Gamenum is currently " .. GameNum .. ".");
+if (GameNum >= 2) then
+ if ((GameNum <= 8)) then
+  emu.print("");
+  emu.print("This Gamenum is used for the following games:");
+  if ((GameNum == 2)) then
+   emu.print("Galactic Pinball");
+   emu.print("Mario Clash");
+   emu.print("Teleroboxer");
+   emu.print("VB Wario Land");
+  end;
+  if ((GameNum == 3)) then
+   emu.print("Red Alarm");
+  end;
+  if ((GameNum == 4)) then
+   emu.print("Panic Bomber");
+  end;
+  if ((GameNum == 5)) then
+   emu.print("Vertical Force");
+  end;
+  if ((GameNum == 6)) then
+   emu.print("3D Tetris");
+  end;
+  if ((GameNum == 7)) then
+   emu.print("Golf");
+  end;
+  if ((GameNum == 8)) then
+   emu.print("V-Tetris");
+  end;
+  emu.print("");
+ end;
+end
+
 emu.print("To be able to use this script with some games, you will have to Edit the script and change the Gamenum to what will work for the game you'd like.");
-emu.print("");
 
 
 --Declarations:
@@ -80,6 +116,14 @@ local MusWriteAddr = 0x050000F4;
 
 --Hudson games use this to distinguish if a song is being asked to init, while keeping the number.
 local StripBit80 = 0;
+
+--A basic coverall variable in case more than 1 list ends up being added
+local UsePlaylist = 0;
+local PlaylistValue = 0;
+
+--V-Tetris can't handle bad values to it's music driver well, so this specifies all the valid songs. 1-18
+local VTetrisValidSongs = {0xC1,0xC8,0xCB,0xCE,0xD2,0xD3,0xD4,0xD5,0xD6,0xDA,0xE2,0xE6,0xE9,0xEC,0xEF,0xF3,0xF4,0xF5};
+local UseVTetrisPlaylist = 0;
 
 --Used to prevent button press events from registering every frame.
 --Only 3 used, so no need to save a full array of all buttons to compare every frame.
@@ -106,14 +150,28 @@ else
      if (GameNum == 7) then
       MusReadAddr = 0x05004B41;
       MusWriteAddr = MusReadAddr;
+     else
+      if (GameNum == 8) then
+       MusReadAddr = 0x05000201;
+       MusWriteAddr = MusReadAddr;
+       UsePlaylist = 1;
+       UseVTetrisPlaylist = 1;
+      end;
      end;
     end;
    end;
  end;
 end;
 
+if (UsePlaylist == 1) then
+ MusicValue = 0;
+end;
+
 function DisplayMusicVal()
- MusicValue = memory.readbyte(MusReadAddr);
+
+ if (UsePlaylist == 0) then
+  MusicValue = memory.readbyte(MusReadAddr);
+ end;
  if (StripBit80 == 1) then
   if (MusicValue > 127) then
    MusicValue = (MusicValue - 128);
@@ -133,15 +191,24 @@ if (not ButtonWasPressed) then
 --Increase Music Value
  if (kbinput.pageup) then
   ButtonWasPressed = 1;
-  MusicValue = memory.readbyte(MusReadAddr);
+  if (UsePlaylist == 0) then
+   MusicValue = memory.readbyte(MusReadAddr);
+  end;
   MusicValue = MusicValue + 1;
  end;
 
 --Decrease Music Value
  if (kbinput.pagedown) then
   ButtonWasPressed = 1;
-  MusicValue = memory.readbyte(MusReadAddr);
+  if (UsePlaylist == 0) then
+   MusicValue = memory.readbyte(MusReadAddr);
+  end;
   MusicValue = MusicValue - 1;
+  if (MakeSongZeroMinimum == 1 or UsePlaylist == 1) then
+   if (MusicValue < 0) then
+    MusicValue = 0;
+   end;
+  end;
  end;
 
 -- An easily customized music selection key,
@@ -149,6 +216,17 @@ if (not ButtonWasPressed) then
  if (kbinput.insert) then
   ButtonWasPressed = 1;
   MusicValue=InsertKeyMusSelect;
+ end;
+
+--If it's a playlist, lookup the value, and do maximum MusicValue checking.
+ if (UsePlaylist == 1) then
+  if (UseVTetrisPlaylist == 1) then
+   if (MusicValue > #VTetrisValidSongs - 1) then
+    MusicValue = #VTetrisValidSongs - 1;
+   end;
+   PlaylistValue = MusicValue;
+   MusicValue = VTetrisValidSongs[MusicValue+1];
+  end;
  end;
 
 --Instead of duplicating the music write code multiple times,
@@ -176,6 +254,10 @@ if (not ButtonWasPressed) then
    end;
   end;
   memory.writebyte(MusWriteAddr,MusicValue);
+ end;
+
+ if (UsePlaylist == 1) then
+  MusicValue = PlaylistValue;
  end;
 
 end;
