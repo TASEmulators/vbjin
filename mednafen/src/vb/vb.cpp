@@ -597,7 +597,7 @@ static int Load(const char *name, MDFNFILE *fp)
 
  VIP_Set3DMode(VB3DMode);
 
- VIP_Init();
+ //VIP_Init();
 
  //VIP_SetParallaxDisable(MDFN_GetSettingB("vb.disable_parallax"));
  
@@ -612,7 +612,7 @@ static int Load(const char *name, MDFNFILE *fp)
   }
   VIP_SetAnaglyphColors(lcolor, rcolor);
  }*/
- VIP_SetDefaultColor((uint32)MDFN_GetSettingUI("vb.default_color"));
+ //VIP_SetDefaultColor((uint32)MDFN_GetSettingUI("vb.default_color"));
 
 
  VB_VSU = new VSU(&sbuf[0], &sbuf[1]);

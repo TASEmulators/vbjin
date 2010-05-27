@@ -76,7 +76,7 @@ static uint32 AnaSlowColorLUT[256][256];
 // A few settings:
 static bool ParallaxDisabled;
 static uint32 Anaglyph_Colors[2];
-static uint32 Default_Color;
+//static uint32 Default_Color;
 static int DisplayLeftRightOutputInternal;
 static int SideBySideSep;
 
@@ -262,11 +262,11 @@ void VIP_SetParallaxDisable(bool disabled)
  ParallaxDisabled = disabled;
 }
 
-void VIP_SetDefaultColor(uint32 default_color)
+/*void VIP_SetDefaultColor(uint32 default_color)
 {
  Default_Color = default_color;
  Recalc3DModeStuff();
-}
+}*/
 
 void VIP_SetAnaglyphColors(uint32 lcolor, uint32 rcolor)
 {
@@ -345,19 +345,19 @@ static void CheckIRQ(void)
 }
 
 
-bool VIP_Init(void)
+/*bool VIP_Init(void)
 {
  //ParallaxDisabled = false; //Force Set Elsewhere
  //DisplayLeftRightOutputInternal = 0 // Force Set Elsewhere
- Anaglyph_Colors[0] = 0xFF0000;
- Anaglyph_Colors[1] = 0x0000FF;
+ //Anaglyph_Colors[0] = 0xFF0000; //Force Set Elsewhere
+ //Anaglyph_Colors[1] = 0x0000FF; //Force Set Elsewhere
  //VB3DMode = VB3DMODE_ANAGLYPH; // Force Set Elsewhere
- Default_Color = 0xFFFFFF;
+ //Default_Color = 0xFFFFFF; //Unused now
 
  //Recalc3DModeStuff();
 
  return(true);
-}
+}*/
 
 void VIP_Power(void)
 {
