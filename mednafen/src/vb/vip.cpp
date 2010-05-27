@@ -35,7 +35,7 @@ static const uint32 AnaglyphPreset_Colors[][2] =
  { 0xFF0000, 0x00FF00 },
  { 0x00FF00, 0xFF00FF },
  { 0xFFFF00, 0x0000FF },
- { 0xF0F0F0, 0xF0F0F0 }, //Greyscale
+ { 0xFFFFFF, 0xFFFFFF }, //Greyscale
 };
 
 static uint8 FB[2][2][0x6000];
