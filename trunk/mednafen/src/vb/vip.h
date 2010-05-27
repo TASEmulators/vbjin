@@ -6,7 +6,7 @@
 namespace MDFN_IEN_VB
 {
 
-bool VIP_Init(void);
+//bool VIP_Init(void);
 void VIP_Power(void);
 
 void VIP_Set3DMode(uint32 mode);
@@ -16,7 +16,7 @@ void VIP_SetParallaxDisable(bool disabled);
 int VIP_GetSideBySidePixels();
 void VIP_SetSideBySidePixels(int pixels);
 void VIP_SetViewDisp(int display);
-void VIP_SetDefaultColor(uint32 default_color);
+//void VIP_SetDefaultColor(uint32 default_color);
 void VIP_SetAnaglyphColors(uint32 lcolor, uint32 rcolor);	// R << 16, G << 8, B << 0
 
 v810_timestamp_t MDFN_FASTCALL VIP_Update(const v810_timestamp_t timestamp);
