@@ -41,6 +41,18 @@
 --Virtual League Baseball
 
 --Incompatible with LUA methods:
+--Bound High! (http://www.planetvb.com):
+--Testing: (Too much noise in all situations at intro)
+--3B4 = Intro SFX(0x24) (Set to 0x0E for a minimal intro SFX)
+--3B6 = Disable Intro SFX (03AC52BE) (Set to C0A00000)
+--314C6 = Intro Music(0x12)
+--Ripping:
+--Disable menu enter SFX:
+--2241C = C0A00000 (01ACEC9D)
+--Music Select
+--22A30 = C0A00000C0A0??00 (068400A84200C940)
+--Go to the Chalvo Password Screen, and you can record without any SFX.
+--
 --Innsmouth Mansion (J):
 --Edit the .VB file. No active music select address in RAM.
 --ECCA7 = Password Screen Music
