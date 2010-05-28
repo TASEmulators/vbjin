@@ -50,7 +50,7 @@ bool MixVideoOutput = false;
 int DisplayLeftRightOutput = 0;
 int SideBySidePixels = 16;
 
-bool PrintJoypadOutput = true;
+bool OpenConsoleWindow = true;
 
 //uint16 PadData;//NEWTODO this sucks
 
@@ -122,12 +122,15 @@ int WINAPI WinMain( HINSTANCE hInstance,
 	winClass.cbClsExtra = 0;
 	winClass.cbWndExtra = 0;
 
-	OpenConsole();
-
 	if( !RegisterClassEx(&winClass) )
 		return E_FAIL;
 
 	GetINIPath();
+
+	OpenConsoleWindow = GetPrivateProfileBool("Display", "OpenConsoleWindow", true, IniName);
+
+	if (OpenConsoleWindow)
+		OpenConsole();
 
 	pcejin.aspectRatio = GetPrivateProfileBool("Video", "aspectratio", false, IniName);
 	pcejin.windowSize = GetPrivateProfileInt("Video", "pcejin.windowSize", 1, IniName);
@@ -245,7 +248,7 @@ void OpenConsole()
 	*stdout = *fp;
 }
 
-HWND Create( int nCmdShow, int w, int h )
+/*HWND Create( int nCmdShow, int w, int h )
 {
 	RECT rc;
 
@@ -271,7 +274,7 @@ HWND Create( int nCmdShow, int w, int h )
 	OpenConsole();
 
 	return hwnd;
-}
+}*/
 
 extern MDFNGI EmulatedVB;
 
@@ -490,7 +493,6 @@ void LoadIniSettings(){
 	MDFN_IEN_VB::SetViewDisp(DisplayLeftRightOutput);
 	Hud.FrameCounterDisplay = GetPrivateProfileBool("Display","FrameCounter", false, IniName);
 	Hud.ShowInputDisplay = GetPrivateProfileBool("Display","Display Input", false, IniName);
-	PrintJoypadOutput = GetPrivateProfileBool("Display","Print Input", true, IniName);
 	Hud.ShowLagFrameCounter = GetPrivateProfileBool("Display","Display Lag Counter", false, IniName);
 	Hud.DisplayStateSlots = GetPrivateProfileBool("Display","Display State Slots", false, IniName);
 	soundDriver->userMute = (GetPrivateProfileBool("Main", "Muted", false, IniName));
@@ -780,7 +782,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		checkMenu(ID_VIEW_DISP_DISABLE, ((DisplayLeftRightOutput==3)));
 		checkMenu(ID_VIEW_FRAMECOUNTER,Hud.FrameCounterDisplay);
 		checkMenu(ID_VIEW_DISPLAYINPUT,Hud.ShowInputDisplay);
-		checkMenu(ID_VIEW_PRINTINPUT,PrintJoypadOutput);
+		checkMenu(ID_VIEW_OPENCONSOLE,OpenConsoleWindow);
 		checkMenu(ID_VIEW_DISPLAYSTATESLOTS,Hud.DisplayStateSlots);
 		checkMenu(ID_VIEW_DISPLAYLAG,Hud.ShowLagFrameCounter);
 		checkMenu(IDM_MUTE,soundDriver->userMute);
@@ -1014,9 +1016,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			osd->clear();
 			return 0;
 
-		case ID_VIEW_PRINTINPUT:
-			PrintJoypadOutput ^= true;
-			WritePrivateProfileBool("Display", "Print Input", PrintJoypadOutput, IniName);
+		case ID_VIEW_OPENCONSOLE:
+			OpenConsoleWindow ^= true;
+			WritePrivateProfileBool("Display", "OpenConsoleWindow", OpenConsoleWindow, IniName);
 			return 0;
 
 		case ID_VIEW_DISPLAYSTATESLOTS:
