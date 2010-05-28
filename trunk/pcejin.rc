@@ -103,9 +103,9 @@ BEGIN
             MENUITEM "Right Only",              ID_VIEW_DISP_RIGHT
             MENUITEM "Disabled",                ID_VIEW_DISP_DISABLE
         END
+        MENUITEM "Open Console (Restart)",      ID_VIEW_OPENCONSOLE
 		MENUITEM "Display Frame Counter",       ID_VIEW_FRAMECOUNTER
         MENUITEM "Display Input",               ID_VIEW_DISPLAYINPUT
-        MENUITEM "Open Console (Restart)",      ID_VIEW_OPENCONSOLE
         MENUITEM "Display Lag Counter",         ID_VIEW_DISPLAYLAG
         MENUITEM "Display State Slots",         ID_VIEW_DISPLAYSTATESLOTS
 
