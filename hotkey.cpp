@@ -155,6 +155,7 @@ extern SJoypad Joypad[16];
 extern SJoypad ToggleJoypadStorage[8];
 //extern SCustomKeys CustomKeys;
 extern SJoypad TurboToggleJoypadStorage[8];
+extern bool PrintJoypadOutput;
 
 void RunInputConfig();
 void RunHotkeyConfig();
@@ -1847,7 +1848,7 @@ void S9xWinScanJoypads ()
 			//		PadState[1] &= ~(4);
 			//}
 
-			if(PadState != 0)
+			if((PadState != 0) && PrintJoypadOutput)
 				printf("%d",PadState);
 
             joypads [J] = PadState | 0x80000000;
