@@ -648,12 +648,12 @@ static int Load(const char *name, MDFNFILE *fp)
         MDFNGameInfo->fb_height = 512;
         break;
 
-  /*case VB3DMODE_CSCOPE:
+  case VB3DMODE_CSCOPE:
 	MDFNGameInfo->nominal_width = 512;
 	MDFNGameInfo->nominal_height = 384;
 	MDFNGameInfo->pitch = 864 * sizeof(uint32);
 	MDFNGameInfo->fb_height = 512;
-	break;*/
+	break;
 
   case VB3DMODE_SIDEBYSIDE:
 	MDFNGameInfo->nominal_width = 768 + MDFN_IEN_VB::VIP_GetSideBySidePixels();	//768;
@@ -864,7 +864,7 @@ static const MDFNSetting_EnumList V810Mode_List[] =
 static const MDFNSetting_EnumList VB3DMode_List[] =
 {
  { "anaglyph", VB3DMODE_ANAGLYPH },
-// { "cscope",  VB3DMODE_CSCOPE },
+ { "cscope",  VB3DMODE_CSCOPE },
  { "sidebyside", VB3DMODE_SIDEBYSIDE },
 // { "overunder", VB3DMODE_OVERUNDER },
  { "pbarrier", VB3DMODE_PBARRIER },
@@ -988,7 +988,7 @@ MDFNGI EmulatedVB =
  384,   // Nominal width
  224,    // Nominal height
  864 * sizeof(uint32), // Framebuffer pitch
- 256,                  // Framebuffer height
+ 384,                  // Framebuffer height (384 for CScope. Otherwise, 256 works fine)
 
  2,     // Number of output sound channels
 };

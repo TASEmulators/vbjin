@@ -81,7 +81,7 @@ BEGIN
         POPUP "Splitting Mode"
         BEGIN
             MENUITEM "Anaglyph",                ID_SPLIT_MODE_ANAGLYPH
-//            MENUITEM "CScope",                  ID_SPLIT_MODE_CSCOPE
+            MENUITEM "CScope",                  ID_SPLIT_MODE_CSCOPE
             MENUITEM "Side By Side",            ID_SPLIT_MODE_SIDEBYSIDE
             MENUITEM "PBarrier",                ID_SPLIT_MODE_PBARRIER
         END

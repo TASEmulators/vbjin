@@ -220,9 +220,9 @@ static void Recalc3DModeStuff(bool non_rgb_output = false)
             CopyFBColumnToTarget = CopyFBColumnToTarget_Anaglyph;
            break;
 
-  /*case VB3DMODE_CSCOPE:
+  case VB3DMODE_CSCOPE:
            CopyFBColumnToTarget = CopyFBColumnToTarget_CScope;
-           break;*/
+           break;
 
   case VB3DMODE_SIDEBYSIDE:
            CopyFBColumnToTarget = CopyFBColumnToTarget_SideBySide;
@@ -848,10 +848,10 @@ void VIP_StartFrame(EmulateSpecStruct *espec)
 	espec->DisplayRect.h = 224;
 	break;
 
-  /*case VB3DMODE_CSCOPE:
+  case VB3DMODE_CSCOPE:
 	espec->DisplayRect.w = 512;
 	espec->DisplayRect.h = 384;
-	break;*/
+	break;
 
   case VB3DMODE_SIDEBYSIDE:
 	espec->DisplayRect.w = 768 + SideBySideSep;	//768;
