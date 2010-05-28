@@ -136,7 +136,7 @@ void ScaleScreen(float factor)
 		else if(factor==65534)
 			factor = 2.5f;
 
-		setClientSize((int)(pcejin.width * factor * (pcejin.aspectRatio ? ((float)309 / (float)384) : 1)), (int)(232 * factor));
+		setClientSize((int)(pcejin.width * factor * (pcejin.aspectRatio ? ((float)309 / (float)384) : 1)), (int)(pcejin.height * factor));
 	}
 
 }
