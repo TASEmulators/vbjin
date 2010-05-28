@@ -136,7 +136,7 @@ int WINAPI WinMain( HINSTANCE hInstance,
 	g_hWnd = CreateWindowEx( NULL, "MY_WINDOWS_CLASS",
 		pcejin.versionName.c_str(),
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
-		WndX, WndY, 256, 232, NULL, NULL, hInstance, NULL );
+		WndX, WndY, 348, 224, NULL, NULL, hInstance, NULL );
 
 	if( g_hWnd == NULL )
 		return E_FAIL;
@@ -752,10 +752,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		EnableMenuItem(GetMenu(hWnd), IDM_FILE_RECORDWAV, MF_BYCOMMAND | (!DRV_WaveRecordActive()) ? MF_ENABLED : MF_GRAYED);
 
 		//Window Size
-		checkMenu(IDC_WINDOW1X, ((pcejin.windowSize==1)));
-		checkMenu(IDC_WINDOW2X, ((pcejin.windowSize==2)));
-		checkMenu(IDC_WINDOW3X, ((pcejin.windowSize==3)));
-		checkMenu(IDC_WINDOW4X, ((pcejin.windowSize==4)));
+		checkMenu(IDC_WINDOW1X,  ((pcejin.windowSize==1)));
+		checkMenu(IDC_WINDOW15X, ((pcejin.windowSize==65535)));
+		checkMenu(IDC_WINDOW2X,  ((pcejin.windowSize==2)));
+		checkMenu(IDC_WINDOW25X, ((pcejin.windowSize==65534)));
+		checkMenu(IDC_WINDOW3X,  ((pcejin.windowSize==3)));
+		checkMenu(IDC_WINDOW4X,  ((pcejin.windowSize==4)));
 		checkMenu(IDC_ASPECT, ((pcejin.aspectRatio)));
 		checkMenu(ID_VIEW_MIXLEFTRIGHT,MixVideoOutput);
 		checkMenu(ID_COLOR_MODE_REDBLUE, ((MDFN_IEN_VB::GetColorMode()==0)));
@@ -819,8 +821,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			pcejin.windowSize=1;
 			ScaleScreen((float)pcejin.windowSize);
 			break;
+		case IDC_WINDOW15X:
+			pcejin.windowSize=65535;
+			ScaleScreen((float)pcejin.windowSize);
+			break;
 		case IDC_WINDOW2X:
 			pcejin.windowSize=2;
+			ScaleScreen((float)pcejin.windowSize);
+			break;
+		case IDC_WINDOW25X:
+			pcejin.windowSize=65534;
 			ScaleScreen((float)pcejin.windowSize);
 			break;
 		case IDC_WINDOW3X:

@@ -10,8 +10,8 @@ public:
 		aspectRatio(true), 
 		romLoaded(false), 
 		frameAdvance(false), 
-		width(256), 
-		height(232), 
+		width(384), 
+		height(224), 
 		versionName(std::string("VBjin svn") + std::string(SVN_REV_STR)),
 		slow(false) {
 	}

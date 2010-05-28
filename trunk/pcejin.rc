@@ -61,7 +61,9 @@ BEGIN
     POPUP "&View"
     BEGIN
         MENUITEM "1x",                          IDC_WINDOW1X
+        MENUITEM "1.5x",                        IDC_WINDOW15X
         MENUITEM "2x",                          IDC_WINDOW2X
+        MENUITEM "2.5x",                        IDC_WINDOW25X
         MENUITEM "3x",                          IDC_WINDOW3X
         MENUITEM "4x",                          IDC_WINDOW4X
         MENUITEM SEPARATOR
