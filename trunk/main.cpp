@@ -50,6 +50,8 @@ bool MixVideoOutput = false;
 int DisplayLeftRightOutput = 0;
 int SideBySidePixels = 16;
 
+bool PrintJoypadOutput = true;
+
 //uint16 PadData;//NEWTODO this sucks
 
 Pcejin pcejin;
@@ -488,6 +490,7 @@ void LoadIniSettings(){
 	MDFN_IEN_VB::SetViewDisp(DisplayLeftRightOutput);
 	Hud.FrameCounterDisplay = GetPrivateProfileBool("Display","FrameCounter", false, IniName);
 	Hud.ShowInputDisplay = GetPrivateProfileBool("Display","Display Input", false, IniName);
+	PrintJoypadOutput = GetPrivateProfileBool("Display","Print Input", true, IniName);
 	Hud.ShowLagFrameCounter = GetPrivateProfileBool("Display","Display Lag Counter", false, IniName);
 	Hud.DisplayStateSlots = GetPrivateProfileBool("Display","Display State Slots", false, IniName);
 	soundDriver->userMute = (GetPrivateProfileBool("Main", "Muted", false, IniName));
@@ -777,6 +780,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		checkMenu(ID_VIEW_DISP_DISABLE, ((DisplayLeftRightOutput==3)));
 		checkMenu(ID_VIEW_FRAMECOUNTER,Hud.FrameCounterDisplay);
 		checkMenu(ID_VIEW_DISPLAYINPUT,Hud.ShowInputDisplay);
+		checkMenu(ID_VIEW_PRINTINPUT,PrintJoypadOutput);
 		checkMenu(ID_VIEW_DISPLAYSTATESLOTS,Hud.DisplayStateSlots);
 		checkMenu(ID_VIEW_DISPLAYLAG,Hud.ShowLagFrameCounter);
 		checkMenu(IDM_MUTE,soundDriver->userMute);
@@ -1008,6 +1012,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			Hud.ShowInputDisplay ^= true;
 			WritePrivateProfileBool("Display", "Display Input", Hud.ShowInputDisplay, IniName);
 			osd->clear();
+			return 0;
+
+		case ID_VIEW_PRINTINPUT:
+			PrintJoypadOutput ^= true;
+			WritePrivateProfileBool("Display", "Print Input", PrintJoypadOutput, IniName);
 			return 0;
 
 		case ID_VIEW_DISPLAYSTATESLOTS:
