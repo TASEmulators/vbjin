@@ -598,11 +598,11 @@
 						>
 					</File>
 					<File
-						RelativePath=".\mednafen\include\blip\old\Blip_Buffer.h"
+						RelativePath=".\mednafen\include\blip\Blip_Buffer.h"
 						>
 					</File>
 					<File
-						RelativePath=".\mednafen\include\blip\Blip_Buffer.h"
+						RelativePath=".\mednafen\include\blip\old\Blip_Buffer.h"
 						>
 					</File>
 					<File
@@ -818,6 +818,14 @@
 		</File>
 		<File
 			RelativePath=".\throttle.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\Icons\VBjin.bmp"
+			>
+		</File>
+		<File
+			RelativePath=".\Icons\VBjin.ico"
 			>
 		</File>
 		<File
