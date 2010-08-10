@@ -38,6 +38,8 @@
 #define IDC_C_ADDCHEAT                  225
 #define IDC_C_WATCH                     226
 #define ID_RAM_WATCH                    227
+#define IDC_C_WATCH_DUPLICATE2          227
+#define IDC_C_WATCH_SEPARATE            227
 #define IDD_RAMWATCH                    228
 #define IDM_RESET                       229
 #define IDC_EDIT_COMPAREVALUE           230
@@ -141,10 +143,10 @@
 #define IDC_BIOSBROWSE                  453
 #define IDM_BIOS_CONFIG                 454
 #define IDD_BIOS                        455
-#define IDC_Right_UP                          456
-#define IDC_Right_LEFT                        457
-#define IDC_Right_DOWN                        458
-#define IDC_Right_RIGHT                       459
+#define IDC_Right_UP                    456
+#define IDC_Right_LEFT                  457
+#define IDC_Right_DOWN                  458
+#define IDC_Right_RIGHT                 459
 #define IDC_WINDOW1X                    500
 #define IDC_WINDOW2X                    501
 #define IDC_WINDOW3X                    502

@@ -72,43 +72,42 @@ BEGIN
         MENUITEM "Mix Left && Right View",      ID_VIEW_MIXLEFTRIGHT
         POPUP "Coloring"
         BEGIN
-            MENUITEM "Red/Blue",                ID_COLOR_MODE_REDBLUE
-            MENUITEM "Red/Cyan",                ID_COLOR_MODE_REDCYAN
-            MENUITEM "Red/Electric Cyan",       ID_COLOR_MODE_REDELECTRICCYAN
-            MENUITEM "Red/Green",               ID_COLOR_MODE_REDGREEN
-            MENUITEM "Green/Magenta",           ID_COLOR_MODE_GREENMAGENTA
-            MENUITEM "Yellow/Blue",             ID_COLOR_MODE_YELLOWBLUE
-            MENUITEM "Greyscale",               ID_COLOR_MODE_GREYSCALE
+            MENUITEM "Red/Blue",                    ID_COLOR_MODE_REDBLUE
+            MENUITEM "Red/Cyan",                    ID_COLOR_MODE_REDCYAN
+            MENUITEM "Red/Electric Cyan",           ID_COLOR_MODE_REDELECTRICCYAN
+            MENUITEM "Red/Green",                   ID_COLOR_MODE_REDGREEN
+            MENUITEM "Green/Magenta",               ID_COLOR_MODE_GREENMAGENTA
+            MENUITEM "Yellow/Blue",                 ID_COLOR_MODE_YELLOWBLUE
+            MENUITEM "Greyscale",                   ID_COLOR_MODE_GREYSCALE
         END
         POPUP "Splitting Mode"
         BEGIN
-            MENUITEM "Anaglyph",                ID_SPLIT_MODE_ANAGLYPH
-            MENUITEM "CScope",                  ID_SPLIT_MODE_CSCOPE
-            MENUITEM "Side By Side",            ID_SPLIT_MODE_SIDEBYSIDE
-            MENUITEM "PBarrier",                ID_SPLIT_MODE_PBARRIER
+            MENUITEM "Anaglyph",                    ID_SPLIT_MODE_ANAGLYPH
+            MENUITEM "CScope",                      ID_SPLIT_MODE_CSCOPE
+            MENUITEM "Side By Side",                ID_SPLIT_MODE_SIDEBYSIDE
+            MENUITEM "PBarrier",                    ID_SPLIT_MODE_PBARRIER
         END
         POPUP "Side By Side Separation"
         BEGIN
-            MENUITEM "16 pixels",               ID_PIXEL_SEP_16
-            MENUITEM "32 pixels",               ID_PIXEL_SEP_32
-            MENUITEM "48 pixels",               ID_PIXEL_SEP_48
-            MENUITEM "64 pixels",               ID_PIXEL_SEP_64
-            MENUITEM "80 pixels",               ID_PIXEL_SEP_80
-            MENUITEM "96 pixels",               ID_PIXEL_SEP_96
+            MENUITEM "16 pixels",                   ID_PIXEL_SEP_16
+            MENUITEM "32 pixels",                   ID_PIXEL_SEP_32
+            MENUITEM "48 pixels",                   ID_PIXEL_SEP_48
+            MENUITEM "64 pixels",                   ID_PIXEL_SEP_64
+            MENUITEM "80 pixels",                   ID_PIXEL_SEP_80
+            MENUITEM "96 pixels",                   ID_PIXEL_SEP_96
         END
         POPUP "Video Display"
         BEGIN
-            MENUITEM "Both",                    ID_VIEW_DISP_BOTH
-            MENUITEM "Left Only",               ID_VIEW_DISP_LEFT
-            MENUITEM "Right Only",              ID_VIEW_DISP_RIGHT
-            MENUITEM "Disabled",                ID_VIEW_DISP_DISABLE
+            MENUITEM "Both",                        ID_VIEW_DISP_BOTH
+            MENUITEM "Left Only",                   ID_VIEW_DISP_LEFT
+            MENUITEM "Right Only",                  ID_VIEW_DISP_RIGHT
+            MENUITEM "Disabled",                    ID_VIEW_DISP_DISABLE
         END
         MENUITEM "Open Console (Restart)",      ID_VIEW_OPENCONSOLE
-		MENUITEM "Display Frame Counter",       ID_VIEW_FRAMECOUNTER
+        MENUITEM "Display Frame Counter",       ID_VIEW_FRAMECOUNTER
         MENUITEM "Display Input",               ID_VIEW_DISPLAYINPUT
         MENUITEM "Display Lag Counter",         ID_VIEW_DISPLAYLAG
         MENUITEM "Display State Slots",         ID_VIEW_DISPLAYSTATESLOTS
-
     END
     POPUP "&Config"
     BEGIN
@@ -430,9 +429,10 @@ BEGIN
     PUSHBUTTON      "Remove",IDC_C_WATCH_REMOVE,226,83,34,14
     PUSHBUTTON      "New",IDC_C_WATCH,226,100,34,14
     PUSHBUTTON      "Duplicate",IDC_C_WATCH_DUPLICATE,226,117,34,14
-    PUSHBUTTON      "Add Cheat",IDC_C_ADDCHEAT,222,140,42,16,WS_DISABLED
-    GROUPBOX        "Watches",IDC_STATIC,222,11,42,125
+    PUSHBUTTON      "Add Cheat",IDC_C_ADDCHEAT,224,161,42,16,WS_DISABLED
+    GROUPBOX        "Watches",IDC_STATIC,222,11,42,145
     CONTROL         "",ID_WATCHES_UPDOWN,"msctls_updown32",WS_TABSTOP,232,23,19,36
+    PUSHBUTTON      "Separator",IDC_C_WATCH_SEPARATE,225,137,36,14
 END
 
 IDD_EDITWATCH DIALOGEX 0, 0, 181, 95
