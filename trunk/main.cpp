@@ -404,7 +404,7 @@ void LoadGame(){
 		}
 		FCEUI_StopMovie();
 		UpdateRecentRoms(szChoice);
-
+		ResetFrameCount();
 		UpdateTitleWithFilename(szChoice);
 		/*std::string romname = RemovePath(szChoice);
 		std::string temp = pcejin.versionName;
