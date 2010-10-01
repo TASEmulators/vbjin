@@ -76,6 +76,11 @@ void MovieData::insertEmpty(int at, int frames)
 
 
 
+void ResetFrameCount() {
+	//for loading roms
+	currFrameCounter = 0;
+}
+
 void MovieRecord::clear()
 { 
 	for (int i = 0; i < 5; i++)

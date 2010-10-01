@@ -4,7 +4,7 @@
 #include "windows.h"
 #include <commctrl.h>
 #include <shlwapi.h>
-
+#include "movie.h"
 #include "recentroms.h"
 #include "resource.h"
 #include "mednafen.h"
@@ -227,7 +227,7 @@ void OpenRecentROM(int listNum)
 	// Sanity check for reset, in case the list is cleared
 	if (!RecentRoms.size())
 		return;
-
+	soundDriver->pause();
 	strcpy(filename, RecentRoms[listNum].c_str());
 	
 	pcejin.romLoaded = true;
@@ -249,5 +249,8 @@ void OpenRecentROM(int listNum)
 		UpdateRecentRoms(filename);
 		UpdateTitleWithFilename(filename);
 	}
-
+	
+	pcejin.tempUnPause();
+	ResetFrameCount();
+	
 }
