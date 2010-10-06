@@ -6,6 +6,7 @@
 #define IDS_APP_TITLE                   103
 #define IDM_ABOUT                       104
 #define IDM_EXIT                        105
+#define IDD_MEM_VIEW                    106
 #define IDR_MAINFRAME                   128
 #define IDC_CV                          129
 #define IDI_ICON1                       130
@@ -191,6 +192,15 @@
 #define ID_FILE_RECENTROM               710
 #define ID_CANCEL                       1002
 #define IDC_COMBO1                      1003
+#define IDC_GO                          1004
+#define IDC_TEXTDUMP                    1005
+#define IDC_MEMVIEWBOX                  1006
+#define IDC_ADDRESS                     1007
+#define IDC_RAWDUMP                     1008
+#define IDC_REGION                      1009
+#define IDC_VIEWMODE                    1010
+#define IDC_DUMPALL                     1011
+#define IDM_MEMORY                      32770
 #define IDC_LABEL_HK1                   60001
 #define IDC_LABEL_HK2                   60002
 #define IDC_LABEL_HK3                   60003

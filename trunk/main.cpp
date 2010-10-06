@@ -18,6 +18,8 @@
 #include "mednafen.h"
 #include "general.h"
 
+#include "CWindow.h"
+#include "memView.h"
 #include "ramwatch.h"
 #include "ramsearch.h"
 #include "Mmsystem.h"
@@ -225,6 +227,8 @@ int WINAPI WinMain( HINSTANCE hInstance,
 	// shutDown();
 
 	timeEndPeriod (wmTimerRes);
+
+	CloseAllToolWindows();
 
 	UnregisterClass( "MY_WINDOWS_CLASS", winClass.hInstance );
 	
@@ -435,6 +439,13 @@ void RecordAvi()
 	ofn.Flags = OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
     if(GetSaveFileName(&ofn))
 		DRV_AviBegin(szChoice);
+}
+
+void UpdateToolWindows()
+{
+	Update_RAM_Search();	//Update_RAM_Watch() is also called; hotkey.cpp - HK_StateLoadSlot & State_Load also call these functions
+
+	RefreshAllToolWindows();
 }
 
 void StopAvi()
@@ -686,8 +697,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 						extern int MDFNSS_Load(const char *fname, const char *suffix);
 						MDFNSS_Load(filename, NULL);
 						ClearDirectDrawOutput();
-						Update_RAM_Watch();
-						Update_RAM_Search();
+						UpdateToolWindows();
 					}
 				}
 			}
@@ -749,6 +759,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 		EnableMenuItem(GetMenu(hWnd), IDM_RECORD_MOVIE, MF_BYCOMMAND | (movieMode == MOVIEMODE_INACTIVE && pcejin.romLoaded) ? MF_ENABLED : MF_GRAYED);
 		EnableMenuItem(GetMenu(hWnd), ID_RAM_WATCH, MF_BYCOMMAND | (movieMode == MOVIEMODE_INACTIVE && pcejin.romLoaded) ? MF_ENABLED : MF_GRAYED);
 		EnableMenuItem(GetMenu(hWnd), ID_RAM_SEARCH, MF_BYCOMMAND | (movieMode == MOVIEMODE_INACTIVE && pcejin.romLoaded) ? MF_ENABLED : MF_GRAYED);
+		EnableMenuItem(GetMenu(hWnd), IDM_MEMORY, MF_BYCOMMAND | (movieMode == MOVIEMODE_INACTIVE && pcejin.romLoaded) ? MF_ENABLED : MF_GRAYED);
 		EnableMenuItem(GetMenu(hWnd), IDM_PLAY_MOVIE, MF_BYCOMMAND | (movieMode == MOVIEMODE_INACTIVE && pcejin.romLoaded) ? MF_ENABLED : MF_GRAYED);
 		EnableMenuItem(GetMenu(hWnd), IDM_STOPMOVIE, MF_BYCOMMAND | (movieMode != MOVIEMODE_INACTIVE) ? MF_ENABLED : MF_GRAYED);
 		EnableMenuItem(GetMenu(hWnd), IDM_FILE_STOPAVI, MF_BYCOMMAND | (DRV_AviIsRecording()) ? MF_ENABLED : MF_GRAYED);
@@ -1069,6 +1080,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			else
 				SetForegroundWindow(RamWatchHWnd);
 			return 0;
+		case IDM_MEMORY:
+			if (!RegWndClass("MemView_ViewBox", MemView_ViewBoxProc, 0, sizeof(CMemView*)))
+				return 0;
+
+			OpenToolWindow(new CMemView());
+			return 0;
 		case IDM_ABOUT:
 			soundDriver->pause();
 
@@ -1328,8 +1345,7 @@ void emulate(){
 
 	CallRegisteredLuaFunctions(LUACALL_AFTEREMULATION);
 
-	Update_RAM_Search();
-	Update_RAM_Watch();
+	UpdateToolWindows();
 
 	//NEWTODO
 	soundDriver->write((u16*)espec.SoundBuf, espec.SoundBufSize);
