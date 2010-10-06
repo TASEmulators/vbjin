@@ -83,6 +83,9 @@
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <Manifest>
+      <AdditionalManifestFiles>pcejin_x86.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
@@ -121,6 +124,9 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <Manifest>
+      <AdditionalManifestFiles>pcejin_x86.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseFastBuild|Win32'">
     <PreBuildEvent>
@@ -156,12 +162,16 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <Manifest>
+      <AdditionalManifestFiles>pcejin_x86.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="aggdraw.cpp" />
     <ClCompile Include="aviout.cpp" />
     <ClCompile Include="mednafen\src\sound\Blip_Buffer.cpp" />
     <ClCompile Include="mednafen\src\compress\blz.c" />
+    <ClCompile Include="CWindow.cpp" />
     <ClCompile Include="dd.cpp" />
     <ClCompile Include="dxsound.cpp" />
     <ClCompile Include="mednafen\src\endian.cpp" />
@@ -181,6 +191,7 @@
     <ClCompile Include="mednafen\src\mednafen.cpp" />
     <ClCompile Include="mednafen\src\memory.cpp" />
     <ClCompile Include="mednafen\src\mempatcher.cpp" />
+    <ClCompile Include="memView.cpp" />
     <ClCompile Include="mednafen\src\compress\minilzo.c" />
     <ClCompile Include="movie.cpp" />
     <ClCompile Include="ParseCmdLine.cpp" />
@@ -215,6 +226,7 @@
     <ClInclude Include="agg2d.h" />
     <ClInclude Include="aggdraw.h" />
     <ClInclude Include="aviout.h" />
+    <ClInclude Include="CWindow.h" />
     <ClInclude Include="dd.h" />
     <ClInclude Include="dxsound.h" />
     <ClInclude Include="GPU_osd.h" />
@@ -264,6 +276,7 @@
     <ClInclude Include="mednafen\include\trio\trionan.h" />
     <ClInclude Include="mednafen\include\trio\triop.h" />
     <ClInclude Include="mednafen\include\trio\triostr.h" />
+    <ClInclude Include="memView.h" />
     <ClInclude Include="movie.h" />
     <ClInclude Include="ParseCmdLine.h" />
     <ClInclude Include="pcejin.h" />
