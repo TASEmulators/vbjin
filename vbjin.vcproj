@@ -24,7 +24,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine=""
+				CommandLine=".\utils\SubWCRev.bat"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -598,11 +598,11 @@
 						>
 					</File>
 					<File
-						RelativePath=".\mednafen\include\blip\Blip_Buffer.h"
+						RelativePath=".\mednafen\include\blip\old\Blip_Buffer.h"
 						>
 					</File>
 					<File
-						RelativePath=".\mednafen\include\blip\old\Blip_Buffer.h"
+						RelativePath=".\mednafen\include\blip\Blip_Buffer.h"
 						>
 					</File>
 					<File
@@ -652,6 +652,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CWindow.h"
+				>
+			</File>
+			<File
 				RelativePath=".\dd.h"
 				>
 			</File>
@@ -677,6 +681,10 @@
 			</File>
 			<File
 				RelativePath=".\main.h"
+				>
+			</File>
+			<File
+				RelativePath=".\memView.h"
 				>
 			</File>
 			<File
@@ -745,6 +753,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\CWindow.cpp"
+			>
+		</File>
+		<File
 			RelativePath=".\dd.cpp"
 			>
 		</File>
@@ -770,6 +782,10 @@
 		</File>
 		<File
 			RelativePath=".\main.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\memView.cpp"
 			>
 		</File>
 		<File
