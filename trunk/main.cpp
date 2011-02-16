@@ -44,6 +44,8 @@
 #include "ParseCmdLine.h"
 #include "vb.h"
 
+std::string GameName;
+
 volatile MDFN_Surface *VTBuffer[2] = { NULL, NULL };
 MDFN_Rect *VTLineWidths[2] = { NULL, NULL };
 volatile int VTBackBuffer = 0;
@@ -410,12 +412,12 @@ void LoadGame(){
 		UpdateRecentRoms(szChoice);
 		ResetFrameCount();
 		UpdateTitleWithFilename(szChoice);
-		/*std::string romname = RemovePath(szChoice);
+		std::string romname = noExtension(RemovePath(szChoice));
 		std::string temp = pcejin.versionName;
 		temp.append(" ");
 		temp.append(romname);
 		
-		SetWindowText(g_hWnd, temp.c_str());*/
+		SetWindowText(g_hWnd, temp.c_str());
 	}
 }
 
@@ -1556,4 +1558,9 @@ std::string RemovePath(std::string filename)
 	{
 		return filename;	
 	}
+}
+
+std::string GetGameName()
+{
+	return GameName;
 }

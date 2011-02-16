@@ -59,3 +59,6 @@ void InitSpeedThrottle();
 int SpeedThrottle();
 std::string LoadMCM(const char* path, bool load);
 void UpdateTitleWithFilename(std::string filename);
+
+std::string GetGameName();
+std::string noExtension(std::string path);
